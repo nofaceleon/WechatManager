@@ -1,0 +1,125 @@
+{extend name="layout/header" /}
+{block name="contents"}
+<div class="jumbotron text-center">
+    <h1>微信公众号管理后台</h1>
+    <p>请先登录</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form id="loginform">
+                <div class="form-group">
+                    <label for="username">用户名:</label>
+                    <input type="text" class="form-control" id='username' name="username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">密码:</label>
+                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="请输入密码">
+                </div>
+                {if $iscaptcha}
+                <div class="form-group">
+                    <label for="embed-captcha">验证码:</label>
+                    <div id="embed-captcha"></div>
+                </div>
+                {/if}
+                <p id="wait" class="show" style="display:none;">正在加载验证码......</p>
+                <p id="notice" class="hide" style="display:none;">请先完成验证</p>
+
+                <button class="btn btn-primary" id="login" type="button">登录</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--<script src="__COMMON__/Geetest/gt.js"></script>-->
+<script src="/WechatDev/public/common/Geetest/gt.js"></script>
+<!--<script src="/common/Geetest/gt.js"></script>-->
+
+<script>
+    $('#login').click(function () {
+
+        var username = $('#username').val();
+        var pwd = $('#pwd').val();
+        if (username == '' || pwd == '') {
+            layer.msg('用户名或密码不能为空!');
+        } else {
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Login/userLogin')}",//url
+                data: $('#loginform').serialize(),
+//                data: formdata,
+                success: function (result) {
+                    if (result.status == 1) {
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href = "{:url('index/Index/index')}";
+                        }, 1000)
+                    } else if (result.status == 2) {
+                        layer.msg(result.msg);
+                        //错误信息刷新页面?
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000)
+
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+        }
+
+    });
+</script>
+
+
+{if $iscaptcha}
+    <script>
+        var handlerEmbed = function (captchaObj) {
+            $("#embed-submit").click(function (e) {
+                var validate = captchaObj.getValidate();
+                if (!validate) {
+//                    $("#notice").show();
+                    $("#notice")[0].className = "show";
+                    setTimeout(function () {
+                        $("#notice")[0].className = "hide";
+//                        $("#notice").hide();
+                    }, 2000);
+                    e.preventDefault();
+                }
+            });
+            // 将验证码加到id为captcha的元素里，同时会有三个input的值：geetest_challenge, geetest_validate, geetest_seccode
+            captchaObj.appendTo("#embed-captcha");
+            captchaObj.onReady(function () {
+                $("#wait")[0].className = "hide";
+            });
+            // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+        };
+
+        $.ajax({
+            url: "{:url('index/Login/GeetTest')}?t=" + (new Date()).getTime(), // 加随机数防止缓存
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                initGeetest({
+                    gt: data.gt,
+                    challenge: data.challenge,
+                    new_captcha: data.new_captcha,
+                    product: "embed", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                    offline: !data.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    width: '100%'
+                    // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+                }, handlerEmbed);
+            }
+        });
+
+    </script>
+
+{/if}
+
+
+{/block}

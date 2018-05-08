@@ -1,0 +1,124 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+{block name="contents"}
+    <div class="container">
+        <h2 class="">编辑公众号菜单</h2>
+        <form id="menuform" >
+            <div class="form-group">
+                <label for="sel1">父级菜单:</label>
+                <select class="form-control" id="sel1" name="parentid">
+                    <option value="0">顶级菜单</option>
+                    {volist name="topmenu" id="v"}
+                        <option value="{$v['id']}">{$v['buttonname']}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="menuname">菜单名:</label>
+                <input type="text" class="form-control" id="menuname" placeholder="" name="buttonname" value="{$menuinfo['buttonname']}">
+            </div>
+            <div class="form-group typediv">
+                <label for="sel2">菜单类型:</label>
+                <select class="form-control" id="sel2" name="type">
+                    <option value="view" selected>链接</option>
+                    <option value="event">事件</option>
+                </select>
+            </div>
+            <div class="form-group typediv" id='linkdiv'>
+                <label for="link">链接地址</label>
+                <input type="text" class="form-control" id="link" placeholder="http://www.demo.com" name="url" value="{$menuinfo['url']}">
+            </div>
+
+            <div class="form-group typediv" id='eventdiv'>
+                <label for="link">事件</label>
+                <input type="text" class="form-control" id="event" placeholder="输入事件" name="key" value="{$menuinfo['key']}">
+            </div>
+
+            <div class="form-group" id='sortdive'>
+                <label for="link">排序</label>
+                <input type="text" class="form-control" id="sort" placeholder="排序" name="sort" value="{$menuinfo['sort']}">
+            </div>
+
+            <div class="radio">
+                <label class="radio-inline"><input type="radio" name="status" value="1" id="open">启用</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0" id="close">禁用</label>
+            </div>
+            <input type="hidden" name="id" value="{$menuinfo['id']}">
+            <button class="btn btn-primary" id="editmenu" type="button">更新</button>
+            <a href="{:url('index/Menu/index')}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+{/block}
+
+{block name="js"}
+    <script>
+
+        //控制select框中的默认值
+        $("#sel1").val("{$menuparentid}");
+//        $("radio").val("{$menuinfo['status']}");
+        //判断启用还是禁用
+        if ('1' == "{$menuinfo['status']}"){
+            $("#open").attr("checked","checked");
+        } else if ('0' == "{$menuinfo['status']}"){
+            $("#close").attr("checked","checked");
+        }
+
+//        //判断是否要显示事件栏
+//        if("{$menuparentid}" == 0){
+//            //说明是顶级菜单(顶级菜也需要显示)
+//            $('.typediv').hide();
+//        }else{
+//
+//        }
+
+        var wetype ="{$menuinfo['type']}";
+        if(wetype == ''){
+            wetype = 'view';
+        }
+        $("#sel2").val(wetype);
+        if(wetype == 'view'){
+            $('#eventdiv').hide();
+        }else{
+            $('#linkdiv').hide();
+        }
+
+        $('#sel2').change(function () {
+            if ($(this).val() == 'view') {
+                $('#linkdiv').show();
+                $('#event').val('');
+                $('#eventdiv').hide();
+            } else {
+                $('#link').val('');
+                $('#linkdiv').hide();
+                $('#eventdiv').show();
+            }
+        });
+
+        $('#editmenu').click(function () {
+//            var formdata = new FormData($('#menuform')[0]);
+            $.ajax({
+                url: "{:url('index/Menu/editmenu')}",//url
+                type: "post",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                data: $('#menuform').serialize(),
+//                data: formdata,
+//                processData: false,  // 告诉jQuery不要去处理发送的数据
+//                contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+                success: function (result) {
+                    if (result.status == 1) {
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href="{:url('index/Menu/index')}";
+                        },1000)
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+
+        })
+    </script>
+{/block}

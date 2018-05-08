@@ -1,0 +1,166 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+
+{block name="head"}
+    <style>
+        .hiddenstr{
+            overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+        }
+    </style>
+
+{/block}
+
+
+
+{block name="contents"}
+    <div class="container">
+        <h2 class="">自定义公众号菜单</h2>
+        <br>
+        <div class="row">
+            <div class="col-4">
+                <button type="button" class="btn btn-success btn-block btn-sm" id="createmenu">推送菜单</button>
+            </div>
+
+            <div class="col-4">
+                <button type="button" class="btn btn-success btn-block btn-sm" id="getmenu">获取菜单</button>
+            </div>
+
+            <!--<div class="col-lg-2"></div>-->
+            <div class="col-4">
+                <a href="{:url('index/Menu/addmenu')}" class="btn btn-success btn-block btn-sm" id="addmenu">添加菜单</a>
+            </div>
+        </div>
+        <br>
+        <div class="table-responsive">
+            <!--<table class="table table-bordered table-sm" style='table-layout:fixed';>-->
+            <table class="table table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>菜单名</th>
+                    <th>类型</th>
+                    <!--<th>链接地址</th>-->
+                    <!--<th>事件名称</th>-->
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="menulist" id="v" empty="$empty"}
+                    <tr class="{$v['class']}">
+                        <td>{$v['id']}</td>
+                        <td class="">{$v['buttonname']}</td>
+                        <td>{$v['type']}</td>
+                        <!--<td class="hiddenstr">{$v['url']}</td>-->
+                        <!--<td>{$v['key']}</td>-->
+                        <td>{$v['status']|raw}</td>
+                        <td>
+                            <!--<a href="">编辑</a>|<a href="">删除</a>-->
+                            <a href="{:url('index/Menu/editmenu',['menuid'=>$v['id']])}" class="btn btn-info btn-sm">编辑</a>
+                            <button type="button" class="btn btn-danger btn-sm delmenu" data-menuid="{$v['id']}">删除</button>
+                        </td>
+                    </tr>
+                {/volist}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+{/block}
+
+{block name="js"}
+    <script>
+
+        //推送菜单
+        $('#createmenu').click(function () {
+            //当点击推送菜单的时候,请求接口
+            layer.confirm('是否确认推送?', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.load(2);
+                $.ajax({
+                    type: "GET",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: "{:url('index/Wechat/createMenu')}",//url
+                    success: function (result) {
+                        if (result.status == 1) {
+                            layer.closeAll('loading');
+                            layer.msg(result.msg,{icon:1});
+                        } else {
+                            layer.closeAll('loading');
+                            layer.msg(result.msg,{icon:1});
+                        }
+                    },
+                    error: function () {
+                        layer.closeAll('loading');
+                        layer.msg("异常!");
+                    }
+                })
+            });
+        });
+
+        $('#getmenu').click(function () {
+            //当点击推送菜单的时候,请求接口
+            layer.confirm('是否确认从微信服务器获取菜单?', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.load(2);
+                $.ajax({
+                    type: "GET",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: "{:url('index/Wechat/getMenu')}",//url
+                    success: function (result) {
+                        if (result.status == 1) {
+                            layer.closeAll('loading');
+                            layer.msg(result.msg,{icon:1});
+                            setTimeout(function () {
+                                window.location.reload();
+                            },1000)
+                        } else {
+                            layer.closeAll('loading');
+                            layer.msg(result.msg,{icon:1});
+                        }
+                    },
+                    error: function () {
+                        layer.closeAll('loading');
+                        layer.msg("异常!");
+                    }
+                })
+            });
+        });
+
+
+
+        $('.delmenu').click(function () {
+            var menuid = $(this).data('menuid');
+            layer.confirm('是否确认删除?', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    url: "{:url('index/Menu/delmenu')}",//url
+                    data: {id:menuid},
+                    success: function (result) {
+                        if (result.status == 1) {
+//                            layer.msg(result.msg);
+                            //刷新页面
+                            window.location.reload();
+                        } else {
+                            layer.msg(result.msg);
+                        }
+                    },
+                    error: function () {
+                        layer.msg("异常!");
+                    }
+                })
+            });
+
+        });
+
+
+
+
+    </script>
+{/block}

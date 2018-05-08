@@ -1,0 +1,102 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+
+{block name="head"}
+<style>
+    .hiddenstr{
+        overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    }
+</style>
+
+{/block}
+
+{block name="contents"}
+<div class="container">
+    <h2 class="">权限控制</h2>
+    <br>
+    <div class="row">
+        <!--<div class="col-4">-->
+        <!--<a href="" class="btn btn-success btn-block btn-sm">返回</a>-->
+        <!--</div>-->
+        <div class="col-4">
+            <a href="{:url('index/Userauth/addauth')}" class="btn btn-success btn-block btn-sm">添加规则</a>
+        </div>
+
+
+        <div class="col-4">
+            <a href="{:url('index/Userauth/userrole')}" class="btn btn-success btn-block btn-sm">角色管理</a>
+        </div>
+
+
+    </div>
+    <br>
+    <div class="table-responsive">
+        <!--<table class="table table-bordered table-sm" style='table-layout:fixed';>-->
+        <table class="table table-bordered table-sm">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>规则</th>
+                <th>名称</th>
+                <th>类型</th>
+                <th>状态</th>
+                <th>条件</th>
+                <th>是否拥有</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="authlist" id="v" empty = "$empty"}
+            <tr>
+                <td>{$v['id']}</td>
+                <td class="hiddenstr">{$v['name']}</td>
+                <td class="">{$v['title']}</td>
+                <td class="">{$v['type']}</td>
+                <td>{$v['status']}</td>
+                <td>{$v['condition']|default='空'}</td>
+                <td>{$v['status']}</td>
+                <td>
+                    <a href="{:url('index/Userauth/editauth',['id'=>$v['id']])}" class="btn btn-warning btn-sm">编辑</a>
+                    <button type="button" class="btn btn-danger btn-sm delmenu" data-menuid="{$v['id']}">删除</button>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+
+    $('.delmenu').click(function () {
+        var menuid = $(this).data('menuid');
+        layer.confirm('是否确认删除?', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Userauth/delauth')}",//url
+                data: {id:menuid},
+                success: function (result) {
+                    if (result.status === 1) {
+//                            layer.msg(result.msg);
+                        //刷新页面
+                        window.location.reload();
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+        });
+    });
+</script>
+{/block}
+

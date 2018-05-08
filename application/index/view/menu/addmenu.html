@@ -1,0 +1,97 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+{block name="contents"}
+    <div class="container">
+        <h2 class="">添加公众号菜单</h2>
+        <form id="menuform">
+            <div class="form-group">
+                <label for="sel1">父级菜单:</label>
+                <select class="form-control" id="sel1" name="parentid">
+                    <option value="0" selected>顶级菜单</option>
+                    {volist name="topmenu" id="v"}
+                        <option value="{$v['id']}">{$v['buttonname']}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="menuname">菜单名:</label>
+                <input type="text" class="form-control" id="menuname" placeholder="" name="buttonname">
+            </div>
+            <div class="form-group">
+                <label for="sel2">菜单类型:</label>
+                <select class="form-control" id="sel2" name="type">
+                    <option value="view" selected>链接</option>
+                    <option value="event">事件</option>
+                </select>
+            </div>
+            <div class="form-group" id='linkdiv'>
+                <label for="link">链接地址</label>
+                <input type="text" class="form-control" id="link" placeholder="http://www.demo.com" name="url">
+            </div>
+
+            <div class="form-group" id='eventdiv'>
+                <label for="link">事件</label>
+                <input type="text" class="form-control" id="event" placeholder="输入事件" name="key">
+            </div>
+
+            <div class="form-group" id='sortdive'>
+                <label for="link">排序</label>
+                <input type="text" class="form-control" id="sort" placeholder="排序" name="sort">
+            </div>
+
+            <div class="radio">
+                <label><input type="radio" name="status" checked value="1">启用</label>
+                <label><input type="radio" name="status" value="0">禁用</label>
+            </div>
+            <button class="btn btn-primary" id="addmenu" type="button">添加</button>
+            <a href="{:url('index/Menu/index')}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+
+    <!--<div class="blankbox"></div>-->
+
+
+{/block}
+
+{block name="js"}
+    <script>
+        $('#eventdiv').hide();
+        $('#sel2').change(function () {
+            if ($(this).val() == 'view') {
+                $('#linkdiv').show();
+                $('#event').val('');
+                $('#eventdiv').hide();
+            } else {
+                $('#link').val('');
+                $('#linkdiv').hide();
+                $('#eventdiv').show();
+            }
+        });
+
+        $('#addmenu').click(function () {
+//            var formdata = new FormData($('#menuform')[0]);
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Menu/addmenu')}",//url
+                data: $('#menuform').serialize(),
+//                data: formdata,
+                success: function (result) {
+                    if (result.status == 1) {
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href="{:url('index/Menu/index')}";
+                        },1000)
+                    } else {
+                        layer.msg(result.msg);
+                    }
+
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+
+        })
+    </script>
+{/block}

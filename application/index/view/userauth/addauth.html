@@ -1,0 +1,70 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+
+{block name="head"}
+<style>
+    .hiddenstr{
+        overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    }
+</style>
+
+{/block]
+
+{block name="contents"}
+<div class="container">
+    <h2 class="">添加权限规则</h2>
+    <br>
+    <form id="configform">
+        <div class="form-group">
+            <label for="title"><span style="color: red">*</span>权限名称:</label>
+            <input type="text" class="form-control" id="title" placeholder="权限名称" name="title">
+        </div>
+
+        <div class="form-group">
+            <label for="wechatappid"><span style="color: red">*</span>规则</label>
+            <input type="text" class="form-control" id="wechatappid" placeholder="index/index/index" name="name">
+        </div>
+
+        <div class="radio disabled">
+            <label><input type="radio" name="status" value="1">启用</label>
+            <label><input type="radio" name="status" checked value="0">禁用</label>
+        </div>
+
+        <button class="btn btn-primary" id="addmenu" type="button">添加</button>
+        <a href="{:url('index/Userauth/index')}" class="btn btn-secondary">取消</a>
+    </form>
+
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    $('#addmenu').click(function () {
+//            var formdata = new FormData($('#menuform')[0]);
+        $.ajax({
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: "{:url('index/Config/addconfig')}",//url
+            data: $('#configform').serialize(),
+//                data: formdata,
+            success: function (result) {
+                if (result.status == 1) {
+                    layer.msg(result.msg);
+                    setTimeout(function () {
+                        window.location.href="{:url('index/Userauth/addauth')}";
+                    },1000)
+                } else {
+                    layer.msg(result.msg);
+                }
+
+            },
+            error: function () {
+                layer.msg("异常!");
+            }
+        })
+
+    })
+</script>
+{/block}
+

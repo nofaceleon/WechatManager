@@ -1,0 +1,114 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+
+{block name="head"}
+    <style>
+        .box2 {
+            margin: 10px 0px 10px 0px;
+        }
+    </style>
+{/block}
+
+{block name="contents"}
+    <div class="container">
+        <h2 class="">模板详情</h2>
+        <form id="templateform">
+            <div class="form-group">
+                <label for="temptitle">模板标题:</label>
+                <input type="text" class="form-control" id="temptitle" placeholder="" name="temptitle"
+                       value="{$tempinfo['title']}" readonly="readonly">
+            </div>
+            <div class="form-group">
+                <label for="templatid">模板ID:</label>
+                <input type="text" class="form-control" id="templatid" placeholder="" name="templatid"
+                       value="{$tempinfo['template_id']}" readonly="readonly">
+            </div>
+
+            <div class="form-group">
+                <label for="templatcontent">模板内容格式:</label>
+                <textarea type="" class="form-control" id="templatcontent" placeholder="" name="templatcontent"
+                          readonly="readonly" rows="6">{$tempinfo['content']}</textarea>
+            </div>
+
+
+            <div class="input-group box2">
+                <span class="input-group-addon"><font color="red">*</font>first</span>
+                <input type="text" class="form-control" name="first">
+            </div>
+
+            {volist name="keywords" id="v" key="k"}
+                <div class="input-group box2">
+                    <span class="input-group-addon"><font color="red">*</font>{$v}</span>
+                    <input type="text" class="form-control" name="keyword{$k}">
+                </div>
+            {/volist}
+
+            <div class="input-group box2">
+                <span class="input-group-addon"><font color="red">*</font>remark</span>
+                <input type="text" class="form-control" name="remark">
+            </div>
+
+
+            <div class="form-group">
+                <label for="templaturl">URL:</label>
+                <input type="text" class="form-control" id="templaturl" placeholder="模板消息跳转的URL" name="url">
+            </div>
+
+            <div class="form-group">
+                <label for="miniprogram">小程序地址(需要与当前公众号关联):</label>
+                <input type="text" class="form-control" id="miniprogram" placeholder="模板消息跳转的小程序路径" name="miniprogram">
+            </div>
+
+            <input type="hidden" name="keywordscount" value="{$keywordscount}">
+
+            <div class="form-group">
+                <label for="senduser">接收者:</label>
+                <textarea type="" class="form-control" id="senduser" placeholder="接收模板消息的用户OPENID,多个OPENID之间使用';'号区分"
+                          name="senduser" rows="6" required="required">oHIv-wagNwj9P18vT51lhYc-y0zE;</textarea>
+            </div>
+
+            <!--<div class="form-group">-->
+                <!--<label for="sendcontent">推送内容:</label>-->
+                <!--<textarea type="" class="form-control" id="sendcontent" placeholder="符合此模板格式的消息内容(JSON格式)"-->
+                          <!--name="sendcontent" rows="6"></textarea>-->
+            <!--</div>-->
+
+            <button class="btn btn-primary" id="pushtempmsg" type="button">推送</button>
+            <a href="{:url('index/Template/index')}" class="btn btn-secondary">取消</a>
+        </form>
+
+    </div>
+{/block}
+{block name="js"}
+    <script>
+        $('#pushtempmsg').click(function () {
+            layer.load(2); //加载动画
+            //点击推送按钮,获取数据进行推送
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Wechat/pushTemMsg')}",//url
+                data: $('#templateform').serialize(),
+                success: function (result) {
+                    if (result.status === 1) {
+                        //推送成功
+                        layer.closeAll('loading'); //清除加载动画
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href = "{:url('index/Template/index')}";
+                        }, 2000)
+                    } else {
+                        //推送失败
+                        layer.closeAll('loading'); //清除加载动画
+                        layer.msg(result.msg);
+                    }
+
+                },
+                error: function () {
+                    layer.msg("异常!");
+                    layer.closeAll('loading'); //清除加载动画
+                }
+            })
+        });
+    </script>
+{/block}}

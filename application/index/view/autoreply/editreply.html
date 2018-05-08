@@ -1,0 +1,70 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+{block name="contents"}
+    <div class="container">
+        <h2 class="">编辑自动回复</h2>
+        <form id="menuform" >
+            <div class="form-group">
+                <label for="keyword">关键字:</label>
+                <input type="text" class="form-control" id="keyword" placeholder="" name="keyword" value="{$replydetail['keyword']}">
+            </div>
+
+
+            <div class="form-group">
+                <label for="replycontents">回复内容:</label>
+                <textarea class="form-control" id="replycontents" name="reply" rows="6">{$replydetail['reply']}</textarea>
+            </div>
+
+            <div class="radio">
+                <label class="radio-inline"><input type="radio" name="status" value="1" id="open">启用</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0" id="close">禁用</label>
+                <label class="radio-inline"><input type="radio" name="status" value="-1" id="default">默认回复</label>
+            </div>
+            <input type="hidden" name="id" value="{$replydetail['id']}">
+            <button class="btn btn-primary" id="editReply" type="button">更新</button>
+            <a href="{:url('index/Autoreply/index')}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+{/block}
+
+{block name="js"}
+    <script>
+
+        //控制select框中的默认值
+        //$("radio").val("{$replydetail['status']}");
+        //判断启用还是禁用
+        if ('1' == "{$replydetail['status']}"){
+            $("#open").attr("checked","checked");
+        } else if ('0' == "{$replydetail['status']}"){
+            $("#close").attr("checked","checked");
+        } else if('-1' == "{$replydetail['status']}"){
+            $("#default").attr("checked","checked");
+        }
+
+        $('#editReply').click(function () {
+            $.ajax({
+                url: "{:url('index/Autoreply/editreply')}",//url
+                type: "post",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                data: $('#menuform').serialize(),
+//                data: formdata,
+//                processData: false,  // 告诉jQuery不要去处理发送的数据
+//                contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+                success: function (result) {
+                    if (result.status == 1) {
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href="{:url('index/Autoreply/index')}";
+                        },1000)
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+
+        })
+    </script>
+{/block}

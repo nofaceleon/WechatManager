@@ -1,0 +1,95 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+{block name="head"}
+    <style>
+        .hiddenstr{
+            overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+        }
+    </style>
+
+{/block}
+
+{block name="contents"}
+    <div class="container">
+        <h2 class="">编辑公众号</h2>
+        <br>
+        <form id="configform">
+            <div class="form-group">
+                <label for="wechatname"><span style="color: red">*</span>公众号名称:</label>
+                <input type="text" class="form-control" id="wechatname" placeholder="公众号名称" name="name" value="{$configlist['name']}">
+            </div>
+
+            <div class="form-group">
+                <label for="wechatappid"><span style="color: red">*</span>Appid</label>
+                <input type="text" class="form-control" id="wechatappid" placeholder="公众号appid" name="appid" value="{$configlist['appid']}">
+            </div>
+
+            <div class="form-group">
+                <label for="wechatappsecret"><span style="color: red">*</span>Appsecret</label>
+                <input type="text" class="form-control" id="wechatappsecret" placeholder="公众号appsecret" name="appsecret" value="{$configlist['appsecret']}">
+            </div>
+
+            <div class="form-group">
+                <label for="wechattoken"><span style="color: red">*</span>Token</label>
+                <input type="text" class="form-control" id="wechattoken" placeholder="" name="token" value="{$configlist['token']}">
+            </div>
+
+            <div class="form-group">
+                <label for="wechatencodingaeskey">Encodingaeskey</label>
+                <input type="text" class="form-control" id="wechatencodingaeskey" placeholder="" name="encodingaeskey" value="{$configlist['encodingaeskey']}">
+            </div>
+
+            <input type="hidden" value="{$configlist['id']}" name="id">
+
+            <div class="radio disabled">
+                <label><input type="radio" name="status" value="1" id="open" disabled>启用</label>
+                <label><input type="radio" name="status" value="0" id="close" disabled>禁用</label>
+            </div>
+
+            <button class="btn btn-primary" id="addmenu" type="button">更新</button>
+            <a href="{:url('index/Config/index')}" class="btn btn-secondary">取消</a>
+        </form>
+
+    </div>
+
+{/block}
+
+{block name="js"}
+    <script>
+
+        $("radio").val("{$configlist['status']}");
+        //判断启用还是禁用
+        if ('1' === "{$configlist['status']}"){
+            $("#open").attr("checked","checked");
+        } else if ('0' === "{$configlist['status']}"){
+            $("#close").attr("checked","checked");
+        }
+
+        $('#addmenu').click(function () {
+//            var formdata = new FormData($('#menuform')[0]);
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Config/editconfig')}",//url
+                data: $('#configform').serialize(),
+//                data: formdata,
+                success: function (result) {
+                    if (result.status === 1) {
+                        layer.msg(result.msg);
+                        setTimeout(function () {
+                            window.location.href="{:url('index/Config/index')}";
+                        },1000)
+                    } else {
+                        layer.msg(result.msg);
+                    }
+
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+
+        })
+    </script>
+{/block}
+

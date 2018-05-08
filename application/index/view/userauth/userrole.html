@@ -1,0 +1,88 @@
+{extend name="layout/header"}
+{block name="navbar"}{include file="layout:navbar" /}{/block}
+
+{block name="head"}
+<style>
+    .hiddenstr{
+        overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    }
+</style>
+
+{/block}
+
+{block name="contents"}
+<div class="container">
+    <h2 class="">角色管理</h2>
+    <br>
+    <div class="row">
+        <!--<div class="col-4">-->
+        <!--<a href="" class="btn btn-success btn-block btn-sm">返回</a>-->
+        <!--</div>-->
+        <div class="col-4">
+            <a href="{:url('index/Userauth/addrole')}" class="btn btn-success btn-block btn-sm">添加角色</a>
+        </div>
+
+    </div>
+    <br>
+    <div class="table-responsive">
+        <!--<table class="table table-bordered table-sm" style='table-layout:fixed';>-->
+        <table class="table table-bordered table-sm">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>角色</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="userrole" id="v" empty = "$empty"}
+            <tr>
+                <td>{$v['id']}</td>
+                <td>{$v['title']}</td>
+                <td>{$v['status']}</td>
+                <td>
+                    <a href="{:url('index/Userauth/rolerules',['id'=>$v['id']])}" class="btn btn-info btn-sm">详细</a>
+                    <button type="button" class="btn btn-danger btn-sm delmenu" data-menuid="{$v['id']}">删除</button>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+
+    $('.delmenu').click(function () {
+        var menuid = $(this).data('menuid');
+        layer.confirm('是否确认删除?', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Userauth/delrole')}",//url
+                data: {id:menuid},
+                success: function (result) {
+                    if (result.status === 1) {
+//                            layer.msg(result.msg);
+                        //刷新页面
+                        window.location.reload();
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("异常!");
+                }
+            })
+        });
+    });
+</script>
+{/block}
+
