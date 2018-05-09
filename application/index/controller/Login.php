@@ -15,8 +15,33 @@ use think\facade\Session;
 
 class Login extends Controller
 {
+
+
+
+    public function __construct()
+    {
+        parent::__construct();
+        //验证API信息
+        $timestamp = input('post.time', '');
+        $apitoken = input('post.apitoken', '');
+        //在通用方法中对API安全进行验证
+        $authres = authApiToken($timestamp,$apitoken);
+
+        //$authres = 1;测试的时候不验证api
+
+        if(!$authres){
+            $response = [
+                'status' => 0,
+                'msg' => 'api auth failed'
+            ];
+            exit(json_encode($response));
+        }
+
+    }
+
+
     /**
-     * 显示登录界面
+     * 显示登录界面del
      */
     public function index()
     {
@@ -40,18 +65,17 @@ class Login extends Controller
     {
         $username = input('post.username', '');
         $pwd = input('post.pwd', '');
-        $timestamp = input('post.time', '');
-        $apitoken = input('post.apitoken', '');
-
-        $authres = authApiToken($timestamp,$apitoken);
-        if(!$authres){
-            $response = [
-                'status' => 0,
-                'msg' => 'api auth failed'
-            ];
-            return json($response);
-        }
-
+//        $timestamp = input('post.time', '');
+//        $apitoken = input('post.apitoken', '');
+//
+//        $authres = authApiToken($timestamp,$apitoken);
+//        if(!$authres){
+//            $response = [
+//                'status' => 0,
+//                'msg' => 'api auth failed'
+//            ];
+//            return json($response);
+//        }
 
         if (CAPTCHA) {
             //验证验证码是否正确
@@ -112,14 +136,18 @@ class Login extends Controller
 
 
     /**
-     * 用户登出功能
+     * 用户登出功能,清除session跳转到首页
      */
     public function logout()
     {
 //        Session::delete('wechatuser'); //清除session
         Session::delete('alluserinfo'); //清除session
-        $this->redirect('index/Login/index');
+        $response = [
+            'status' => 1,
+            'msg' => '退出成功!',
 
+        ];
+        return json($response);
     }
 
 

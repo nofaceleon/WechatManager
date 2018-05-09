@@ -220,7 +220,7 @@ function pinyin1($zh){
 
 
 /**
- * 验证接口请求的身份
+ * 简单验证接口请求的身份
  */
 function authApiToken($timestamp,$apitoken)
 {

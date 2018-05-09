@@ -14,27 +14,34 @@ class Menu extends Common
 
         //自定义菜单的地方需要进行验证
         $this->userAuth();
-
         $this->menumodel = model('Menu');
     }
 
 
     /**
      * 显示公众号菜单信息
+     *
      */
     public function index()
     {
 
         $menulist = $this->menumodel->getMenuinfo($this->wechatconfig['appid']);
-        foreach ($menulist as $k => $v) {
-
-            ($v['parentid'] == 0) ? $menulist[$k]['class'] = 'table-secondary' : $menulist[$k]['class'] = '';
-            ($v['type'] == 'view') ? $menulist[$k]['type'] = '链接' : $menulist[$k]['type'] = '事件';
-            ($v['status'] == '1') ? $menulist[$k]['status'] = '<span style="color: green">可用</span>' : $menulist[$k]['status'] = '<span style="color: red">禁用</span>';
+        if(empty($menulist)){
+            $response = [
+                'status' => 0,
+                'msg' => '没有数据',
+                'menulist' => [],
+            ];
+        }else{
+            $response = [
+                'status' => 1,
+                'msg' => '获取数据成功',
+                'menulist' => $menulist,
+            ];
         }
-        $this->assign('menulist', $menulist);
-        $this->assign('empty', '<td colspan="5" class="empty">暂时没有数据</td>');
-        return $this->fetch();
+
+        return json($response);
+
     }
 
     /**
@@ -80,7 +87,7 @@ class Menu extends Common
     /**
      * 添加菜单信息
      */
-    public function addmenu()
+    public function addMenu()
     {
 
         if (Request::isAjax()) {
@@ -112,6 +119,18 @@ class Menu extends Common
         }
 
     }
+
+
+
+
+    public function getMenuInfo()
+    {
+
+        $topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid']); //获取顶级菜单数据
+
+    }
+
+
 
 
     /**

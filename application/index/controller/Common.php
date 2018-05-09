@@ -24,47 +24,17 @@ class Common extends Controller
     {
         parent::__construct();
 
-        $this->isAjax = Request::isAjax(); //是否验证是不是ajax请求
-
         //验证用户是否已经登录,从session中获取用户是否登录的信息
         $alluserinfo = $this->isExpireSession();
-
         //$alluserinfo = Session::get('alluserinfo');
-
         $this->wechatuser = $alluserinfo['username'];
         $this->userid = $alluserinfo['userid'];
-
-        //$this->wechatuser = Session::get('wechatuser');
-        //$this->userid = Session::get('userid');
-//        if (empty($this->wechatuser)) {
-//            //说明用户没有登录,跳转到登录页面
-//            $this->redirect('index/Login/index');
-//        }
         $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid);
-        $this->assign('wechatname', $this->wechatconfig['name']);
+        //api身份验证
+
+        $this->authApi();
 
         //$this->userAuth();
-
-//        $isAuth = 0; //是否开启权限认证
-//        if($isAuth){
-//            //在Common中加上权限认证
-//            $UserAuth = new Auth();
-//            //验证当前访问的用户是否有访问的某控制器的权限
-//            if(!$UserAuth->check(Request::module().'-'. Request::controller(),$this->userid)){
-//                //如果是ajax请求就返回json格式的数据
-//                if(Request::isAjax()){
-//                    $response = [
-//                        'status' => 0,
-//                        'msg' => '没有权限!'
-//                    ];
-//                    return json($response);
-//                }else{
-//                    $this->error('你没有权限');
-//                }
-//
-//            }
-//        }
-
     }
 
     /**
@@ -76,7 +46,6 @@ class Common extends Controller
     {
 
         return; //临时关闭权限认证
-
         //在Common中加上权限认证
         $UserAuth = new Auth();
         //默认是对控制器进行验证
@@ -100,7 +69,6 @@ class Common extends Controller
                 $this->error('你没有权限');
             }
         }
-
         return;
     }
 
@@ -113,9 +81,16 @@ class Common extends Controller
 
         //判断是否有session
         $alluserinfo = Session::get('alluserinfo');
+
         if (empty($alluserinfo)) {
-            $this->redirect('index/Login/index');
+            //用户没有登录,返回到首页
+            $response = [
+                'status' => 2,
+                'msg' => '请先登录'
+            ];
+            exit(json_encode($response));
         }
+
         //控制session的有效期
         $logintime = $alluserinfo['logintime'];
         $expiretime = 60 * 10; //定义session有效期为10分钟
@@ -123,14 +98,38 @@ class Common extends Controller
         if ($lasttime < time()) {
             //说明登录时间已经过期,清除session,并重定向到首页
             Session::delete('alluserinfo');
-            $this->redirect('index/Login/index');
+            $response = [
+                'status' => 2,
+                'msg' => '登录状态已过期,请重新登录'
+            ];
+            exit(json_encode($response));
         }
         //更新session中的时间,保证只是在使用的过程中session不会失效
         $alluserinfo['logintime'] = time();
         Session::set('alluserinfo',$alluserinfo);
-
-
         return $alluserinfo;
+    }
+
+
+    /**
+     * 验证api身份
+     * @return bool|\think\response\Json
+     */
+    protected function authApi()
+    {
+        //验证API信息
+        $timestamp = input('post.time', '');
+        $apitoken = input('post.apitoken', '');
+        //在通用方法中对API安全进行验证
+        $authres = authApiToken($timestamp,$apitoken);
+        if(!$authres){
+            $response = [
+                'status' => 0,
+                'msg' => 'api auth failed'
+            ];
+            exit(json_encode($response)); //返回数据并终止程序继续运行
+        }
+        return true;
     }
 
 

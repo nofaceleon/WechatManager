@@ -31,5 +31,19 @@ class Index extends Common
     }
 
 
+    /**
+     * 返回用户的基本信息
+     */
+    public function getBaseInfo()
+    {
+        $data = [
+            'username' => $this->wechatuser,
+        ];
+
+        return json($data);
+
+    }
+
+
 
 }
