@@ -42,14 +42,6 @@ class Userauth extends Common
     {
 
         $this->userAuth('action');
-        if(Request::isAjax()){
-
-
-
-
-        }else{
-            return $this->fetch();
-        }
 
     }
 
@@ -59,15 +51,10 @@ class Userauth extends Common
     public function editauth()
     {
 
-        if(Request::isAjax()){
+        $id = input('param.id',0);
+        $ruleinfo = Db::name('AuthRule')->find($id);
 
-        }else{
-            $id = input('param.id',0);
-            $ruleinfo = Db::name('AuthRule')->find($id);
-            $this->assign('ruleinfo',$ruleinfo);
 
-            return $this->fetch();
-        }
 
     }
 

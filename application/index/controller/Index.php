@@ -18,17 +18,6 @@ class Index extends Common
     /**
      * 显示微信后台管理首页
      */
-    public function index()
-    {
-        return $this->fetch();
-    }
-
-    public function test()
-    {
-        $name = '天乐邦测试公众号';
-       $res = pinyin1($name);
-       echo $res;
-    }
 
 
     /**
@@ -39,7 +28,6 @@ class Index extends Common
         $data = [
             'username' => $this->wechatuser,
         ];
-
         return json($data);
 
     }

@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use app\index\model\WechatConfig;
 use think\Db;
 use think\facade\Request;
 
@@ -21,7 +22,6 @@ class Config extends Common
     public function index()
     {
         $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
-
         if (empty($configList)) {
             $response = [
                 'status' => 0,
@@ -42,10 +42,15 @@ class Config extends Common
     /**
      * 公众号配置修改界面
      */
-    public function editConfig()
+    public function updateConfig()
     {
-
-        $data = input('param.');
+        $this->userAuth('action'); //权限验证
+        $data['name'] = input('post.name','');
+        $data['appid'] = input('post.appid','');
+        $data['appsecret'] = input('post.appsecret','');
+        $data['token'] = input('post.token','');
+        $data['encodingaeskey'] = input('post.encodingaeskey','');
+        $data['uid'] = $this->userid;
         $data['updatetime'] = date('Y-m-d H:i:s');
         //这边数据进行更新的时候需要对数据进行验证,使用验证器进行验证
         $res = $this->configModel->update($data);
@@ -69,9 +74,9 @@ class Config extends Common
     /**
      * 获取具体的公众号配置信息
      */
-    public function getConfigInfo()
+    public function getConfigInfo($id = 0)
     {
-        $id = input('param.id', 0);
+        //$id = input('param.id', 0);
         if (empty($id)) {
             $response = [
                 'status' => 0,
@@ -153,9 +158,9 @@ class Config extends Common
     /**
      * 公众号配置删除
      */
-    public function delConfig()
+    public function delConfig($id = 0)
     {
-        $id = input('param.id', 0);
+        $this->userAuth('action'); //权限验证
         if (empty($id)) {
             $response = [
                 'status' => 0,
@@ -189,10 +194,10 @@ class Config extends Common
     /**
      * 切换公众号账户
      */
-    public function changeAccount()
+    public function changeAccount($id = 0)
     {
 
-        $id = input('param.id');
+        $this->userAuth('action'); //权限验证
         //根据ID将此ID的状态改为1,其他的状态改为0
         //先查询出所有的公众号列表
         $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
