@@ -9,6 +9,7 @@
 namespace app\index\controller;
 
 use think\Controller;
+use think\Db;
 use think\facade\Request;
 use Wxcomponent\WechatApi;
 
@@ -166,6 +167,14 @@ class WechatServer extends Controller
         }
 
         if ($allinfo['Event'] == 'SCAN') {
+
+            $eventkey = $allinfo['EventKey'];//获取扫描事件中携带的参数
+
+            //根据事件所携带的参数,查询数据库(查询哪个数据库?),然后,从数据库中的类型来判断回复的类型
+            
+
+
+
             if ($allinfo['EventKey'] == 'userinfo') {
                 //获取用户的信息
                 $userinfo = $this->weixin->getUserInfo($allinfo['FromUserName']);

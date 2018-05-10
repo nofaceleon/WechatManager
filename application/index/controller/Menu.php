@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use think\Db;
 use think\facade\Request;
 
 class Menu extends Common
@@ -24,21 +25,14 @@ class Menu extends Common
      */
     public function index()
     {
-
-        $menulist = $this->menumodel->getMenuinfo($this->wechatconfig['appid']);
-        if(empty($menulist)){
-            $response = [
-                'status' => 0,
-                'msg' => '没有数据',
-                'menulist' => [],
-            ];
-        }else{
-            $response = [
-                'status' => 1,
-                'msg' => '获取数据成功',
-                'menulist' => $menulist,
-            ];
-        }
+        //$menulist = $this->menumodel->getMenuinfo($this->wechatconfig['appid']);
+        $menulist = $this->menumodel->getMenuInfoNew($this->wechatconfig['appid']);
+        $menulist = empty($menulist) ? [] : $menulist;
+        $response = [
+            'status' => 1,
+            'msg' => '获取数据成功',
+            'menulist' => $menulist,
+        ];
 
         return json($response);
 
@@ -85,42 +79,87 @@ class Menu extends Common
 
 
     /**
+     * 获取顶级菜单的信息
+     */
+    public function getTopMenu()
+    {
+
+        //$topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid'], $id);//获取所有的顶级菜单信息
+
+
+    }
+
+
+    /**
+     * 更改启用或者禁用的状态
+     */
+    public function exchangeStatus()
+    {
+
+        $id = input('param.id', 0);
+        $status = input('param.status', 0);
+        if ($id == 0) {
+            $response = [
+                'status' => 0,
+                'msg' => 'ID不能为空!'
+            ];
+            return json($response);
+        }
+
+        $data['id'] = $id;
+        $data['status'] = $status;
+        $data['updatetime'] = date('Y-m-d H:i:s');
+
+        $res = Db::name('Menu')->update($data);
+        if ($res === false) {
+            $response = [
+                'status' => 0,
+                'msg' => '修改状态失败!'
+            ];
+        } else {
+            $response = [
+                'status' => 1,
+                'msg' => '修改状态成功!'
+            ];
+        }
+
+        return json($response);
+
+    }
+
+
+    /**
      * 添加菜单信息
      */
     public function addMenu()
     {
 
-        if (Request::isAjax()) {
-            $data = input('param.'); //接收前端传递过来的数据
-            $data['createtime'] = date('Y-m-d H:i:s');
-            $data['updatetime'] = date('Y-m-d H:i:s');
-            $data['appid'] = $this->wechatconfig['appid'];
-            //使用模型对表单数据进行验证
+        $data = input('param.'); //获取全部请求数据
 
-            // 验证通过 可以进行其他数据操作
-            $res = $this->menumodel->insert($data);
-            if ($res) {
-                $response = [
-                    'status' => 1,
-                    'msg' => '添加成功!'
-                ];
-            } else {
-                $response = [
-                    'status' => 0,
-                    'msg' => '添加失败!'
-                ];
-            }
-            return json($response);
+        unset($data['apitoken']);
+        unset($data['time']);
 
+        $data['createtime'] = date('Y-m-d H:i:s');
+        $data['updatetime'] = date('Y-m-d H:i:s');
+        $data['appid'] = $this->wechatconfig['appid'];
+        //使用模型对表单数据进行验证
+        // 验证通过 可以进行其他数据操作
+        $res = $this->menumodel->insert($data);
+        if ($res) {
+            $response = [
+                'status' => 1,
+                'msg' => '添加成功!'
+            ];
         } else {
-            $topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid']);
-            $this->assign('topmenu', $topmenu);
-            return $this->fetch();
+            $response = [
+                'status' => 0,
+                'msg' => '添加失败!'
+            ];
         }
+        return json($response);
+
 
     }
-
-
 
 
     public function getMenuInfo()
@@ -131,13 +170,11 @@ class Menu extends Common
     }
 
 
-
-
     /**
      * 删除菜单
      */
 
-    public function delmenu()
+    public function delMenu()
     {
         //这边也应该是ajax的请求
         $menuid = input('param.id', '');
@@ -148,10 +185,7 @@ class Menu extends Common
             ];
             return json($response);
         }
-
-
         //该菜单下面有子类应该禁止删除操作
-
         //查询是否有子类
         $ishave = $this->menumodel->where(['parentid' => $menuid])->find();
         if ($ishave) {

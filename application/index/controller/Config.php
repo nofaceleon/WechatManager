@@ -22,20 +22,31 @@ class Config extends Common
     public function index()
     {
         $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
-        if (empty($configList)) {
-            $response = [
-                'status' => 0,
-                'msg' => '没有数据',
-                'configlist' => [],
-            ];
-        } else {
-            $response = [
-                'status' => 1,
-                'msg' => '获取数据成功',
-                'configlist' => $configList,
-            ];
-        }
+
+        $configList = empty($configList) ? [] : $configList;
+
+        $response = [
+            'status' => 1,
+            'msg' => '获取数据成功',
+            'configlist' => $configList,
+        ];
+        
         return json($response);
+
+//        if (empty($configList)) {
+//            $response = [
+//                'status' => 1,
+//                'msg' => '没有数据',
+//                'configlist' => [],
+//            ];
+//        } else {
+//            $response = [
+//                'status' => 1,
+//                'msg' => '获取数据成功',
+//                'configlist' => $configList,
+//            ];
+//        }
+//        return json($response);
     }
 
 
@@ -46,6 +57,8 @@ class Config extends Common
     {
         $this->userAuth('action'); //权限验证
         $data['name'] = input('post.name','');
+        $data['id'] = input('post.id',0); //主键ID
+        $data['wechatid'] = input('post.wechatid','');
         $data['appid'] = input('post.appid','');
         $data['appsecret'] = input('post.appsecret','');
         $data['token'] = input('post.token','');
@@ -53,20 +66,38 @@ class Config extends Common
         $data['uid'] = $this->userid;
         $data['updatetime'] = date('Y-m-d H:i:s');
         //这边数据进行更新的时候需要对数据进行验证,使用验证器进行验证
-        $res = $this->configModel->update($data);
-        if ($res) {
+
+        //更新的时候判断公众号在该用户下面是否已经存在其他相同的appid/微信号?
+        $appid = $data['appid'];
+        $id = $data['id'];
+
+        $ishave = Db::name('WechatConfig')->where("uid = $this->userid and appid = '$appid' and id <> $id")->find();
+        if(!empty($ishave)){
+            //有重复数据,不能更新
             $response = [
-                'status' => 1,
-                'msg' => '更新成功!'
+                'status' => 0,
+                'msg' => '更新失败,该APPID已经存在!'
             ];
-        } else {
+            return json($response);
+        }
+
+        $res = Db::name('WechatConfig')->update($data);//数据中包含主键能够直接更新,这边返回的是受影响的条数
+
+//        $res = $this->configModel->update($data);  //使用模型的话更新之后返回的是一个对象
+        //filedebug('更新的时候返回的数据是'.print_r($res,true));
+
+        if ($res === false) {
             $response = [
                 'status' => 0,
                 'msg' => '更新失败!'
             ];
+        } else {
+            $response = [
+                'status' => 1,
+                'msg' => '更新成功!'
+            ];
         }
         return json($response);
-
 
     }
 
@@ -114,6 +145,7 @@ class Config extends Common
         $this->userAuth('action'); //权限验证
         //$data = input('param.');
         $data['name'] = input('post.name','');
+        $data['wechatid'] = input('post.wechatid','');
         $data['appid'] = input('post.appid','');
         $data['appsecret'] = input('post.appsecret','');
         $data['token'] = input('post.token','');
@@ -123,8 +155,9 @@ class Config extends Common
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
 
-        //新增之前判断是否已经存在该公众号
+        //新增之前判断该用户账号下面是否已经存在该公众号
         $map['appid'] = $data['appid'];
+        $map['uid'] = $this->userid;
         $is_exist = $this->configModel->where($map)->find();
         if ($is_exist) {
             $response = [
@@ -211,7 +244,7 @@ class Config extends Common
             }
             $configList[$k]['updatetime'] = date('Y-m-d H:i:s'); //更新修改时间
 
-            $res = $this->configModel->update($configList[$k]); //tp3貌似没有批量更新,循环更新
+            $res = $this->configModel->update($configList[$k]); //循环更新
 
             if ($res === false) {
                 $errornum++; //如果中间有失败的,就记录一下

@@ -23,6 +23,34 @@ class Menu extends Model
 
 
     /**
+     * 根据公众号appid获取无限极分类信息
+     * @param string $appid
+     * @return array
+     */
+    public function getMenuInfoNew($appid = '')
+    {
+        //查询出所有的菜单选项
+        $map['appid'] = $appid;
+        $map['parentid'] = 0;
+        $menuinfo = $this->where($map)->select()->toArray();
+        if(empty($menuinfo)){
+            return [];
+        }
+        //先找出所有的顶级菜单
+        foreach ($menuinfo as $k => $v){
+            //循环查询该顶级菜单下面是否有子菜单
+            $chmenu = $this->where(['parentid'=>$v['id']])->select()->toArray();
+            $chmenu = empty($chmenu) ? [] : $chmenu;
+                //说明有子菜单,将所有子菜单的数据放到顶级菜单下面
+            $menuinfo[$k]['chmenu'] = $chmenu;
+        }
+
+        return $menuinfo;
+
+
+    }
+
+    /**
      * 获取顶级菜单
      * @param string $appid
      * @param int $id

@@ -52,7 +52,6 @@ class Wechat extends Common
     public function createMenu()
     {
         //ajax请求
-        if (!Request::isAjax()) return;
         //先查出顶级菜单
         $MenuModel = model('Menu');
         $map['parentid'] = 0;
@@ -124,10 +123,8 @@ class Wechat extends Common
     public function getMenu()
     {
 
-        if(!Request::isAjax()) return;
-
         $menuinfo = $this->weixin->getMenu();
-        filedebug('获取到的菜单信息是 = '.print_r($menuinfo,true));
+        //filedebug('获取到的菜单信息是 = '.print_r($menuinfo,true));
         $menu = $menuinfo['menu'];
         $data['appid'] = $this->wechatconfig['appid'];
         $errornum = 0; //添加失败的数量
@@ -139,6 +136,15 @@ class Wechat extends Common
             ];
             return json($response);
         }
+
+
+        //获取到菜单信息后先清空数据库然后再进行插入,数据插入失败怎么办?
+        $sql = 'truncate we_menu';
+        $res = Db::execute($sql);
+
+        //$res = Db::name('Menu')->delete(true);//删除表中所有的数据
+
+
         foreach ($menu as $k1 => $v1) {
             foreach ($v1 as $k2 => $v2) {
                 if (empty($v2['sub_button'])) {
