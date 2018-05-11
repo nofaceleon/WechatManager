@@ -72,8 +72,14 @@ class Wechat extends Common
                 if (strcasecmp($v['type'], 'view') == 0) {
                     $main[$k]['url'] = $v['url'];
                 }elseif (strcasecmp($v['type'],'media_id') == 0){
-                    $main[$k]['url'] = $v['url'];
-                } else {
+                    //说明是图文消息
+                    $main[$k]['media_id'] = $v['url'];
+                }elseif (strcasecmp($v['type'],'miniprogram') == 0){
+                    //说明是小程序
+                    $main[$k]['appid'] = $v['key'];
+                    $main[$k]['pagepath'] = $v['url'];
+                }
+                else {
                     $main[$k]['key'] = 'rselfmenu_' . $v['id'] . '_0';
                 }
             } else {
@@ -88,6 +94,10 @@ class Wechat extends Common
                         $temp[$ckey]['url'] = $cvalue['url'];
                     } elseif (strcasecmp($cvalue['type'],'media_id') == 0){
                         $temp[$ckey]['media_id'] = $cvalue['url'];
+                    }elseif (strcasecmp($cvalue['type'],'miniprogram') == 0){
+                        //说明是小程序
+                        $temp[$ckey]['appid'] = $cvalue['key'];
+                        $temp[$ckey]['pagepath'] = $cvalue['url'];
                     } else {
                         $temp[$ckey]['key'] = 'rselfmenu_' . $v['id'] . '_' . $ckey;
                     }
@@ -98,6 +108,7 @@ class Wechat extends Common
         }
 
         $finall['button'] = $main;
+        //filedebug('最后推送的数据格式为 = '.print_r($finall,true));
         $res = $this->weixin->createMenu($finall); //调用接口推送菜单栏
         if ($res) {
             $response = [
@@ -124,7 +135,17 @@ class Wechat extends Common
     {
 
         $menuinfo = $this->weixin->getMenu();
-        //filedebug('获取到的菜单信息是 = '.print_r($menuinfo,true));
+
+        //获取菜单信息出错,返回错误信息
+        if($menuinfo === false){
+            $response = [
+                'status' => 0,
+                'msg' => $this->weixin->errMsg //返回具体的错误信息
+            ];
+            return json($response);
+        }
+
+        filedebug('获取到的菜单信息是 = '.print_r($menuinfo,true));
         $menu = $menuinfo['menu'];
         $data['appid'] = $this->wechatconfig['appid'];
         $errornum = 0; //添加失败的数量
@@ -139,10 +160,8 @@ class Wechat extends Common
 
 
         //获取到菜单信息后先清空数据库然后再进行插入,数据插入失败怎么办?
-        $sql = 'truncate we_menu';
-        $res = Db::execute($sql);
 
-        //$res = Db::name('Menu')->delete(true);//删除表中所有的数据
+        $res = Db::name('Menu')->where(['appid'=>$this->wechatconfig['appid']])->delete();//删除表中该APPID中的所有数据
 
 
         foreach ($menu as $k1 => $v1) {
@@ -167,7 +186,7 @@ class Wechat extends Common
                     //说明有子菜单
                     //先添加顶级菜单,根据顶级菜单返回的主键ID再循环添加子菜单
                     $data['buttonname'] = $v2['name'];
-                    $data['type'] = 'view';
+                    $data['type'] = 'show';
                     $data['parentid'] = 0; //没有子菜单,该菜单就是顶级菜单
                     $data['sort'] = 0;
                     $data['status'] = 1;
@@ -225,7 +244,7 @@ class Wechat extends Common
         if ($templist === false) {
             $response = [
                 'status' => 0,
-                'msg' => '获取模板列表失败!,请稍后再试',
+                'msg' => '获取模板列表失败!'.$this->weixin->errMsg,
             ];
             return json($response);
         }
@@ -284,23 +303,16 @@ class Wechat extends Common
     public function pushTemMsg()
     {
 
-        if (!Request::isAjax()) return;
 
         $this->userAuth('action');
-
         $alldata = $_POST; //使用原生的获取提交的信息,防止一些数据被过滤掉
-
-        filedebug('执行到这模板消息推送');
-
         if (empty($alldata)) {
             $response = [
                 'status' => 0,
                 'msg' => '推送数据不能为空!'
             ];
-
             return json($response);
         }
-
 
         if (empty($alldata['senduser'])) {
             $response = [
@@ -309,7 +321,6 @@ class Wechat extends Common
             ];
             return json($response);
         }
-
         //去掉末尾的分号
         $alldata['senduser'] = trim($alldata['senduser'], ';');
         $senduserlist = explode(';', $alldata['senduser']); //将接收人信息分成数组格式
@@ -326,8 +337,6 @@ class Wechat extends Common
         }
 
         if (empty($alldata['first']) || empty($alldata['remark'])) $flag = 0;
-
-
         if (!$flag) {
             //说明推送的数据中有空的数据
             $response = [
@@ -427,6 +436,17 @@ class Wechat extends Common
         ];
 
         return json($response);
+
+    }
+
+
+    /**
+     * 获取素材列表
+     */
+    public function getSucai()
+    {
+
+
 
     }
 

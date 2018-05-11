@@ -32,8 +32,9 @@ class Common extends Controller
         $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
         //api身份验证
         $this->authApi();
-        //接口权限认证
-        $this->userAuth(); //默认是对控制器进行验证
+
+        //接口权限认证 (common里面不验证)
+        //$this->userAuth(); //默认是对控制器进行验证
     }
 
     /**

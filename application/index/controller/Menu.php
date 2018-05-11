@@ -41,13 +41,26 @@ class Menu extends Common
     /**
      * 编辑菜单信息
      */
-    public function editmenu()
+    public function editMenu()
     {
 
-        if (Request::isAjax()) {
             $data = input('param.'); //接收前端传递过来的数据
+
+            unset($data['apitoken']);
+            unset($data['time']);
+
             $data['updatetime'] = date('Y-m-d H:i:s');
             //对表单数据进行验证
+
+
+            //说明是外链
+            if(strcasecmp($data['type'],'view') == 0){
+                //验证URL是否正确
+                
+
+            }
+
+            //使用验证器验证URL是否符合规则
 
             $res = $this->menumodel->update($data); //data中包含主键字段就不需要where条件了
             if ($res === false) {
@@ -63,31 +76,43 @@ class Menu extends Common
             }
             return json($response);
 
-
-        } else {
-            $id = input('param.menuid', 0); //获取菜单主键ID
-            $menuinfo = $this->menumodel->where(['id' => $id])->find(); //获取当前菜单信息
-            $topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid'], $id);//获取所有的顶级菜单信息
-            $this->assign('menuinfo', $menuinfo);
-            $this->assign('menuparentid', $menuinfo['parentid']);
-            $this->assign('topmenu', $topmenu);
-            return $this->fetch();
-
-        }
-
     }
 
 
     /**
-     * 获取顶级菜单的信息
+     * 获取菜单信息
      */
-    public function getTopMenu()
+    public function getMenuInfo($id = 0)
     {
 
-        //$topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid'], $id);//获取所有的顶级菜单信息
+        if($id == 0){
+            $response = [
+                'status' => 0,
+                'msg' => 'ID不能为空'
+            ];
+            return json($response);
+        }
+        $menuinfo = Db::name('Menu')->where(['id'=>$id])->find();
+        if(empty($menuinfo)){
+            $response =[
+                'status' => 0,
+                'msg' => '没有数据!'
+            ];
+        }else{
+            $response = [
+                'status' => 1,
+                'msg' => '获取成功',
+                'menuinfo' =>$menuinfo
+            ];
+        }
 
+
+        return json($response);
 
     }
+
+
+
 
 
     /**
@@ -105,7 +130,6 @@ class Menu extends Common
             ];
             return json($response);
         }
-
         $data['id'] = $id;
         $data['status'] = $status;
         $data['updatetime'] = date('Y-m-d H:i:s');
@@ -135,13 +159,13 @@ class Menu extends Common
     {
 
         $data = input('param.'); //获取全部请求数据
-
         unset($data['apitoken']);
         unset($data['time']);
 
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
         $data['appid'] = $this->wechatconfig['appid'];
+        $data['cid'] = $this->wechatconfig['id'];
         //使用模型对表单数据进行验证
         // 验证通过 可以进行其他数据操作
         $res = $this->menumodel->insert($data);
@@ -162,18 +186,19 @@ class Menu extends Common
     }
 
 
-    public function getMenuInfo()
+    /**
+     * 获取所有的父级菜单
+     */
+    public function getTopMenu()
     {
-
         $topmenu = $this->menumodel->getTopMenu($this->wechatconfig['appid']); //获取顶级菜单数据
+        return json($topmenu);
 
     }
-
-
+    
     /**
      * 删除菜单
      */
-
     public function delMenu()
     {
         //这边也应该是ajax的请求

@@ -17,9 +17,9 @@ class MenuValidate extends Validate
      * @var array
      */
     protected $rule =   [
-        'name'  => 'require|max:25',
+        'buttonname'  => 'require|max:4',
         'age'   => 'number|between:1,120',
-        'email' => 'email',
+        'url' => 'url',
     ];
 
     /**
