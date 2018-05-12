@@ -64,21 +64,29 @@ class WechatServer extends Controller
                 $content = $this->weixin->getRevContent();
                 //filedebug('获取到了用户发送的消息' . print_r($content, true));
                 //根据获取到的内容,去数据库中查询与之对应的回复方式并推送
-                $this->handleUserReply($content, $type, $this->config['appid']);
+                //filedebug('直行道 = '.$type);
+
+                $this->handleUserReply($content, $this->config['appid'],$type);
                 exit;
                 break;
             case WechatApi::MSGTYPE_EVENT: //事件
+
+
                 $detailtype = $this->weixin->getRev()->getEventType(); //获取具体的事件类型
                 //获取事件的详细参数
                 $eventkey = $this->weixin->getRev()->getRevEvent();
                 //filedebug('获取的eventkey = '.print_r($eventkey,true));
                 //获取详细信息
                 $allinfo = $this->weixin->getRevData();
-                //filedebug('详细的返回信息 = ' . print_r($allinfo, true));
+                filedebug('事件详细的返回信息 = ' . print_r($allinfo, true));
                 //对数据进行处理,并存入数据库中
 //                filedebug('获取到的事件信息是 = '.print_r($allinfo,true));
                 $this->handleSeverInfo($allinfo); //保存事件信息
-                $this->handleEvent($detailtype,$allinfo);//处理事件信息
+
+                $this->handleUserReply($allinfo['EventKey'], $this->config['appid'],$detailtype); //定义事件回复内容
+
+                //$this->handleEvent($detailtype,$allinfo);//处理事件信息
+
                 //filedebug('接收到了事件推送' . print_r($detailtype, true));
                 break;
             case WechatApi::MSGTYPE_IMAGE: //图片
@@ -90,10 +98,59 @@ class WechatServer extends Controller
 
     }
 
+
+    /**
+     * 自动回复
+     * @param string $content 关键字
+     * @param string $type 类型
+     * @param string $appid
+     */
+    private function handleUserReply($content = '',$appid = '',$event = 'text')
+    {
+        //filedebug('获取到的自动回复数据为start');
+
+        //先根据关键词去数据库中查询该关键字所对应的自动回复内容
+
+        //事件字段使用事件表中的数据
+        $res = Db::name('AutoReply')->alias('a')->join(['we_event' => 'b'],'a.eventtype = b.id')->where("b.event = '$event' and a.keyword = '$content' and a.status = 1 and a.appid = '$appid'")->field('a.*')->find();
+
+
+        //事件字段不用事件表中的数据
+        //$res = Db::name('AutoReply')->where("keyword = '$content' and appid = '$appid' and status = 1 and eventtype = '$event'")->find();
+
+        //$sql = Db::name('AutoReply')->getLastSql();
+
+       // filedebug('获取到的自动回复数据为end = '.print_r($sql,true));
+       // filedebug('获取到的自动回复数据为end2 = '.json_encode($res));
+
+        if(!empty($res)){
+            //有定义过自动回复
+            $msgtype = $res['msgtype'];
+            $reply = $res['reply'];
+            //$this->weixin->$msgtype($reply)->reply();
+        }else{
+            //查询是否有自定义的默认回复内容
+            $res = Db::name('AutoReply')->where("status = -1 and appid = '$appid'")->find();
+            if(empty($res)){
+                $reply = '没有自定义回复内容';
+                $msgtype = 'text';
+            }else{
+                $reply = $res['reply'];
+                $msgtype = $res['msgtype'];
+            }
+        }
+
+        $this->weixin->$msgtype($reply)->reply();
+
+    }
+
+
+
+
     /**
      * 处理用户回复
      */
-    private function handleUserReply($content = '', $type = 'text', $appid = '')
+    private function handleUserReply_old($content = '', $type = 'text', $appid = '')
     {
         //获取用户输入的内容
         $AutoReplyModel = model('AutoReply');
@@ -130,10 +187,12 @@ class WechatServer extends Controller
 
     }
 
+
     /**
-     * 事件处理
+     * 获取事件并回复消息(文本,图文,音频,视频)
+     *
      */
-    private function handleEvent($detailtype,$allinfo)
+    private function handleEvent_old($detailtype,$allinfo)
     {
         //当用户关注的时候,推送某条消息
         if ($detailtype == 'subscribe') {
