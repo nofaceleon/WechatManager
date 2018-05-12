@@ -2,12 +2,13 @@
 
 namespace app\index\controller;
 
+use app\index\validate\MenuValidate;
 use think\Db;
 use think\facade\Request;
+use think\facade\Validate;
 
 class Menu extends Common
 {
-
 
     public function __construct()
     {
@@ -46,21 +47,21 @@ class Menu extends Common
 
             $data = input('param.'); //接收前端传递过来的数据
 
-            unset($data['apitoken']);
+            unset($data['apitoken']); //需要登录的话,这个就不需要了
             unset($data['time']);
-
             $data['updatetime'] = date('Y-m-d H:i:s');
+
             //对表单数据进行验证
-
-
             //说明是外链
-            if(strcasecmp($data['type'],'view') == 0){
-                //验证URL是否正确
-                
-
-            }
-
             //使用验证器验证URL是否符合规则
+            $validate = new MenuValidate();
+            if(!$validate->check($data)){
+                $response = [
+                    'status' => 0,
+                    'msg' => $validate->getError()
+                ];
+                return json($response);
+            }
 
             $res = $this->menumodel->update($data); //data中包含主键字段就不需要where条件了
             if ($res === false) {
@@ -159,14 +160,46 @@ class Menu extends Common
     {
 
         $data = input('param.'); //获取全部请求数据
-        unset($data['apitoken']);
-        unset($data['time']);
 
+        //作为登录才能使用的接口,不需要进行安全认证
+        //unset($data['apitoken']);
+        //unset($data['time']);
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
         $data['appid'] = $this->wechatconfig['appid'];
         $data['cid'] = $this->wechatconfig['id'];
         //使用模型对表单数据进行验证
+
+        $validate = new MenuValidate();
+
+//        if(strcasecmp($data['type'],'view') == 0){
+//            if(!$validate->scene('view')->batch()->check($data)){
+//                //验证失败
+//                $response = [
+//                    'status' => 0,
+//                    'msg' => $validate->getError()
+//                ];
+//            }
+//        }else{
+//            if(!$validate->scene('other')->batch()->check($data)){
+//                //验证失败
+//                $response = [
+//                    'status' => 0,
+//                    'msg' => $validate->getError()
+//                ];
+//
+//            }
+//        }
+
+        if(!$validate->check($data)){
+            //验证失败
+            $response = [
+                'status' => 0,
+                'msg' => $validate->getError()
+            ];
+            return json($response);
+        }
+
         // 验证通过 可以进行其他数据操作
         $res = $this->menumodel->insert($data);
         if ($res) {

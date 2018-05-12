@@ -42,6 +42,7 @@ require __DIR__ . '/../thinkphp/base.php';
 // 支持事先使用静态方法设置Request对象和Config对象
 
 define('CAPTCHA',false); //是否显示极验验证码
+define('CONFIG_URL','http://www.test.top/'); //配置默认的网站域名
 
 
 // 执行应用并响应

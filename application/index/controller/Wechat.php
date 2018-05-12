@@ -39,7 +39,6 @@ class Wechat extends Common
             'appsecret' => $this->wechatconfig['appsecret'],
             'token' => $this->wechatconfig['token'],
         ];
-////
         $this->weixin = new WechatApi($config);
 
 
@@ -97,7 +96,11 @@ class Wechat extends Common
                     }elseif (strcasecmp($cvalue['type'],'miniprogram') == 0){
                         //说明是小程序
                         $temp[$ckey]['appid'] = $cvalue['key'];
-                        $temp[$ckey]['pagepath'] = $cvalue['url'];
+                        $pathstr = trim($cvalue['url'],';');
+                        $patharr = explode(';',$pathstr);//将字符串分割成数组
+                        $temp[$ckey]['pagepath'] = $patharr[0]; //小程序路径
+                        $temp[$ckey]['url'] = $patharr[1]; //低版本微信中无法打开小程序的时候跳转的页面
+
                     } else {
                         $temp[$ckey]['key'] = 'rselfmenu_' . $v['id'] . '_' . $ckey;
                     }

@@ -12,14 +12,16 @@ use think\Validate;
 
 class MenuValidate extends Validate
 {
+
     /**
      * 验证的规则
      * @var array
      */
     protected $rule =   [
-        'buttonname'  => 'require|max:4',
-        'age'   => 'number|between:1,120',
-        'url' => 'url',
+        'buttonname'  => 'require',
+//        'url' => 'url',
+        'sort' => 'integer',
+        'parentid' => 'require|integer',
     ];
 
     /**
@@ -27,11 +29,9 @@ class MenuValidate extends Validate
      * @var array
      */
     protected $message  =   [
-        'name.require' => '名称必须',
-        'name.max'     => '名称最多不能超过25个字符',
-        'age.number'   => '年龄必须是数字',
-        'age.between'  => '年龄只能在1-120之间',
-        'email'        => '邮箱格式错误',
+        'buttonname.require' => '按钮名称不能为空',
+        'url.url' => 'URL格式不正确',
+        'sort.integer' => '排序必须是整数',
     ];
 
     

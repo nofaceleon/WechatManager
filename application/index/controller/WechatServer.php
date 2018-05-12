@@ -79,29 +79,6 @@ class WechatServer extends Controller
 //                filedebug('获取到的事件信息是 = '.print_r($allinfo,true));
                 $this->handleSeverInfo($allinfo); //保存事件信息
                 $this->handleEvent($detailtype,$allinfo);//处理事件信息
-
-//                //当用户关注的时候,推送某条消息
-//                if ($detailtype == 'subscribe') {
-//                    //当用户关注的时候推送某条消息
-//                    $this->weixin->text('欢迎关注!')->reply();
-//                } elseif ($detailtype == 'unsubscribe') {
-//                    //filedebug('用户取消了关注');
-//                }
-////
-//                if($allinfo['Event'] == 'SCAN'){
-//
-//                    if($allinfo['EventKey'] == 'userinfo'){
-//                        //获取用户的信息
-//                        $userinfo = $this->weixin->getUserInfo($allinfo['FromUserName']);
-//
-//                        $reply = '欢迎访问!'.$userinfo['nickname'];
-//
-//                        $this->weixin->text($reply)->reply();
-//                    }
-//
-//
-//                }
-
                 //filedebug('接收到了事件推送' . print_r($detailtype, true));
                 break;
             case WechatApi::MSGTYPE_IMAGE: //图片
@@ -126,7 +103,7 @@ class WechatServer extends Controller
         if (empty($reply)) {
             //获取默认的回复内容
             $reply = $AutoReplyModel->getDefaultReply($appid);
-            $reply = empty($reply) ? '欢迎访问2' : $reply;
+            $reply = empty($reply) ? '欢迎访问' : $reply; //当数据库中没有找到回复内容的时候,默认回复的
         }
         $this->weixin->text($reply)->reply();
 
@@ -171,9 +148,6 @@ class WechatServer extends Controller
             $eventkey = $allinfo['EventKey'];//获取扫描事件中携带的参数
 
             //根据事件所携带的参数,查询数据库(查询哪个数据库?),然后,从数据库中的类型来判断回复的类型
-            
-
-
 
             if ($allinfo['EventKey'] == 'userinfo') {
                 //获取用户的信息
