@@ -18,7 +18,7 @@ require __DIR__ . '/../thinkphp/base.php';
 
 
 define('CAPTCHA',false); //是否显示极验验证码
-define('CONFIG_URL','http://www.test.top/'); //配置默认的网站域名
+define('CONFIG_URL','http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/'); //配置默认的网站域名
 
 
 // 执行应用并响应

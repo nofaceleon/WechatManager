@@ -19,7 +19,7 @@ class MenuValidate extends Validate
      */
     protected $rule =   [
         'buttonname'  => 'require',
-//        'url' => 'url',
+//        'url' => 'url', //验证URL
         'sort' => 'integer',
         'parentid' => 'require|integer',
     ];

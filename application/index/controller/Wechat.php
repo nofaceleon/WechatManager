@@ -50,7 +50,6 @@ class Wechat extends Common
      */
     public function createMenu()
     {
-        //ajax请求
         //先查出顶级菜单
         $MenuModel = model('Menu');
         $map['parentid'] = 0;
@@ -118,6 +117,11 @@ class Wechat extends Common
                 'status' => 1,
                 'msg' => '推送成功!',
             ];
+
+
+            //推送成功后把当前是哪个用户推送的操作记录写入数据库日志中
+
+
         } else {
             $response = [
                 'status' => 0,
@@ -164,7 +168,7 @@ class Wechat extends Common
 
         //获取到菜单信息后先清空数据库然后再进行插入,数据插入失败怎么办?
 
-        $res = Db::name('Menu')->where(['appid'=>$this->wechatconfig['appid']])->delete();//删除表中该APPID中的所有数据
+        $res = Db::name('Menu')->where(['appid'=>$this->wechatconfig['appid']])->delete();//删除表中该APPID对应的菜单的所有数据
 
 
         foreach ($menu as $k1 => $v1) {
@@ -385,10 +389,8 @@ class Wechat extends Common
             if ($result === false) {
                 //推送失败
                 $errornum++;
-
                 //将错误信息存入数组中,之后一次性循环写入数据库
                 $errorarr[] = '详细:' . 'OPENID = ' . $v . '错误原因 = ' . $this->weixin->errMsg;
-
 //                doLog($this->wechatconfig['appid'],'', '推送模板消息失败', '详细:' . 'OPENID = ' . $v . '错误原因 = ' . $this->weixin->errMsg, 'pushTemMsg', __CLASS__);
             } else {
                 //推送成功
@@ -397,7 +399,6 @@ class Wechat extends Common
         }
 
         $msg = '成功:' . $successnum . '条,失败:' . $errornum . '条.';
-
 
         //将推送记录存储到数据库中
         $temppushlogmodel = model('TemplatePushlog');
@@ -432,7 +433,6 @@ class Wechat extends Common
             $message = '记录失败!';
         }
 
-
         $response = [
             'status' => 1,
             'msg' => $msg . $message,
@@ -452,6 +452,26 @@ class Wechat extends Common
 
 
     }
+
+
+    /**
+     * 生成带参数的二维码
+     */
+    public function createQRcode()
+    {
+        $data = [
+            'expire' => 2592000
+        ];
+        $ticket = $this->weixin->getQRCode(); //获取二维码ticket
+        $imgurl = $this->weixin->getQRUrl($ticket);
+        
+    }
+
+
+
+
+
+    
 
 
 }

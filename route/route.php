@@ -14,3 +14,4 @@ Route::any('mrsong', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
 Route::any('wang', 'index/WechatServer/index?appid=wxfaa90d8812d78147');
 Route::any('TLBCSGZH', 'index/WechatServer/index?appid=fdsfdsfsdfs');
 Route::any('ZWCM', 'index/WechatServer/index?appid=wxf42302be9b7152f8');
+Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');

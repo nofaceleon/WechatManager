@@ -22,39 +22,21 @@ class Login extends Controller
     {
         parent::__construct();
         //验证API信息
-        $timestamp = input('post.time', '');
-        $apitoken = input('post.apitoken', '');
+        //$timestamp = input('post.time', '');
+        //$apitoken = input('post.apitoken', '');
         //在通用方法中对API安全进行验证
-        $authres = authApiToken($timestamp,$apitoken);
+        //$authres = authApiToken($timestamp,$apitoken);
 
         //$authres = 1;测试的时候不验证api
 
-        if(!$authres){
-            $response = [
-                'status' => 0,
-                'msg' => 'api auth failed'
-            ];
-            exit(json_encode($response));
-        }
+//        if(!$authres){
+//            $response = [
+//                'status' => 0,
+//                'msg' => 'api auth failed'
+//            ];
+//            exit(json_encode($response));
+//        }
 
-    }
-
-
-    /**
-     * 显示登录界面del
-     */
-    public function index()
-    {
-
-        //判断如果已经登录的话就直接跳转到首页
-
-        $alluserinfo = Session::get('alluserinfo');
-        if(!empty($alluserinfo)){
-            //说明已经登录过了,直接跳转到首页
-            $this->redirect('index/Index/index');
-        }
-        $this->assign('iscaptcha', CAPTCHA);
-        return $this->fetch();
     }
 
 

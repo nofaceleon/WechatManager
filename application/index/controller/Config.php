@@ -167,6 +167,9 @@ class Config extends Common
             return json($response);
         }
 
+        $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
+        $data['url'] = CONFIG_URL.$name; //拼接配置URL
+
         $res = $this->configModel->insert($data);
         if ($res) {
             $response = [
@@ -174,7 +177,7 @@ class Config extends Common
                 'msg' => '添加成功!'
             ];
             //将新公众号的路由注册到文件中/route/route.php文件
-            $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
+           // $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
             $this->registerRoute($name, $data['appid']); //按照规则注册路由
         } else {
             $response = [

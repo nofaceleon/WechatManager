@@ -33,6 +33,8 @@ class AutoReply extends Model
     {
         $map['appid'] = $appid;
         $res = $this->where($map)->select()->toArray(); //将查询的结果转换成数组格式
+        
+
         return $res;
 
     }

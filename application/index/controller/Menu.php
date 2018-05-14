@@ -46,10 +46,15 @@ class Menu extends Common
     {
 
             $data = input('param.'); //接收前端传递过来的数据
-
-            unset($data['apitoken']); //需要登录的话,这个就不需要了
-            unset($data['time']);
             $data['updatetime'] = date('Y-m-d H:i:s');
+
+
+
+        if(isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])){
+            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用
+            unset($data['miniprogramurl']);
+        }
+
 
             //对表单数据进行验证
             //说明是外链
@@ -93,13 +98,20 @@ class Menu extends Common
             ];
             return json($response);
         }
-        $menuinfo = Db::name('Menu')->where(['id'=>$id])->find();
+        $menuinfo = Db::name('Menu')->find($id);
         if(empty($menuinfo)){
             $response =[
                 'status' => 0,
                 'msg' => '没有数据!'
             ];
         }else{
+            //当菜单类型是小程序的时候
+            if(strcasecmp($menuinfo['type'],'miniprogram') == 0){
+                $patharr = explode(';',$menuinfo['url']);
+                $menuinfo['url'] = $patharr[0] ?? '';
+                $menuinfo['miniprogramurl'] = $patharr[1] ?? '';
+            }
+            
             $response = [
                 'status' => 1,
                 'msg' => '获取成功',
@@ -160,36 +172,19 @@ class Menu extends Common
     {
 
         $data = input('param.'); //获取全部请求数据
-
         //作为登录才能使用的接口,不需要进行安全认证
-        //unset($data['apitoken']);
-        //unset($data['time']);
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
         $data['appid'] = $this->wechatconfig['appid'];
         $data['cid'] = $this->wechatconfig['id'];
-        //使用模型对表单数据进行验证
 
+        if(isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])){
+            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用
+            unset($data['miniprogramurl']);
+        }
+
+        //使用验证器对表单数据进行验证
         $validate = new MenuValidate();
-
-//        if(strcasecmp($data['type'],'view') == 0){
-//            if(!$validate->scene('view')->batch()->check($data)){
-//                //验证失败
-//                $response = [
-//                    'status' => 0,
-//                    'msg' => $validate->getError()
-//                ];
-//            }
-//        }else{
-//            if(!$validate->scene('other')->batch()->check($data)){
-//                //验证失败
-//                $response = [
-//                    'status' => 0,
-//                    'msg' => $validate->getError()
-//                ];
-//
-//            }
-//        }
 
         if(!$validate->check($data)){
             //验证失败
