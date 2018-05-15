@@ -130,7 +130,7 @@ class WechatServer extends Controller
             //$this->weixin->$msgtype($reply)->reply();
         }else{
             //查询是否有自定义的默认回复内容
-            $res = Db::name('AutoReply')->where("status = -1 and appid = '$appid'")->find();
+            $res = Db::name('AutoReply')->where("keyword = 'DEFAULT_REPLY' and appid = '$appid' and status = 1")->find();
             if(empty($res)){
                 $reply = '没有自定义回复内容';
                 $msgtype = 'text';

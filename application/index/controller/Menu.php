@@ -179,7 +179,7 @@ class Menu extends Common
         $data['cid'] = $this->wechatconfig['id'];
 
         if(isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])){
-            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用
+            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用 //TODO 这边之后应该改成存储json格式的数据
             unset($data['miniprogramurl']);
         }
 

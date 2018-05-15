@@ -2211,7 +2211,7 @@ class WechatApi
 	 * @param int $expire 临时二维码有效期，最大为604800秒
 	 * @return array('ticket'=>'qrcode字串','expire_seconds'=>604800,'url'=>'二维码图片解析后的地址')
 	 */
-	public function getQRCode($scene_id,$type=0,$expire=604800){
+	public function getQRCode_old($scene_id,$type=0,$expire=604800){
 		if (!$this->access_token && !$this->checkAuth()) return false;
 		if (!isset($scene_id)) return false;
 		switch ($type) {
@@ -2261,6 +2261,64 @@ class WechatApi
 		}
 		return false;
 	}
+
+
+
+    /**
+     * sjs 修改后的生成带参数的二维码
+     * 创建二维码ticke
+     * @param string $scene_id 自定义追踪id,临时二维码只能用数值型
+     * @param int $type 1:字符串型临时二维码；2:字符串型永久二维码(此时expire参数无效)
+     * @param int $expire 临时二维码有效期，最大为2592000秒,也就是30天
+     * @return array('ticket'=>'qrcode字串','expire_seconds'=>604800,'url'=>'二维码图片解析后的地址')
+     */
+    public function getQRCode($scene_id,$type=1,$expire=604800){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        if (!isset($scene_id)) return false;
+        switch ($type) {
+            case '1':
+                //临时的字符串类型二维码
+                if (!is_string($scene_id))
+                    $scene_id = (string)$scene_id;//转换成字符串格式
+                $action_name = 'QR_STR_SCENE';
+                $action_info = array('scene'=>(array('scene_str'=>$scene_id)));
+                break;
+            case '2':
+                //永久字符串类型二维码
+                if (!is_string($scene_id))
+                    $scene_id = (string)$scene_id;//转换成字符串格式
+                $action_name = 'QR_LIMIT_STR_SCENE';
+                $action_info = array('scene'=>(array('scene_str'=>$scene_id)));
+                break;
+
+            default:
+                return false;
+        }
+
+        $data = array(
+            'action_name'    => $action_name,
+            'expire_seconds' => $expire,
+            'action_info'    => $action_info
+        );
+        if ($type) {
+            unset($data['expire_seconds']);
+        }
+
+        $result = $this->http_post(self::API_URL_PREFIX.self::QRCODE_CREATE_URL.'access_token='.$this->access_token,self::json_encode($data));
+        if ($result) {
+            $json = json_decode($result,true);
+            if (!$json || !empty($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return $json;
+        }
+        return false;
+    }
+
+
+
 
 	/**
 	 * 获取二维码图片

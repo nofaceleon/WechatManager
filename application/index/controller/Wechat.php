@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 123
- * Date: 2018/4/26
- * Time: 16:20
- * 调用微信接口
- */
-
 namespace app\index\controller;
 
 use think\Db;
 use think\facade\Request;
+use think\Validate;
 use Wxcomponent\WechatApi;
 
 class Wechat extends Common
@@ -33,14 +26,12 @@ class Wechat extends Common
 //            'appsecret' => '67083c9d2d66055bdea6a20b63edcb3c',
 //            'token' => 'songphper',
 //        ];
-
         $config = [
             'appid' => $this->wechatconfig['appid'],
             'appsecret' => $this->wechatconfig['appsecret'],
             'token' => $this->wechatconfig['token'],
         ];
         $this->weixin = new WechatApi($config);
-
 
     }
 
@@ -69,34 +60,34 @@ class Wechat extends Common
                 $main[$k]['type'] = $v['type'];
                 if (strcasecmp($v['type'], 'view') == 0) {
                     $main[$k]['url'] = $v['url'];
-                }elseif (strcasecmp($v['type'],'media_id') == 0){
+                } elseif (strcasecmp($v['type'], 'media_id') == 0) {
                     //说明是图文消息
                     $main[$k]['media_id'] = $v['url'];
-                }elseif (strcasecmp($v['type'],'miniprogram') == 0){
+                } elseif (strcasecmp($v['type'], 'miniprogram') == 0) {
                     //说明是小程序
                     $main[$k]['appid'] = $v['key'];
                     $main[$k]['pagepath'] = $v['url'];
-                }
-                else {
+                } else {
                     $main[$k]['key'] = 'rselfmenu_' . $v['id'] . '_0';
                 }
             } else {
                 //说明有子按钮
 //                $arr['name']= $v['buttonname'];
                 foreach ($childbutton as $ckey => $cvalue) {
-                    filedebug('cvalue = '.print_r($cvalue,true));
+                    filedebug('cvalue = ' . print_r($cvalue, true));
                     $temp[$ckey]['name'] = $cvalue['buttonname'];
                     $temp[$ckey]['type'] = $cvalue['type'];
 //                    $temp[$ckey]['key']= 'rselfmenu_'.$v['id'].'_'.$ckey;
-                    if (strcasecmp($cvalue['type'], 'view') == 0 ) {
+                    if (strcasecmp($cvalue['type'], 'view') == 0) {
                         $temp[$ckey]['url'] = $cvalue['url'];
-                    } elseif (strcasecmp($cvalue['type'],'media_id') == 0){
+                    } elseif (strcasecmp($cvalue['type'], 'media_id') == 0) {
                         $temp[$ckey]['media_id'] = $cvalue['url'];
-                    }elseif (strcasecmp($cvalue['type'],'miniprogram') == 0){
+                    } elseif (strcasecmp($cvalue['type'], 'miniprogram') == 0) {
                         //说明是小程序
+                        //TODO 这边之后的数据应该改成json格式的数据
                         $temp[$ckey]['appid'] = $cvalue['key'];
-                        $pathstr = trim($cvalue['url'],';');
-                        $patharr = explode(';',$pathstr);//将字符串分割成数组
+                        $pathstr = trim($cvalue['url'], ';');
+                        $patharr = explode(';', $pathstr);//将字符串分割成数组
                         $temp[$ckey]['pagepath'] = $patharr[0]; //小程序路径
                         $temp[$ckey]['url'] = $patharr[1]; //低版本微信中无法打开小程序的时候跳转的页面
 
@@ -144,7 +135,7 @@ class Wechat extends Common
         $menuinfo = $this->weixin->getMenu();
 
         //获取菜单信息出错,返回错误信息
-        if($menuinfo === false){
+        if ($menuinfo === false) {
             $response = [
                 'status' => 0,
                 'msg' => $this->weixin->errMsg //返回具体的错误信息
@@ -152,12 +143,12 @@ class Wechat extends Common
             return json($response);
         }
 
-        filedebug('获取到的菜单信息是 = '.print_r($menuinfo,true));
+        filedebug('获取到的菜单信息是 = ' . print_r($menuinfo, true));
         $menu = $menuinfo['menu'];
         $data['appid'] = $this->wechatconfig['appid'];
         $errornum = 0; //添加失败的数量
         $successnum = 0; //添加成功的数量
-        if(empty($menu)){
+        if (empty($menu)) {
             $response = [
                 'status' => 0,
                 'msg' => '没有菜单信息'
@@ -168,7 +159,7 @@ class Wechat extends Common
 
         //获取到菜单信息后先清空数据库然后再进行插入,数据插入失败怎么办?
 
-        $res = Db::name('Menu')->where(['appid'=>$this->wechatconfig['appid']])->delete();//删除表中该APPID对应的菜单的所有数据
+        $res = Db::name('Menu')->where(['appid' => $this->wechatconfig['appid']])->delete();//删除表中该APPID对应的菜单的所有数据
 
 
         foreach ($menu as $k1 => $v1) {
@@ -210,7 +201,7 @@ class Wechat extends Common
                             $ch_data['buttonname'] = $v3['name'];
                             $ch_data['type'] = $type;
                             $ch_data['url'] = $v3['url'] ?? $v3[$type];
-                           // $ch_data['media_id'] = $v3['media_id'] ?? '';
+                            // $ch_data['media_id'] = $v3['media_id'] ?? '';
                             $ch_data['parentid'] = $pkid; //子菜单的父级ID
                             $ch_data['sort'] = 0;
                             $ch_data['status'] = 1;
@@ -251,7 +242,7 @@ class Wechat extends Common
         if ($templist === false) {
             $response = [
                 'status' => 0,
-                'msg' => '获取模板列表失败!'.$this->weixin->errMsg,
+                'msg' => '获取模板列表失败!' . $this->weixin->errMsg,
             ];
             return json($response);
         }
@@ -444,34 +435,146 @@ class Wechat extends Common
 
 
     /**
-     * 获取素材列表
+     * 生成带参数的二维码,测试的时候先使用临时的
      */
-    public function getSucai()
+    public function createQRcode()
     {
+        $scene_id = input('param.keyword',''); //自定义的场景ID
+        $type = input('param.qrtype',1); //默认是临时二维码
+        if(empty($scene_id)){
+            $response = [
+                'status' => 0,
+                'msg' => '关键字不能为空'
+            ];
+            return json($response);
+        }
+//        $data = input('param.');
+//
+//        //独立验证
+//        $validate = Validate::make([
+//            'keyword'  => 'require',
+//            'type' => 'require|integer'
+//        ]);
+//
+//        if (!$validate->check($data)) {
+//            dump($validate->getError());
+//        }
+        //将有效期转天数转换成秒
+        $expire = input('param.expire',7); //获取定义的有效时间
 
+        //判断有效期天数是否超过30
+        if($type == 1 && $expire > 30){
+            $response = [
+                'status' => 0,
+                'msg' => '临时二维码的有效期不能超过30天'
+            ];
+            return json($response);
+        }
+        
+        $expire = $expire * 3600 * 24; //将天数参数转换成秒
+        $ticketinfo = $this->weixin->getQRCode($scene_id, $type,$expire); //获取二维码ticket
+        if ($ticketinfo) {
+            //成功获取到了ticket信息
+            $ticket = $ticketinfo['ticket'];
+            $imgurl = $this->weixin->getQRUrl($ticket);
+            $response = [
+                'status' => 1,
+                'msg' => '获取二维码成功',
+                'imgurl' => $imgurl
+            ];
+        } else {
+            //没有获取到ticket信息
+            $response = [
+                'status' => 0,
+                'msg' => $this->weixin->errMsg
+            ];
+        }
+        return json($response);
 
 
     }
 
 
     /**
-     * 生成带参数的二维码
+     * 从微信服务器端获取素材列表,并写入数据库中
      */
-    public function createQRcode()
+    public function getMaterial()
     {
-        $data = [
-            'expire' => 2592000
+
+        set_time_limit(0); //数据获取并写入数据库的时候可能会很慢
+        //TODO 先默认获取图文消息
+
+        $offset = 0; //从0开始获取
+        $type = 'news'; //获取的素材类型,目前默认为图文消息
+//        $count = 10;
+
+        //先获取总数
+        $countarr = $this->weixin->getForeverCount();
+
+        if($countarr === false){
+            $response = [
+                'status' => 0,
+                'msg' => $this->weixin->errMsg
+            ];
+            return json($response);
+
+        }
+
+        $count_str = $type.'_count';
+        $newscount = $countarr[$count_str];
+
+        if(empty($newscount)){
+            $response = [
+                'status' => 0,
+                'msg' => '没有数据'
+            ];
+            return json($response);
+        }
+
+        $material = $this->weixin->getForeverList($type,$offset,$newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
+        if(empty($material)){
+            $response = [
+                'status' => 0,
+                'msg' => '获取数据为空'
+            ];
+            return json($response);
+
+        }elseif($material === false){
+
+            $response = [
+                'status' => 0,
+                'msg' => $this->weixin->errMsg
+            ];
+
+            return json($response);
+        }
+        $successnum = 0;
+        $failednum = 0;
+        foreach ($material['item'] as $k=>$v){
+            //循环插入数据库中,只保留关键的部分,方便识别
+            $data['media_id'] = $v['media_id'];
+            $data['title'] = $v['content']['news_item'][0]['title'];
+            $data['author'] = $v['content']['news_item'][0]['author'];
+//            $data['digest'] = $v['content']['news_item'][0]['digest'];
+            $data['createtime'] = date('Y-m-d H:i:s',$v['content']['create_time']);
+            $data['updatetime'] = date('Y-m-d H:i:s',$v['content']['update_time']);
+            $data['appid'] = $this->wechatconfig['appid']; //
+            $res = Db::name('Material')->insert($data);
+            if($res){
+                //插入成功
+                $successnum++;
+
+            } else{
+                //插入失败
+                $failednum++;
+            }
+        }
+        $response = [
+            'status' => 1,
+            'msg' =>'插入成功'.$successnum.'条,失败'.$failednum.'条'
         ];
-        $ticket = $this->weixin->getQRCode(); //获取二维码ticket
-        $imgurl = $this->weixin->getQRUrl($ticket);
-        
+        return json($response);
     }
-
-
-
-
-
-    
 
 
 }

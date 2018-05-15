@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: song
- * Date: 2018/4/26
- * Time: 22:13
- */
 
 namespace app\index\controller;
 
@@ -48,19 +42,19 @@ class Common extends Controller
         //在Common中加上权限认证
         $UserAuth = new Auth();
         //默认是对控制器进行验证
-        if(strcasecmp($type,'controller') == 0){
+        if (strcasecmp($type, 'controller') == 0) {
             $authname = Request::module() . '/' . Request::controller();
-        }else{
-            $authname = Request::module() . '/' . Request::controller().'/'.Request::action();
+        } else {
+            $authname = Request::module() . '/' . Request::controller() . '/' . Request::action();
         }
         //验证当前访问的用户是否有访问的某控制器的权限
         if (!$UserAuth->check($authname, $this->userid)) {
             //如果是ajax请求就返回json格式的数据
-                $response = [
-                    'status' => 0,
-                    'msg' => '对不起权限不足!'
-                ];
-                exit(json_encode($response)); //这边直接退出
+            $response = [
+                'status' => 0,
+                'msg' => '对不起权限不足!'
+            ];
+            exit(json_encode($response)); //这边直接退出
         }
         return true;
     }
@@ -99,7 +93,7 @@ class Common extends Controller
         }
         //更新session中的时间,保证只是在使用的过程中session不会失效
         $alluserinfo['logintime'] = time();
-        Session::set('alluserinfo',$alluserinfo);
+        Session::set('alluserinfo', $alluserinfo);
         return $alluserinfo;
     }
 
@@ -118,8 +112,8 @@ class Common extends Controller
         //验证该请求是否已经过期
         $expire = 600; //设置每次请求的有效时间
         //在通用方法中对API安全进行验证
-        $authres = authApiToken($timestamp,$apitoken);
-        if(!$authres || ($timestamp+$expire) < time()){
+        $authres = authApiToken($timestamp, $apitoken);
+        if (!$authres || ($timestamp + $expire) < time()) {
             $response = [
                 'status' => 0,
                 'msg' => 'api auth failed'
@@ -130,7 +124,19 @@ class Common extends Controller
     }
 
 
-
+    /**
+     * 定义空控制器
+     * @param $name
+     * @return mixed
+     */
+    public function _empty()
+    {
+        $response = [
+            'status' => 0,
+            'msg' => '方法不存在!',
+        ];
+        return json($response);
+    }
 
 
 }

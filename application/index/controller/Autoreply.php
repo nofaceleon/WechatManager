@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use app\index\validate\AutoreplyValidate;
 use think\Db;
 use think\facade\Request;
 
@@ -26,16 +27,25 @@ class Autoreply extends Common
        // $page = input('param.page',1); //
         //$limit = 5;
         //$replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->page($page,$limit)->select();
-        $replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->select();
+        $replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->select(); //返回的是二维数组
 
         $replylist = empty($replylist) ? [] : $replylist;
 
+        if(!empty($replylist)){
+            foreach ($replylist as $k => $v){
+                if(isset($v['qrinfo']) && !empty($v['qrinfo'])){
+                    $qrinfoarr = json_decode($v['qrinfo'],true);
+                    $replylist[$k]['imgurl'] = $qrinfoarr['imgurl'];
+                    $replylist[$k]['expire'] = $qrinfoarr['expire'];
+                    $replylist[$k]['qrtype'] = $qrinfoarr['qrtype'];
+                }
+            }
+        }
         $response = [
             'status' => 1,
             'replylist' => $replylist
 
         ];
-
         return json($response);
 
     }
@@ -48,6 +58,19 @@ class Autoreply extends Common
     {
         $data = Request::param(false); //不对输入的数据进行过滤操作
         $data['updatetime'] = date('Y-m-d H:i:s');
+
+
+        $validate = new AutoreplyValidate();
+        if(!$validate->scene('edit')->check($data)){
+            //没有通过验证
+            $response = [
+                'status' => 0,
+                'msg' => $validate->getError()
+            ];
+
+            return json($response);
+        }
+
         $res = $this->AutoReplyModel->update($data); //data中包含主键字段就不需要where条件了
         if ($res === false) {
             $response = [
@@ -78,6 +101,16 @@ class Autoreply extends Common
                 'msg' => '没有相关信息!'
             ];
         } else {
+
+
+            if(isset($replyinfo['qrinfo']) && !empty($replyinfo['qrinfo'])){
+                $qrinfoarr = json_decode($replyinfo['qrinfo'],true);
+                $replyinfo['qrtype'] = $qrinfoarr['qrtype'];
+                $replyinfo['imgurl'] = $qrinfoarr['imgurl'];
+                $replyinfo['expire'] = $qrinfoarr['expire'];
+            }
+
+            
             $response = [
                 'status' => 1,
                 'msg' => '获取成功!',
@@ -96,15 +129,45 @@ class Autoreply extends Common
     {
 
         $data = Request::param(false); //获取原始数据,不对数据进过滤,因为回复的内容中可能包含链接
-
         //$data['reply'] = $_POST['reply'];
         $date = date('Y-m-d H:i:s');
-        //$data['msgtype'] = 'text'; //TODO:目前先固定是text
-        //$data['eventtype'] = 1; //先默认都是被动回复
-
         $data['appid'] = $this->wechatconfig['appid'];
         $data['createtime'] = $date;
         $data['updatetime'] = $date;
+        //二维码的数据
+        if($data['eventtype'] == 13){
+
+
+            //是否我后台来生成?
+
+
+            //说明是扫码回复事件
+            $qrinfo = [
+                'imgurl' => $data['imgurl'], //生成的二维码图片路径
+                'qrtype' => $data['qrtype'], //二维码的类型,1表示临时二维码,2表示永久二维码
+                'expire' => $data['expire'] ?? 0, //二维码的有效时间,单位为秒
+            ];
+
+            $data['qrinfo'] = json_encode($qrinfo); //将二维码数据按照json格式存入数据库中
+            unset($data['imgurl']);
+            unset($data['qrtype']);
+            unset($data['expire']);
+            
+        }
+
+        //对数据进行验证
+        $validate = new AutoreplyValidate();
+        if(!$validate->check($data)){
+            //验证不通过
+            $response = [
+                'status' => 0,
+                'msg' => $validate->getError()
+            ];
+            return json($response);
+        }
+
+        //数据插入之前,是否需要判断默认回复是否已经添加过了
+
 
         $res = $this->AutoReplyModel->insert($data); //data中包含主键字段就不需要where条件了
         if ($res === false) {
@@ -155,6 +218,75 @@ class Autoreply extends Common
     }
 
 
+
+    /**
+     * 更改启用或者禁用的状态
+     */
+    public function exchangeStatus()
+    {
+
+        $id = input('param.id', 0);
+        $status = input('param.status', 0);
+        if ($id == 0) {
+            $response = [
+                'status' => 0,
+                'msg' => 'ID不能为空!'
+            ];
+            return json($response);
+        }
+        $data['id'] = $id;
+        $data['status'] = $status;
+        $data['updatetime'] = date('Y-m-d H:i:s');
+
+        $res = Db::name('AutoReply')->update($data);
+        if ($res === false) {
+            $response = [
+                'status' => 0,
+                'msg' => '修改状态失败!'
+            ];
+        } else {
+            $response = [
+                'status' => 1,
+                'msg' => '修改状态成功!'
+            ];
+        }
+
+        return json($response);
+
+    }
+
+
+    /**
+     * 获取生成的二维码
+     */
+    public function getQrcode($id = 0)
+    {
+        if($id == 0) {
+            $response = [
+                'status' => 0,
+                'msg' => 'ID不能为空!'
+            ];
+            return json($response);
+        }
+        $qrinfo = Db::name('AutoReply')->where(['id'=>$id])->value('qrinfo'); //这边返回的应该是一个json数据
+        if(empty($qrinfo)){
+            $response = [
+                'status' => 0,
+                'msg' => '没有数据!'
+            ];
+        }else{
+
+            $qrinfoarr = json_decode($qrinfo,true); //将json数据转换成数组
+            $imgurl = $qrinfoarr['imgurl']; //只需要向前端返回二维码的链接就行了
+            $response = [
+                'status' => 1,
+                'msg' => '获取成功!',
+                'imgurl'=>$imgurl
+            ];
+
+        }
+        return json($response);
+    }
 
 
 
