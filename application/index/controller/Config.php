@@ -3,6 +3,7 @@
 namespace app\index\controller;
 
 use app\index\model\WechatConfig;
+use app\index\validate\ConfigValidate;
 use think\Db;
 use think\facade\Request;
 
@@ -67,19 +68,30 @@ class Config extends Common
         $data['updatetime'] = date('Y-m-d H:i:s');
         //这边数据进行更新的时候需要对数据进行验证,使用验证器进行验证
 
-        //更新的时候判断公众号在该用户下面是否已经存在其他相同的appid/微信号?
-        $appid = $data['appid'];
-        $id = $data['id'];
-
-        $ishave = Db::name('WechatConfig')->where("uid = $this->userid and appid = '$appid' and id <> $id")->find();
-        if(!empty($ishave)){
-            //有重复数据,不能更新
+        $validate = new ConfigValidate();
+        if(!$validate->check($data)){
             $response = [
                 'status' => 0,
-                'msg' => '更新失败,该APPID已经存在!'
+                'msg' => $validate->getError(),
             ];
             return json($response);
+
         }
+
+
+//        //更新的时候判断公众号在该用户下面是否已经存在其他相同的appid/微信号?
+//        $appid = $data['appid'];
+//        $id = $data['id'];
+//
+//        $ishave = Db::name('WechatConfig')->where("uid = $this->userid and appid = '$appid' and id <> $id")->find();
+//        if(!empty($ishave)){
+//            //有重复数据,不能更新
+//            $response = [
+//                'status' => 0,
+//                'msg' => '更新失败,该APPID已经存在!'
+//            ];
+//            return json($response);
+//        }
 
         $res = Db::name('WechatConfig')->update($data);//数据中包含主键能够直接更新,这边返回的是受影响的条数
 
@@ -155,19 +167,33 @@ class Config extends Common
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
 
-        //新增之前判断该用户账号下面是否已经存在该公众号
-        $map['appid'] = $data['appid'];
-        $map['uid'] = $this->userid;
-        $is_exist = $this->configModel->where($map)->find();
-        if ($is_exist) {
+
+        $validate = new ConfigValidate();
+        if(!$validate->check($data)){
             $response = [
                 'status' => 0,
-                'msg' => '该公众号已经存在',
+                'msg' => $validate->getError(),
             ];
             return json($response);
+
         }
 
+        //新增之前判断该用户账号下面是否已经存在该公众号
+//        $map['appid'] = $data['appid'];
+//        $map['uid'] = $this->userid;
+//        $is_exist = $this->configModel->where($map)->find();
+//        if ($is_exist) {
+//            $response = [
+//                'status' => 0,
+//                'msg' => '该公众号已经存在',
+//            ];
+//            return json($response);
+//        }
+
         $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
+
+        $name = trim($name); //去除首尾的空白字符
+
         $data['url'] = CONFIG_URL.$name; //拼接配置URL
 
         $res = $this->configModel->insert($data);

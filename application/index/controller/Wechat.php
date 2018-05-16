@@ -2,6 +2,7 @@
 namespace app\index\controller;
 
 use think\Db;
+use think\facade\Cache;
 use think\facade\Request;
 use think\Validate;
 use Wxcomponent\WechatApi;
@@ -13,19 +14,6 @@ class Wechat extends Common
     {
         parent::__construct();
         //这边目前只能使用一个账号的配置信息
-
-//        $config = [
-//            'appid' => 'wx7ad4ce9789a311ea',
-//            'appsecret' => '67083c9d2d66055bdea6a20b63edcb3c',
-//            'token' => 'songphper',
-//        ];
-//
-//        //测试临时使用
-//        $this->wechatconfig = [
-//            'appid' => 'wx7ad4ce9789a311ea',
-//            'appsecret' => '67083c9d2d66055bdea6a20b63edcb3c',
-//            'token' => 'songphper',
-//        ];
         $config = [
             'appid' => $this->wechatconfig['appid'],
             'appsecret' => $this->wechatconfig['appsecret'],
@@ -34,8 +22,6 @@ class Wechat extends Common
         $this->weixin = new WechatApi($config);
 
     }
-
-
     /**
      * 创建自定义菜单
      */
@@ -471,7 +457,8 @@ class Wechat extends Common
             return json($response);
         }
         
-        $expire = $expire * 3600 * 24; //将天数参数转换成秒
+        $expire = $expire*3600*24; //将天数参数转换成秒
+        //filedebug('生成二维码的有效期为 = '.$expire);
         $ticketinfo = $this->weixin->getQRCode($scene_id, $type,$expire); //获取二维码ticket
         if ($ticketinfo) {
             //成功获取到了ticket信息
@@ -574,6 +561,73 @@ class Wechat extends Common
             'msg' =>'插入成功'.$successnum.'条,失败'.$failednum.'条'
         ];
         return json($response);
+    }
+
+
+
+
+    /**
+     * 获取图文消息的选项
+     */
+    public function getNews_old()
+    {
+        $list = Db::name('Material')->where(['appid'=>$this->wechatconfig['appid']])->field('id,media_id,title,createtime')->order('createtime desc')->select();
+        $list = empty($list) ? [] : $list;
+
+        $response = [
+            'status' => 1,
+            'msg' => '获取成功',
+            'list' => $list
+        ];
+
+        return json($response);
+    }
+
+
+    public function getNews()
+    {
+
+        $res = Cache::get('newslist');
+        if(!empty($res)){
+            $data = json_decode($res,true);
+        }else{
+            $offset = 0; //从0开始获取
+            $type = 'news'; //获取的素材类型,目前默认为图文消息
+            //先获取总数
+            $countarr = $this->weixin->getForeverCount();
+
+
+            $count_str = $type.'_count';
+            $newscount = $countarr[$count_str];
+
+            if(empty($newscount)){
+                $response = [
+                    'status' => 0,
+                    'msg' => '没有数据'
+                ];
+                return json($response);
+            }
+
+            $material = $this->weixin->getForeverList($type,$offset,$newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
+
+            foreach ($material['item'] as $k=>$v){
+                $data[$k]['media_id'] = $v['media_id'];
+                $data[$k]['title'] = $v['content']['news_item'][0]['title'];
+                $data[$k]['createtime'] = date('Y-m-d H:i:s',$v['content']['create_time']);
+                $data[$k]['updatetime'] = date('Y-m-d H:i:s',$v['content']['update_time']);
+            }
+
+            //这边对数据进行缓存
+            Cache::set('newslist',json_encode($data),30*60); //使用文件缓存30分钟
+        }
+
+        $response = [
+            'status' => 1,
+            'msg' => '获取成功',
+            'list' => $data
+        ];
+        return json($response);
+
     }
 
 

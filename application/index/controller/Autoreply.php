@@ -35,9 +35,13 @@ class Autoreply extends Common
             foreach ($replylist as $k => $v){
                 if(isset($v['qrinfo']) && !empty($v['qrinfo'])){
                     $qrinfoarr = json_decode($v['qrinfo'],true);
+                    $expire = $qrinfoarr['expire']; //定义的过期时间
+                    $createtime = $v['createtime'];
+                    $endtime = strtotime("$createtime + $expire day");
                     $replylist[$k]['imgurl'] = $qrinfoarr['imgurl'];
                     $replylist[$k]['expire'] = $qrinfoarr['expire'];
                     $replylist[$k]['qrtype'] = $qrinfoarr['qrtype'];
+                    $replylist[$k]['endtime'] = date('Y-m-d H:i:s',$endtime); //最终的截止时间
                 }
             }
         }
@@ -136,19 +140,22 @@ class Autoreply extends Common
         $data['updatetime'] = $date;
         //二维码的数据
         if($data['eventtype'] == 13){
-
-
-            //是否我后台来生成?
-
-
             //说明是扫码回复事件
             $qrinfo = [
                 'imgurl' => $data['imgurl'], //生成的二维码图片路径
                 'qrtype' => $data['qrtype'], //二维码的类型,1表示临时二维码,2表示永久二维码
                 'expire' => $data['expire'] ?? 0, //二维码的有效时间,单位为秒
             ];
-
             $data['qrinfo'] = json_encode($qrinfo); //将二维码数据按照json格式存入数据库中
+
+//            $endtime = date('Y-m-d H:i:s',strtotime($date.'+'.$data['expire'].' day')); //截止时间
+//            $qrtype = $data['qrtype'];
+//            $imgurl = $data['imgurl'];
+            $info = [
+                'endtime' =>  date('Y-m-d H:i:s',strtotime($date.'+'.$data['expire'].' day')),
+                'qrtype' => $data['qrtype'],
+                'imgurl' => $data['imgurl'],
+            ];
             unset($data['imgurl']);
             unset($data['qrtype']);
             unset($data['expire']);
@@ -166,9 +173,6 @@ class Autoreply extends Common
             return json($response);
         }
 
-        //数据插入之前,是否需要判断默认回复是否已经添加过了
-
-
         $res = $this->AutoReplyModel->insert($data); //data中包含主键字段就不需要where条件了
         if ($res === false) {
             $response = [
@@ -178,7 +182,8 @@ class Autoreply extends Common
         } else {
             $response = [
                 'status' => 1,
-                'msg' => '添加成功!'
+                'msg' => '添加成功!',
+                'info' => $info ?? [],
             ];
         }
         return json($response);

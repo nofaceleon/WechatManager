@@ -16,3 +16,5 @@ Route::any('TLBCSGZH', 'index/WechatServer/index?appid=fdsfdsfsdfs');
 Route::any('ZWCM', 'index/WechatServer/index?appid=wxf42302be9b7152f8');
 Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
 Route::any('1', 'index/WechatServer/index?appid=1');
+Route::any('STDOTAHLS', 'index/WechatServer/index?appid= wxfede681f96a1c9a6');
+Route::any('WLCS', 'index/WechatServer/index?appid=123');

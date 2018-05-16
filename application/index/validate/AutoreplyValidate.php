@@ -19,6 +19,7 @@ class AutoreplyValidate extends Validate
      */
     protected $rule =   [
         'reply'  => 'require',
+        'keyword'  => 'unique:AutoReply', //验证是否唯一
         'msgtype' => 'require',
         'eventtype' => 'require|integer',
         'appid' => 'require',
@@ -27,7 +28,17 @@ class AutoreplyValidate extends Validate
 
 
     protected $scene = [
-        'edit'  =>  ['reply','msgtype','eventtype','status'], //编辑场景验证的字段
+        'edit'  =>  ['reply','msgtype','eventtype','status','keyword'], //编辑场景验证的字段
+    ];
+
+
+    /**
+     * 自定义错误消息
+     * @var array
+     */
+    protected $message  =   [
+        'reply.require' => '回复内容不能为空',
+        'keyword.unique' => '该关键字已经存在,请更换关键字',
     ];
 
 }

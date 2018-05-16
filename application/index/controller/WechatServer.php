@@ -2,8 +2,6 @@
 /**
  * Created by PhpStorm.
  * User: song
- * Date: 2018/4/26
- * Time: 22:38
  * 接收微信端传递过来的消息,微信后台配置的URL也应该是配置到这个里面的
  */
 namespace app\index\controller;
@@ -20,30 +18,14 @@ class WechatServer extends Controller
     {
         parent::__construct();
 //        //这边目前只能使用一个账号的配置信息
-        //测试账号
-
-//        $request = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
-        //filedebug('当前请求的地址是 = '.$request);
         $appid = input('param.appid','');//获取路由中的appid参数
-//        $allparams = input('param.');
-        //filedebug('当前请求的所有参数是 = '.print_r($allparams,true));
-
         //根据appid参数获取公众号的配置信息
         $this->config = model('WechatConfig')->getWechatConfigByAppid($appid);
-
         if(empty($this->config)){
             //没有找到对应的公众号配置
             return;//直接退出
         }
-
-//        $this->config = [
-//            'appid' => 'wx7ad4ce9789a311ea',
-//            'appsecret' => '67083c9d2d66055bdea6a20b63edcb3c',
-//            'token' => 'songphper',
-//        ];
-
         $this->weixin = new WechatApi($this->config);
-
     }
 
     /**
@@ -71,14 +53,15 @@ class WechatServer extends Controller
                 break;
             case WechatApi::MSGTYPE_EVENT: //事件
 
-
                 $detailtype = $this->weixin->getRev()->getEventType(); //获取具体的事件类型
+
                 //获取事件的详细参数
                 $eventkey = $this->weixin->getRev()->getRevEvent();
+
                 //filedebug('获取的eventkey = '.print_r($eventkey,true));
                 //获取详细信息
                 $allinfo = $this->weixin->getRevData();
-                filedebug('事件详细的返回信息 = ' . print_r($allinfo, true));
+                //filedebug('事件详细的返回信息 = ' . print_r($allinfo, true));
                 //对数据进行处理,并存入数据库中
 //                filedebug('获取到的事件信息是 = '.print_r($allinfo,true));
                 $this->handleSeverInfo($allinfo); //保存事件信息
@@ -108,6 +91,15 @@ class WechatServer extends Controller
     private function handleUserReply($content = '',$appid = '',$event = 'text')
     {
         //filedebug('获取到的自动回复数据为start');
+        //关注事件,如果携带了参数自动回复的时候改成扫码事件
+        if(strcasecmp($event,'subscribe') == 0 && !empty($content)){
+            $pattern  =  '/^qrscene_/' ;
+            preg_match ( $pattern ,  $content ,  $matches);
+            if(!empty($matches)){
+                $event = 'SCAN';
+                $content = str_replace('qrscene_','',$content); //去除参数中的qrscene_
+            }
+        }
 
         //先根据关键词去数据库中查询该关键字所对应的自动回复内容
 

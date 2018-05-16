@@ -18,11 +18,25 @@ class ConfigValidate extends Validate
      * @var array
      */
     protected $rule =   [
-        'name'  => 'require',
-        'wechatid' => 'require',
-        'appid' => 'require',
+        'name'  => 'require|unique:WechatConfig',
+        'wechatid' => 'require|unique:WechatConfig',
+        'appid' => 'require|unique:WechatConfig',
         'appsecret' => 'require',
         'token' => 'require',
     ];
+
+
+
+    /**
+     * 自定义错误消息
+     * @var array
+     */
+    protected $message  =   [
+        'name.require' => '公众号名称不能为空',
+        'name.unique' => '改公众号名称已经存在',
+        'wechatid.require' => '微信号不能为空',
+        'wechatid.unique' => '该微信号已经存在',
+    ];
+
 
 }
