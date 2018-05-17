@@ -15,7 +15,6 @@ class Menu extends Common
         parent::__construct();
 
         //自定义菜单的地方需要进行验证
-        $this->userAuth();
         $this->menumodel = model('Menu');
     }
 
@@ -45,42 +44,48 @@ class Menu extends Common
     public function editMenu()
     {
 
-            $data = input('param.'); //接收前端传递过来的数据
-            $data['updatetime'] = date('Y-m-d H:i:s');
+        $this->userAuth('action');
+
+        $data = input('param.'); //接收前端传递过来的数据
+        $data['updatetime'] = date('Y-m-d H:i:s');
 
 
-
-        if(isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])){
-            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用
+        if (isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])) {
+            $data['url'] = $data['url'] . ';' . $data['miniprogramurl']; //使用
             unset($data['miniprogramurl']);
         }
 
 
-            //对表单数据进行验证
-            //说明是外链
-            //使用验证器验证URL是否符合规则
-            $validate = new MenuValidate();
-            if(!$validate->check($data)){
-                $response = [
-                    'status' => 0,
-                    'msg' => $validate->getError()
-                ];
-                return json($response);
-            }
-
-            $res = $this->menumodel->update($data); //data中包含主键字段就不需要where条件了
-            if ($res === false) {
-                $response = [
-                    'status' => 0,
-                    'msg' => '更新失败!'
-                ];
-            } else {
-                $response = [
-                    'status' => 1,
-                    'msg' => '更新成功!'
-                ];
-            }
+        //对表单数据进行验证
+        //说明是外链
+        //使用验证器验证URL是否符合规则
+        $validate = new MenuValidate();
+        if (!$validate->check($data)) {
+            $response = [
+                'status' => 0,
+                'msg' => $validate->getError()
+            ];
             return json($response);
+        }
+
+        $res = $this->menumodel->update($data); //data中包含主键字段就不需要where条件了
+        if ($res === false) {
+            $response = [
+                'status' => 0,
+                'msg' => '更新失败!'
+            ];
+
+            doLog('编辑菜单', '修改失败', '', 'Menu/editMenu/error', $this->wechatconfig['appid'], $this->userid);
+
+        } else {
+            $response = [
+                'status' => 1,
+                'msg' => '更新成功!'
+            ];
+
+            doLog('编辑菜单', '修改成功', json_encode($data), 'Menu/editMenu', $this->wechatconfig['appid'], $this->userid);
+        }
+        return json($response);
 
     }
 
@@ -91,7 +96,7 @@ class Menu extends Common
     public function getMenuInfo($id = 0)
     {
 
-        if($id == 0){
+        if ($id == 0) {
             $response = [
                 'status' => 0,
                 'msg' => 'ID不能为空'
@@ -99,23 +104,23 @@ class Menu extends Common
             return json($response);
         }
         $menuinfo = Db::name('Menu')->find($id);
-        if(empty($menuinfo)){
-            $response =[
+        if (empty($menuinfo)) {
+            $response = [
                 'status' => 0,
                 'msg' => '没有数据!'
             ];
-        }else{
+        } else {
             //当菜单类型是小程序的时候
-            if(strcasecmp($menuinfo['type'],'miniprogram') == 0){
-                $patharr = explode(';',$menuinfo['url']);
+            if (strcasecmp($menuinfo['type'], 'miniprogram') == 0) {
+                $patharr = explode(';', $menuinfo['url']);
                 $menuinfo['url'] = $patharr[0] ?? '';
                 $menuinfo['miniprogramurl'] = $patharr[1] ?? '';
             }
-            
+
             $response = [
                 'status' => 1,
                 'msg' => '获取成功',
-                'menuinfo' =>$menuinfo
+                'menuinfo' => $menuinfo
             ];
         }
 
@@ -123,7 +128,7 @@ class Menu extends Common
         return json($response);
 
     }
-    
+
     /**
      * 更改启用或者禁用的状态
      */
@@ -149,11 +154,13 @@ class Menu extends Common
                 'status' => 0,
                 'msg' => '修改状态失败!'
             ];
+
         } else {
             $response = [
                 'status' => 1,
                 'msg' => '修改状态成功!'
             ];
+
         }
 
         return json($response);
@@ -167,6 +174,7 @@ class Menu extends Common
     public function addMenu()
     {
 
+        $this->userAuth('action');
         $data = input('param.'); //获取全部请求数据
         //作为登录才能使用的接口,不需要进行安全认证
         $data['createtime'] = date('Y-m-d H:i:s');
@@ -174,15 +182,15 @@ class Menu extends Common
         $data['appid'] = $this->wechatconfig['appid'];
         $data['cid'] = $this->wechatconfig['id'];
 
-        if(isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])){
-            $data['url'] = $data['url'].';'.$data['miniprogramurl']; //使用 //TODO 这边之后应该改成存储json格式的数据
+        if (isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])) {
+            $data['url'] = $data['url'] . ';' . $data['miniprogramurl']; //使用 //TODO 这边之后应该改成存储json格式的数据
             unset($data['miniprogramurl']);
         }
 
         //使用验证器对表单数据进行验证
         $validate = new MenuValidate();
 
-        if(!$validate->check($data)){
+        if (!$validate->check($data)) {
             //验证失败
             $response = [
                 'status' => 0,
@@ -198,11 +206,15 @@ class Menu extends Common
                 'status' => 1,
                 'msg' => '添加成功!'
             ];
+
+            doLog('添加菜单', '添加菜单成功', json_encode($data), 'Menu/addMenu/error', $this->wechatconfig['appid'], $this->userid);
+
         } else {
             $response = [
                 'status' => 0,
                 'msg' => '添加失败!'
             ];
+            doLog('添加菜单', '添加失败', '', 'Menu/addMenu', $this->wechatconfig['appid'], $this->userid);
         }
         return json($response);
 
@@ -219,12 +231,15 @@ class Menu extends Common
         return json($topmenu);
 
     }
-    
+
     /**
      * 删除菜单
      */
     public function delMenu()
     {
+
+
+        $this->userAuth('action');
         //这边也应该是ajax的请求
         $menuid = input('param.id', '');
         if (empty($menuid)) {
@@ -265,7 +280,6 @@ class Menu extends Common
 
 
     }
-
 
 
 }

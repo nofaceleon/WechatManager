@@ -137,8 +137,6 @@ class WechatServer extends Controller
     }
 
 
-
-
     /**
      * 处理用户回复
      */
@@ -179,39 +177,5 @@ class WechatServer extends Controller
 
     }
 
-
-    /**
-     * 获取事件并回复消息(文本,图文,音频,视频)
-     *
-     */
-    private function handleEvent_old($detailtype,$allinfo)
-    {
-        //当用户关注的时候,推送某条消息
-        if ($detailtype == 'subscribe') {
-            //当用户关注的时候推送某条消息
-            $this->weixin->text('欢迎关注!')->reply();
-        } elseif ($detailtype == 'unsubscribe') {
-            //filedebug('用户取消了关注');
-        }
-
-        if ($allinfo['Event'] == 'SCAN') {
-
-            $eventkey = $allinfo['EventKey'];//获取扫描事件中携带的参数
-
-            //根据事件所携带的参数,查询数据库(查询哪个数据库?),然后,从数据库中的类型来判断回复的类型
-
-            if ($allinfo['EventKey'] == 'userinfo') {
-                //获取用户的信息
-                $userinfo = $this->weixin->getUserInfo($allinfo['FromUserName']);
-                $reply = '欢迎访问!' . $userinfo['nickname'];
-            }else{
-                $reply = '没有该关键字';
-            }
-
-            $this->weixin->text($reply)->reply();
-
-        }
-
-    }
 
 }

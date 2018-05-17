@@ -103,11 +103,18 @@ class Config extends Common
                 'status' => 0,
                 'msg' => '更新失败!'
             ];
+
+
+            doLog('公众号配置修改','修改失败','','Config/updateConfig/error',$this->wechatconfig['appid'],$this->userid);
+
         } else {
             $response = [
                 'status' => 1,
                 'msg' => '更新成功!'
             ];
+
+            doLog('公众号配置修改','修改成功',json_encode($data),'Config/updateConfig',$this->wechatconfig['appid'],$this->userid);
+
         }
         return json($response);
 
@@ -202,6 +209,9 @@ class Config extends Common
                 'status' => 1,
                 'msg' => '添加成功!'
             ];
+
+            doLog('添加公众号','添加成功',json_encode($data),'Config/addConfig',$this->wechatconfig['appid'],$this->userid);
+
             //将新公众号的路由注册到文件中/route/route.php文件
            // $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
             $this->registerRoute($name, $data['appid']); //按照规则注册路由
@@ -210,6 +220,8 @@ class Config extends Common
                 'status' => 0,
                 'msg' => '添加失败!'
             ];
+
+            doLog('添加公众号','添加失败','','Config/addConfig',$this->wechatconfig['appid'],$this->userid);
         }
         return json($response);
 
@@ -239,12 +251,16 @@ class Config extends Common
                 'msg' => '删除成功!',
             ];
 
+            doLog('删除公众号配置','删除成功','','Config/delConfig',$this->wechatconfig['appid'],$this->userid);
+
         } else {
             //删除失败
             $response = [
                 'status' => 0,
                 'msg' => '删除失败!',
             ];
+
+            doLog('删除公众号配置','删除失败','','Config/delConfig',$this->wechatconfig['appid'],$this->userid);
 
         }
 
@@ -272,9 +288,7 @@ class Config extends Common
                 $configList[$k]['status'] = 0; //其他的状态改为 0
             }
             $configList[$k]['updatetime'] = date('Y-m-d H:i:s'); //更新修改时间
-
             $res = $this->configModel->update($configList[$k]); //循环更新
-
             if ($res === false) {
                 $errornum++; //如果中间有失败的,就记录一下
             }
@@ -287,7 +301,6 @@ class Config extends Common
                 'status' => 0,
                 'msg' => '切换账号失败',
             ];
-
             $this->configModel->rollback(); //数据回滚
 
         } else {
@@ -296,8 +309,6 @@ class Config extends Common
                 'status' => 1,
                 'msg' => '切换账号成功',
             ];
-
-
             $this->configModel->commit(); //数据提交
         }
         return json($response);

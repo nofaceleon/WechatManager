@@ -47,47 +47,19 @@ function tree($arr, $pid = 0, $level = 0, $flagstr = '└―')
 
 /**
  * 记录系统日志
- * 需要能够可选数据库
- * 可以选择mysql或者mongodb
  */
-function doLog()
+
+
+function doLog($user_action = '',$content = '',$detail = '',$api_name = '',$appid = '',$uid = '')
 {
-    $res = func_get_args();//获取所有的参数信息
-    return;
-}
-
-
-/**
- * 极验-验证验证码是否正确
- * @param $geetest_challenge
- * @param $geetest_validate
- * @param $geetest_seccode
- * @return bool
- */
-function VerifyLoginServlet($geetest_challenge, $geetest_validate, $geetest_seccode)
-{
-
-    $GtSdk = new \Geetest\GeetestLib(config('myconfig.CAPTCHA_ID'), config('myconfig.PRIVATE_KEY'));
-    $data = array(
-        "user_id" => session_id(), # 网站用户id
-        "client_type" => "web", #web:电脑上的浏览器；h5:手机上的浏览器，包括移动应用内完全内置的web_view；native：通过原生SDK植入APP应用的方式
-        "ip_address" => \think\facade\Request::ip() # 请在此处传输用户请求验证时所携带的IP
-    );
-    if (session('gtserver') == 1) {//服务器正常
-        $result = $GtSdk->success_validate($geetest_challenge, $geetest_validate, $geetest_seccode, $data);
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {//服务器宕机,走failback模式
-        $result = $GtSdk->success_validate($geetest_challenge, $geetest_validate, $geetest_seccode, $data);
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    $data['appid'] = $appid;
+    $data['uid'] = $uid;
+    $data['user_action'] = $user_action;
+    $data['api_name'] = $api_name;
+    $data['content'] = $content;
+    $data['detail'] = $detail;
+    $data['createtime'] = date('Y-m-d H:i:s');
+    $res = \think\Db::name('Log')->insert($data);
 }
 
 
@@ -220,7 +192,7 @@ function pinyin1($zh){
 
 
 /**
- * 简单验证接口请求的身份
+ * 简单验证接口请求的身份(废弃)
  */
 function authApiToken($timestamp,$apitoken)
 {

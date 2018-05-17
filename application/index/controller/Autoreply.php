@@ -60,6 +60,9 @@ class Autoreply extends Common
      */
     public function editReply()
     {
+
+        $this->userAuth('action');
+
         $data = Request::param(false); //不对输入的数据进行过滤操作
         $data['updatetime'] = date('Y-m-d H:i:s');
 
@@ -81,11 +84,17 @@ class Autoreply extends Common
                 'status' => 0,
                 'msg' => '更新失败!'
             ];
+
+            doLog('修改自动回复','修改失败','','Autoreply/editReply/error',$this->wechatconfig['appid'],$this->userid);
+
         } else {
             $response = [
                 'status' => 1,
                 'msg' => '更新成功!'
             ];
+
+            doLog('修改自动回复','修改成功','','Autoreply/editReply',$this->wechatconfig['appid'],$this->userid);
+
         }
         return json($response);
 
@@ -121,6 +130,7 @@ class Autoreply extends Common
                 'replyinfo' => $replyinfo
             ];
 
+
         }
         return json($response);
     }
@@ -131,6 +141,8 @@ class Autoreply extends Common
      */
     public function addReply()
     {
+
+        $this->userAuth('action');
 
         $data = Request::param(false); //获取原始数据,不对数据进过滤,因为回复的内容中可能包含链接
         //$data['reply'] = $_POST['reply'];
@@ -179,12 +191,18 @@ class Autoreply extends Common
                 'status' => 0,
                 'msg' => '添加失败!'
             ];
+
+            doLog('添加自动回复','添加失败','','Autoreply/addReply/error',$this->wechatconfig['appid'],$this->userid);
+
         } else {
             $response = [
                 'status' => 1,
                 'msg' => '添加成功!',
                 'info' => $info ?? [],
             ];
+
+            doLog('添加自动回复','添加成功','','Autoreply/addReply',$this->wechatconfig['appid'],$this->userid);
+
         }
         return json($response);
 
@@ -197,6 +215,7 @@ class Autoreply extends Common
     public function delReply($id = 0)
     {
 
+        $this->userAuth('action');
 
         if ($id == 0) {
             $response = [
@@ -212,11 +231,17 @@ class Autoreply extends Common
                 'status' => 1,
                 'msg' => '删除成功!'
             ];
+
+            doLog('删除自动回复','删除成功','','Autoreply/delReply',$this->wechatconfig['appid'],$this->userid);
+
         } else {
             $response = [
                 'status' => 0,
                 'msg' => '删除失败!'
             ];
+
+            doLog('删除自动回复','删除失败','','Autoreply/delReply/error',$this->wechatconfig['appid'],$this->userid);
+
         }
         return json($response);
 
@@ -266,6 +291,9 @@ class Autoreply extends Common
      */
     public function getQrcode($id = 0)
     {
+
+        $this->userAuth('action');
+
         if($id == 0) {
             $response = [
                 'status' => 0,

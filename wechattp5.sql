@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50714
 File Encoding         : 65001
 
-Date: 2018-05-16 18:09:23
+Date: 2018-05-17 17:28:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,16 +23,16 @@ CREATE TABLE `we_auth_group` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(100) NOT NULL DEFAULT '',
   `status` tinyint(1) NOT NULL DEFAULT '1',
-  `rules` char(80) NOT NULL DEFAULT '',
+  `rules` char(80) NOT NULL DEFAULT '0' COMMENT '用户拥有的权限',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户组的权限表';
 
 -- ----------------------------
 -- Records of we_auth_group
 -- ----------------------------
-INSERT INTO `we_auth_group` VALUES ('1', '超级管理员', '1', '1,2,3,4,5');
-INSERT INTO `we_auth_group` VALUES ('2', '普通管理员', '1', '1,2,3,4,5');
-INSERT INTO `we_auth_group` VALUES ('3', '普通用户', '1', '5');
+INSERT INTO `we_auth_group` VALUES ('1', '超级管理员', '1', '1,2,3,4,5,6,7,8,9,10,11,12');
+INSERT INTO `we_auth_group` VALUES ('2', '普通管理员', '1', '1,2,4,5');
+INSERT INTO `we_auth_group` VALUES ('3', '普通用户', '1', '0');
 
 -- ----------------------------
 -- Table structure for we_auth_group_access
@@ -68,19 +68,23 @@ CREATE TABLE `we_auth_rule` (
   `condition` char(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='权限规则表';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='权限规则表';
 
 -- ----------------------------
 -- Records of we_auth_rule
 -- ----------------------------
-INSERT INTO `we_auth_rule` VALUES ('1', 'index/User/addUser', '添加用户', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('2', 'index-User', '用户管理', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('3', 'index-Wechat', '微信接口', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('4', 'index-WechatServer', '微信回调', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('5', 'index-Index', '控制台首页', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('6', 'index-AutoReply', '自动回复页面', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('7', 'index-Config', '公众号配置界面', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('8', '', '', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('1', 'index/Config/updateConfig', '修改公众号配置', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('2', 'index/Config/addConfig', '添加公众号配置', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('3', 'index/Config/delConfig', '删除公众号配置', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('4', 'inde/Menu/addMenu', '添加自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('5', 'index/Menu/editMenu', '编辑自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('6', 'index/Menu/delMenu', '删除自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('7', 'index/Wechat/createMenu', '推送自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('8', 'index/Wechat/getMenu', '获取自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('9', 'index/Autoreply/delReply', '删除自动回复', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('10', 'index/Autoreply/addReply', '添加自动回复', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('11', 'index/Autoreply/getQrcode', '生成二维码', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('12', 'index/Autoreply/editReply', '编辑自动回复', '1', '1', '');
 
 -- ----------------------------
 -- Table structure for we_auto_reply
@@ -99,12 +103,12 @@ CREATE TABLE `we_auto_reply` (
   `updatetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_key_appid` (`keyword`,`appid`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='自动回复配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COMMENT='自动回复配置表';
 
 -- ----------------------------
 -- Records of we_auto_reply
 -- ----------------------------
-INSERT INTO `we_auto_reply` VALUES ('4', '后台管理3', '<a href=\"http://www.songphper.top\">欢迎使用微信后台管理系统</a>', 'text', '1', 'wx7ad4ce9789a311ea', '1', null, '2018-04-15 21:56:21', '2018-05-15 10:26:00');
+INSERT INTO `we_auto_reply` VALUES ('4', '后台管理5', '<a href=\"http://www.songphper.top\">欢迎使用微信后台管理系统</a>', 'text', '1', 'wx7ad4ce9789a311ea', '1', null, '2018-04-15 21:56:21', '2018-05-17 14:43:37');
 INSERT INTO `we_auto_reply` VALUES ('5', 'DEFAULT_REPLY', '如需帮助，<a href=\"https://uat.zwmedia.com.cn/wxzspfse/index.php/Customer/index/index\">请点击咨询客服</a> [耶] \r\n如自助咨询内无您遇到的问题，可在客服链接内选择“提交工单”，进行反馈，客服会为您解答！[皱眉]', 'text', '1', 'wx7ad4ce9789a311ea', '0', null, '2018-04-15 22:03:23', '2018-04-19 23:44:31');
 INSERT INTO `we_auto_reply` VALUES ('7', '百度一下', '<a href=\"www.baidu.com\">百度一下</a>', 'text', '1', 'wx7ad4ce9789a311ea', '1', null, '2018-04-15 22:06:55', '2018-04-15 22:06:55');
 INSERT INTO `we_auto_reply` VALUES ('8', '客服', '<a href=\"https://uat.zwmedia.com.cn/wxzspfse/index.php/Customer/index/index\">请点击咨询客服</a> ', 'text', '1', 'wx7ad4ce9789a311ea', '1', null, '2018-04-15 22:08:02', '2018-04-15 22:08:02');
@@ -115,9 +119,7 @@ INSERT INTO `we_auto_reply` VALUES ('30', '后台管理4f', 'fdsfsdfdsfsdwwwww',
 INSERT INTO `we_auto_reply` VALUES ('32', 'test', '回复test222999999', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQGp8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyQ2UzNHc5c2JmLTExVms4V05xY1UAAgQYiPpaAwQ8AAAA\",\"qrtype\":1,\"expire\":5}', '2018-05-15 15:11:20', '2018-05-15 16:59:25');
 INSERT INTO `we_auto_reply` VALUES ('34', '1234', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEX8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAySjFWaHdNc2JmLTExMDAwMHcwN18AAgR1hfpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 15:12:26', '2018-05-15 16:41:35');
 INSERT INTO `we_auto_reply` VALUES ('36', '123', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEX8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAySjFWaHdNc2JmLTExMDAwMHcwN18AAgR1hfpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 15:35:03', '2018-05-15 15:35:03');
-INSERT INTO `we_auto_reply` VALUES ('37', '123', '123少时诵诗书所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所所', 'text', '13', 'wxf42302be9b7152f8', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFn8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAycjkzY0lCczliRmUxVU5xV05xY2EAAgT1mfpaAwQ8AAAA\",\"qrtype\":1,\"expire\":10}', '2018-05-15 16:27:32', '2018-05-15 18:38:54');
 INSERT INTO `we_auto_reply` VALUES ('38', '1', '1', 'text', '13', 'wxf42302be9b7152f8', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFb8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyX3hBdUlKczliRmUxMDAwMGcwNzkAAgQNnPpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 16:36:29', '2018-05-15 16:36:29');
-INSERT INTO `we_auto_reply` VALUES ('40', '123', '123', 'text', '1', 'wxf42302be9b7152f8', '1', '', '2018-05-16 10:41:39', '2018-05-16 10:41:39');
 INSERT INTO `we_auto_reply` VALUES ('41', 'lyn', 'lyn', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEG8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyYTMyOHdac2JmLTExVnp2WGhxY1kAAgQnn-taAwQ8AAAA\",\"qrtype\":1,\"expire\":30}', '2018-05-16 11:01:59', '2018-05-16 11:01:59');
 INSERT INTO `we_auto_reply` VALUES ('42', 'nihao', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFP8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyTXFwZXdnc2JmLTExWTIzWDFxY2sAAgTGwvtaAwQ8AAAA\",\"qrtype\":1,\"expire\":30}', '2018-05-16 13:33:58', '2018-05-16 13:33:58');
 INSERT INTO `we_auto_reply` VALUES ('44', 'test10', 'fdsfdsaf', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEk8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyWkxYOXd6c2JmLTExZDhPOE5yYzEAAgRIw-taAwQALw0A\",\"qrtype\":1,\"expire\":\"10\"}', '2018-05-16 13:36:08', '2018-05-16 13:36:08');
@@ -127,6 +129,8 @@ INSERT INTO `we_auto_reply` VALUES ('48', 'day', 'fdsfdsfs', 'text', '13', 'wx7a
 INSERT INTO `we_auto_reply` VALUES ('49', 'lkjh', '4567898', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFI8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAydnpnT3dmc2JmLTExMzBkOU5yY0IAAgTA3vtaAwQALw0A\",\"qrtype\":1,\"expire\":\"10\"}', '2018-05-16 15:33:20', '2018-05-16 15:33:20');
 INSERT INTO `we_auto_reply` VALUES ('50', '258', '147', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQF-8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAybl9ZeHg2c2JmLTExMl9lOTFyYzAAAgS-3-taAwQALw0A\",\"qrtype\":1,\"expire\":\"10\"}', '2018-05-16 15:37:35', '2018-05-16 15:37:35');
 INSERT INTO `we_auto_reply` VALUES ('51', '232323232', '23213213', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQER8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyYVdnbHdmc2JmLTExMDAwMGcwN1cAAgTN3-taAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-16 15:37:49', '2018-05-16 15:40:04');
+INSERT INTO `we_auto_reply` VALUES ('52', 'testst', 'fsfdsfs', 'text', '1', 'wxf42302be9b7152f8', '1', '', '2018-05-17 16:40:59', '2018-05-17 16:40:59');
+INSERT INTO `we_auto_reply` VALUES ('53', 'fsfsdfsfds', 'fdsfdsfsdf', 'text', '1', 'wxf42302be9b7152f8', '1', '', '2018-05-17 16:46:37', '2018-05-17 16:46:37');
 
 -- ----------------------------
 -- Table structure for we_event
@@ -183,20 +187,53 @@ DROP TABLE IF EXISTS `we_log`;
 CREATE TABLE `we_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `appid` varchar(64) NOT NULL DEFAULT '',
-  `remak` varchar(255) NOT NULL DEFAULT '',
-  `action` varchar(255) DEFAULT NULL,
+  `uid` varchar(255) NOT NULL DEFAULT '',
+  `user_action` varchar(255) DEFAULT NULL,
+  `api_name` varchar(255) DEFAULT NULL,
   `content` varchar(255) DEFAULT '',
   `detail` text,
-  `controller` varchar(255) DEFAULT NULL,
-  `classname` varchar(255) DEFAULT NULL,
   `createtime` datetime DEFAULT NULL,
-  `updatetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='平台日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COMMENT='平台日志表';
 
 -- ----------------------------
 -- Records of we_log
 -- ----------------------------
+INSERT INTO `we_log` VALUES ('1', 'wx7ad4ce9789a311ea', '1', '修改自动回复成功', 'Autoreply/editReply', '', '', '2018-05-17 14:43:37');
+INSERT INTO `we_log` VALUES ('2', '', '', '用户登录', 'Login/userLogin', '登录成功', '', '2018-05-17 14:54:54');
+INSERT INTO `we_log` VALUES ('3', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 14:55:47');
+INSERT INTO `we_log` VALUES ('4', ' wxfede681f96a1c9a6', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '', '2018-05-17 15:00:17');
+INSERT INTO `we_log` VALUES ('5', 'wx7ad4ce9789a311ea', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"\\u9876\\u7ea7\\u83dc\",\"sort\":100,\"status\":1,\"id\":188,\"parentid\":0,\"type\":\"show\",\"updatetime\":\"2018-05-17 15:08:27\"}', '2018-05-17 15:08:27');
+INSERT INTO `we_log` VALUES ('6', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 15:13:12');
+INSERT INTO `we_log` VALUES ('7', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"wechat\",\"sort\":0,\"status\":1,\"parentid\":200,\"id\":203,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg\",\"key\":\"\\u65b0\\u5a92\\u4f53\\u8425\\u9500\\uff0c\\u8fd9\\u4e9b\\u6e20\\u9053\\u73a9\\u6cd5\\u4f60\\u90fd\\u505a\\u4e86\\u5417\\uff1f\",\"updatetime\":\"2018-05-17 15:31:47\"}', '2018-05-17 15:31:47');
+INSERT INTO `we_log` VALUES ('8', 'wxf42302be9b7152f8', '1', '添加菜单', 'Menu/addMenu/error', '添加菜单成功', '{\"buttonname\":\"12\",\"sort\":\"\",\"status\":1,\"parentid\":0,\"type\":\"media_id\",\"url\":\"KrulI7-ilUtDZHUDdioQkxWxL6o47Mhb-mT5uafjnho\",\"key\":\"LOVECLUB\",\"createtime\":\"2018-05-17 15:32:07\",\"updatetime\":\"2018-05-17 15:32:07\",\"appid\":\"wxf42302be9b7152f8\",\"cid\":12}', '2018-05-17 15:32:07');
+INSERT INTO `we_log` VALUES ('9', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"12\",\"sort\":0,\"status\":1,\"id\":205,\"parentid\":0,\"type\":\"media_id\",\"url\":\"KrulI7-ilUtDZHUDdioQkxWxL6o47Mhb-mT5uafjnho\",\"key\":\"LOVECLUB\",\"updatetime\":\"2018-05-17 15:32:33\"}', '2018-05-17 15:32:33');
+INSERT INTO `we_log` VALUES ('10', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"12\",\"sort\":0,\"status\":1,\"id\":205,\"parentid\":0,\"type\":\"media_id\",\"url\":\"KyLKdTqiKZqw5kq6Vz487Lz6QwXz5FhNbKS6AAzP8WU\",\"key\":\"\\u4f60\\u79bb\\u4eba\\u751f\\u5dc5\\u5cf0\\uff0c\\u53ea\\u5dee\\u4e00\\u4e2a\\u597d\\u57fa\\u53cb\\u7684\\u8ddd\\u79bb\\uff01\",\"updatetime\":\"2018-05-17 15:40:30\"}', '2018-05-17 15:40:30');
+INSERT INTO `we_log` VALUES ('11', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 15:41:03');
+INSERT INTO `we_log` VALUES ('12', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 15:54:39');
+INSERT INTO `we_log` VALUES ('13', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:22:01');
+INSERT INTO `we_log` VALUES ('14', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:22:56');
+INSERT INTO `we_log` VALUES ('15', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong2登录', '2018-05-17 16:23:30');
+INSERT INTO `we_log` VALUES ('16', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:24:12');
+INSERT INTO `we_log` VALUES ('17', 'wxf42302be9b7152f8', '1', '添加菜单', 'Menu/addMenu/error', '添加菜单成功', '{\"buttonname\":\"123\",\"sort\":\"\",\"status\":1,\"parentid\":0,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBs12Q84mJ_q2WJD6F73Rj6n0\",\"key\":\"123\",\"createtime\":\"2018-05-17 16:25:57\",\"updatetime\":\"2018-05-17 16:25:57\",\"appid\":\"wxf42302be9b7152f8\",\"cid\":12}', '2018-05-17 16:25:57');
+INSERT INTO `we_log` VALUES ('18', 'wx7ad4ce9789a311ea3', '2', '公众号配置修改', 'Config/updateConfig', '修改成功', '{\"name\":\"songphper\",\"id\":\"29\",\"wechatid\":\"songphper\",\"appid\":\"wx7ad4ce9789a311ea\",\"appsecret\":\"67083c9d2d66055bdea6a20b63edcb3c\",\"token\":\"songphper\",\"encodingaeskey\":\"\",\"uid\":2,\"updatetime\":\"2018-05-17 16:28:52\"}', '2018-05-17 16:28:52');
+INSERT INTO `we_log` VALUES ('19', 'wx7ad4ce9789a311ea', '2', '公众号配置修改', 'Config/updateConfig', '修改成功', '{\"name\":\"fdsfd\",\"id\":\"30\",\"wechatid\":\"fsdfsd\",\"appid\":\"wx7ad4ce9789a311ea\",\"appsecret\":\"fdsafdasfdsaf\",\"token\":\"fdsf\",\"encodingaeskey\":\"sfds\",\"uid\":2,\"updatetime\":\"2018-05-17 16:29:00\"}', '2018-05-17 16:29:00');
+INSERT INTO `we_log` VALUES ('20', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"FfaXbaQsGS70LzSCGHZDMWCRZXm_1T0nPTc6hLzIXgU\",\"key\":\"H5\\u7b56\\u5212\\uff0c\\u4f60\\u77e5\\u9053\\u4f60\\u7684\\u7528\\u6237\\u6b63\\u5728\\u60f3\\u4ec0\\u4e48\\u5417\\uff1f\",\"updatetime\":\"2018-05-17 16:30:47\"}', '2018-05-17 16:30:47');
+INSERT INTO `we_log` VALUES ('21', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:31:38');
+INSERT INTO `we_log` VALUES ('22', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:34:34');
+INSERT INTO `we_log` VALUES ('23', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"KrulI7-ilUtDZHUDdioQkxWxL6o47Mhb-mT5uafjnho\",\"key\":\"LOVECLUB\",\"updatetime\":\"2018-05-17 16:35:19\"}', '2018-05-17 16:35:19');
+INSERT INTO `we_log` VALUES ('24', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBs90HZGRvKIe7Np9UD0vfG7s\",\"key\":\"\\u600e\\u6837\\u5199\\u51fa\\u8f6c\\u53d1\\u66b4\\u589e\\u7684\\u793e\\u4ea4\\u6587\\u6848\\uff1f\",\"updatetime\":\"2018-05-17 16:35:47\"}', '2018-05-17 16:35:47');
+INSERT INTO `we_log` VALUES ('25', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBs90HZGRvKIe7Np9UD0vfG7s\",\"key\":\"\\u600e\\u6837\\u5199\\u51fa\\u8f6c\\u53d1\\u66b4\\u589e\\u7684\\u793e\\u4ea4\\u6587\\u6848\\uff1f\",\"updatetime\":\"2018-05-17 16:36:29\"}', '2018-05-17 16:36:29');
+INSERT INTO `we_log` VALUES ('26', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg\",\"key\":\"\\u65b0\\u5a92\\u4f53\\u8425\\u9500\\uff0c\\u8fd9\\u4e9b\\u6e20\\u9053\\u73a9\\u6cd5\\u4f60\\u90fd\\u505a\\u4e86\\u5417\\uff1f\",\"updatetime\":\"2018-05-17 16:36:41\"}', '2018-05-17 16:36:41');
+INSERT INTO `we_log` VALUES ('27', 'wxf42302be9b7152f8', '1', '删除自动回复', 'Autoreply/delReply', '删除成功', '', '2018-05-17 16:37:45');
+INSERT INTO `we_log` VALUES ('28', 'wxf42302be9b7152f8', '1', '删除自动回复', 'Autoreply/delReply', '删除成功', '', '2018-05-17 16:38:28');
+INSERT INTO `we_log` VALUES ('29', 'wxf42302be9b7152f8', '1', '添加自动回复', 'Autoreply/addReply', '添加成功', '', '2018-05-17 16:40:59');
+INSERT INTO `we_log` VALUES ('30', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong2登录', '2018-05-17 16:41:27');
+INSERT INTO `we_log` VALUES ('31', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 16:44:08');
+INSERT INTO `we_log` VALUES ('32', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong2登录', '2018-05-17 16:46:24');
+INSERT INTO `we_log` VALUES ('33', 'wxf42302be9b7152f8', '1', '添加自动回复', 'Autoreply/addReply', '添加成功', '', '2018-05-17 16:46:37');
+INSERT INTO `we_log` VALUES ('34', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 17:05:07');
+INSERT INTO `we_log` VALUES ('35', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-17 17:05:24');
 
 -- ----------------------------
 -- Table structure for we_material
@@ -350,7 +387,7 @@ CREATE TABLE `we_menu` (
   `updatetime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `index_appid` (`appid`)
-) ENGINE=InnoDB AUTO_INCREMENT=182 DEFAULT CHARSET=utf8 COMMENT='自定义菜单表';
+) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8 COMMENT='自定义菜单表';
 
 -- ----------------------------
 -- Records of we_menu
@@ -363,27 +400,29 @@ INSERT INTO `we_menu` VALUES ('73', '27', '1231', '小程序', 'miniprogram', 'f
 INSERT INTO `we_menu` VALUES ('105', '29', 'wx7ad4ce9789a311ea3', '顶级菜单', 'show', '', '', '0', '0', '1', '2018-05-11 16:46:37', '2018-05-11 16:46:37');
 INSERT INTO `we_menu` VALUES ('106', '29', 'wx7ad4ce9789a311ea3', '百度一下', 'view', '', 'http://www.baidu.com', '105', '0', '1', '2018-05-11 16:46:53', '2018-05-11 16:46:53');
 INSERT INTO `we_menu` VALUES ('107', '29', 'wx7ad4ce9789a311ea3', '百度两下', 'view', '', 'http://www.baidu.com', '105', '0', '1', '2018-05-11 16:47:33', '2018-05-11 16:47:33');
-INSERT INTO `we_menu` VALUES ('142', '0', 'wx7ad4ce9789a311ea', '消费', 'show', '', '', '0', '0', '1', '2018-05-11 17:32:21', '2018-05-11 17:32:36');
-INSERT INTO `we_menu` VALUES ('143', '0', 'wx7ad4ce9789a311ea', '信用卡', 'view', '', 'https://mp.weixin.qq.com/mp/homepage?__biz=MzIwNTMzMDQyOQ==&hid=3&sn=aceac7d43b7fbacc9f59827ef749895e&scene=18&uin=&key=&devicetype=Windows+10&version=620502c8&lang=zh_CN&ascene=7&winzoom=1', '142', '2', '1', '2018-05-11 17:32:22', '2018-05-14 17:26:36');
-INSERT INTO `we_menu` VALUES ('144', '0', 'wx7ad4ce9789a311ea', '消费避雷区', 'view', '', 'https://mp.weixin.qq.com/mp/homepage?__biz=MzIwNTMzMDQyOQ==&hid=4&sn=d1e7ff93317f3ec19ed2856b4bcc9261&scene=18&uin=&key=&devicetype=Windows+10&version=620502c8&lang=zh_CN&ascene=7&winzoom=1', '142', '0', '1', '2018-05-11 17:32:22', '2018-05-11 17:32:22');
-INSERT INTO `we_menu` VALUES ('145', '0', 'wx7ad4ce9789a311ea', '会员卡权益', 'view', '', 'http://m.zwmedia.com.cn/vip/public/index.php', '142', '0', '1', '2018-05-11 17:32:22', '2018-05-11 17:32:22');
-INSERT INTO `we_menu` VALUES ('146', '1', 'wx7ad4ce9789a311ea', '12', 'miniprogram', '1', '1;1', '142', '0', '1', '2018-05-14 11:03:49', '2018-05-14 15:21:41');
-INSERT INTO `we_menu` VALUES ('150', '1', 'wx7ad4ce9789a311ea', '小程序', 'show', '1', '1;1', '0', '0', '1', '2018-05-14 15:21:16', '2018-05-14 17:20:11');
-INSERT INTO `we_menu` VALUES ('151', '0', 'wxf42302be9b7152f8', '案例赏', 'show', '', '', '0', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('152', '0', 'wxf42302be9b7152f8', '互动H5', 'view', '', 'http://m.zwmedia.com.cn/highlander0321', '151', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('153', '0', 'wxf42302be9b7152f8', '奇妙H5', 'view', '', 'http://m.zwmedia.com.cn/zx150925', '151', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('154', '0', 'wxf42302be9b7152f8', '酷炫H5', 'view', '', 'http://landingpage.hdtmedia.com/youyiku', '151', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('155', '0', 'wxf42302be9b7152f8', '掌握案例秀', 'media_id', '', 'PVEYnlT-wOoTU7NC_kIafeM8maG31Dwpn1Qg8CcfA00', '151', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('156', '0', 'wxf42302be9b7152f8', '行业案例赏', 'view', '', 'http://m.zwmedia.com.cn/Levin0514', '151', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('157', '0', 'wxf42302be9b7152f8', '掌握秀', 'show', '', '', '0', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('158', '0', 'wxf42302be9b7152f8', '掌握简介', 'view', '', 'http://vurl.cn/OGMyN', '157', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('159', '0', 'wxf42302be9b7152f8', '了解更多', 'view', '', 'http://www.zwmedia.com.cn/', '157', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('160', '0', 'wxf42302be9b7152f8', '测试子菜单', 'view', '', 'http://www.baidu.com', '157', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:38');
-INSERT INTO `we_menu` VALUES ('161', '0', 'wxf42302be9b7152f8', '图文消息', 'show', '', '', '0', '0', '1', '2018-05-15 17:30:38', '2018-05-15 17:30:51');
-INSERT INTO `we_menu` VALUES ('173', '33', 'wx7ad4ce9789a311ea', 'we', 'show', '', '', '0', '1', '1', '2018-05-16 15:42:08', '2018-05-16 15:42:08');
-INSERT INTO `we_menu` VALUES ('174', '33', 'wx7ad4ce9789a311ea', '123', 'view', '', '123', '173', '123', '1', '2018-05-16 15:55:45', '2018-05-16 15:55:45');
-INSERT INTO `we_menu` VALUES ('176', '33', 'wx7ad4ce9789a311ea', '213', 'view', '', '213', '150', '123', '1', '2018-05-16 15:56:09', '2018-05-16 15:56:09');
-INSERT INTO `we_menu` VALUES ('181', '12', 'wxf42302be9b7152f8', '1', 'media_id', '怎样写出转发暴增的社交文案？', 'fjXYanzKvnxn-F-BJ_OBs90HZGRvKIe7Np9UD0vfG7s', '161', '0', '1', '2018-05-16 17:26:30', '2018-05-16 17:26:30');
+INSERT INTO `we_menu` VALUES ('182', '35', ' wxfede681f96a1c9a6', '123', 'show', '', '', '0', '0', '1', '2018-05-17 09:44:07', '2018-05-17 09:44:07');
+INSERT INTO `we_menu` VALUES ('184', '0', 'wx7ad4ce9789a311ea', '消费', 'show', '', '', '0', '0', '1', '2018-05-17 13:44:24', '2018-05-17 13:44:24');
+INSERT INTO `we_menu` VALUES ('185', '0', 'wx7ad4ce9789a311ea', '信用卡', 'view', '', 'https://mp.weixin.qq.com/mp/homepage?__biz=MzIwNTMzMDQyOQ==&hid=3&sn=aceac7d43b7fbacc9f59827ef749895e&scene=18&uin=&key=&devicetype=Windows+10&version=620502c8&lang=zh_CN&ascene=7&winzoom=1', '184', '0', '1', '2018-05-17 13:44:24', '2018-05-17 13:44:24');
+INSERT INTO `we_menu` VALUES ('186', '0', 'wx7ad4ce9789a311ea', '消费避雷区', 'view', '', 'https://mp.weixin.qq.com/mp/homepage?__biz=MzIwNTMzMDQyOQ==&hid=4&sn=d1e7ff93317f3ec19ed2856b4bcc9261&scene=18&uin=&key=&devicetype=Windows+10&version=620502c8&lang=zh_CN&ascene=7&winzoom=1', '184', '90', '1', '2018-05-17 13:44:24', '2018-05-17 13:45:19');
+INSERT INTO `we_menu` VALUES ('187', '0', 'wx7ad4ce9789a311ea', '会员卡权益', 'view', '', 'http://m.zwmedia.com.cn/vip/public/index.php', '184', '100', '1', '2018-05-17 13:44:24', '2018-05-17 13:45:10');
+INSERT INTO `we_menu` VALUES ('188', '0', 'wx7ad4ce9789a311ea', '顶级菜', 'show', '', '', '0', '100', '1', '2018-05-17 13:44:24', '2018-05-17 15:08:27');
+INSERT INTO `we_menu` VALUES ('189', '0', 'wx7ad4ce9789a311ea', '测试子菜单', 'view', '', 'http://www.baidu.com', '188', '0', '1', '2018-05-17 13:44:24', '2018-05-17 13:44:24');
+INSERT INTO `we_menu` VALUES ('204', '35', ' wxfede681f96a1c9a6', '图文', 'media_id', 'H5策划，你知道你的用户正在想什么吗？', 'FfaXbaQsGS70LzSCGHZDMWCRZXm_1T0nPTc6hLzIXgU', '0', '1', '1', '2018-05-17 14:59:33', '2018-05-17 15:00:17');
+INSERT INTO `we_menu` VALUES ('220', '0', 'wxf42302be9b7152f8', '案例赏', 'show', '', '', '0', '0', '1', '2018-05-17 16:23:22', '2018-05-17 16:23:22');
+INSERT INTO `we_menu` VALUES ('221', '0', 'wxf42302be9b7152f8', '互动H5', 'view', '', 'http://m.zwmedia.com.cn/highlander0321', '220', '0', '1', '2018-05-17 16:23:22', '2018-05-17 16:23:22');
+INSERT INTO `we_menu` VALUES ('222', '0', 'wxf42302be9b7152f8', '奇妙H5', 'view', '', 'http://m.zwmedia.com.cn/zx150925', '220', '0', '1', '2018-05-17 16:23:22', '2018-05-17 16:23:22');
+INSERT INTO `we_menu` VALUES ('223', '0', 'wxf42302be9b7152f8', '酷炫H5', 'view', '', 'http://landingpage.hdtmedia.com/youyiku', '220', '0', '1', '2018-05-17 16:23:22', '2018-05-17 16:23:22');
+INSERT INTO `we_menu` VALUES ('224', '0', 'wxf42302be9b7152f8', '掌握案例秀', 'media_id', '', 'PVEYnlT-wOoTU7NC_kIafeM8maG31Dwpn1Qg8CcfA00', '220', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('225', '0', 'wxf42302be9b7152f8', '行业案例赏', 'view', '', 'http://m.zwmedia.com.cn/Levin0514', '220', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('226', '0', 'wxf42302be9b7152f8', '掌握秀', 'show', '', '', '0', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('227', '0', 'wxf42302be9b7152f8', '掌握简介', 'view', '', 'http://vurl.cn/OGMyN', '226', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('228', '0', 'wxf42302be9b7152f8', '了解更多', 'view', '', 'http://www.zwmedia.com.cn/', '226', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('229', '0', 'wxf42302be9b7152f8', '测试子菜单', 'view', '', 'http://www.baidu.com', '226', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('230', '0', 'wxf42302be9b7152f8', '123', 'show', '', '', '0', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('231', '0', 'wxf42302be9b7152f8', '跳转小程序', 'miniprogram', '', 'http://www.baidu.com', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('232', '0', 'wxf42302be9b7152f8', '社群商业', 'media_id', '', 'THQtp_Cmk9MLUuNsNe0R3_el62o_UGFfhaqJyrN88us', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('233', '0', 'wxf42302be9b7152f8', 'wechat', 'media_id', '', 'zoz1HFDY1FCTuQ_5uE5Q227K-DqmGxfMZS-jYUW2I5o', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
+INSERT INTO `we_menu` VALUES ('234', '12', 'wxf42302be9b7152f8', '123', 'media_id', '新媒体营销，这些渠道玩法你都做了吗？', 'fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg', '0', '0', '1', '2018-05-17 16:25:57', '2018-05-17 16:36:41');
 
 -- ----------------------------
 -- Table structure for we_server_log
@@ -511,9 +550,7 @@ CREATE TABLE `we_wechat_config` (
 -- ----------------------------
 -- Records of we_wechat_config
 -- ----------------------------
-INSERT INTO `we_wechat_config` VALUES ('12', '1', '掌握传媒', '12345', 'wxf42302be9b7152f8', 'fae546a19b3112151ed598ba1c293bfd', 'zwmediatoken', '124222', '1', '', '2018-05-02 10:33:34', '2018-05-16 17:14:41');
-INSERT INTO `we_wechat_config` VALUES ('29', '2', 'songphper', 'songphper', 'wx7ad4ce9789a311ea3', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '1', '', '2018-05-10 10:44:04', '2018-05-11 16:52:01');
-INSERT INTO `we_wechat_config` VALUES ('30', '2', 'fdsfd', 'fsdfsd', 'wx7ad4ce9789a311ea2', 'fdsafdasfdsaf', 'fdsf', 'sfds', '0', '', '2018-05-10 11:33:06', '2018-05-11 16:52:01');
+INSERT INTO `we_wechat_config` VALUES ('12', '1,2', '掌握传媒', '12345', 'wxf42302be9b7152f8', 'fae546a19b3112151ed598ba1c293bfd', 'zwmediatoken', '124222', '1', '', '2018-05-02 10:33:34', '2018-05-17 15:11:47');
 INSERT INTO `we_wechat_config` VALUES ('31', '3', 'new测试的公众号', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '1', '', '2018-05-10 16:19:43', '2018-05-11 10:12:31');
-INSERT INTO `we_wechat_config` VALUES ('33', '1', '无脸测试', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/WLCS', '2018-05-14 16:17:54', '2018-05-16 17:14:41');
-INSERT INTO `we_wechat_config` VALUES ('35', '1', '上头DOTA欢乐送', 'gh_73f3f4ffb18c', ' wxfede681f96a1c9a6', '8d7dbf7d2c37d91b047dce7b0f80c968', 'qwert', 'h3ulY8VjLY7Rt52oIARdncto8owsx77RoEIW3oY7Bw9', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/STDOTAHLS', '2018-05-16 10:43:03', '2018-05-16 17:14:41');
+INSERT INTO `we_wechat_config` VALUES ('33', '1', '无脸测试', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/WLCS', '2018-05-14 16:17:54', '2018-05-17 15:11:47');
+INSERT INTO `we_wechat_config` VALUES ('35', '1', '上头DOTA欢乐送', 'gh_73f3f4ffb18c', ' wxfede681f96a1c9a6', '8d7dbf7d2c37d91b047dce7b0f80c968', 'qwert', 'h3ulY8VjLY7Rt52oIARdncto8owsx77RoEIW3oY7Bw9', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/STDOTAHLS', '2018-05-16 10:43:03', '2018-05-17 15:11:47');

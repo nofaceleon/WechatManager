@@ -38,17 +38,16 @@ class Userauth extends Common
     /**
      * 新增规则
      */
-    public function addauth()
+    public function addAuth()
     {
-
-        $this->userAuth('action');
+        
 
     }
 
     /**
      * 编辑规则
      */
-    public function editauth()
+    public function editAuth()
     {
 
         $id = input('param.id',0);
@@ -62,7 +61,7 @@ class Userauth extends Common
     /**
      * 删除规则
      */
-    public function delauth()
+    public function delAuth()
     {
 
 

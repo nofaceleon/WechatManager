@@ -16,10 +16,7 @@ namespace think;
 require __DIR__ . '/../thinkphp/base.php';
 
 
-
-define('CAPTCHA',false); //是否显示极验验证码
+define('DEBUG_MODEL',true); //是否是测试环境
 define('CONFIG_URL','http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/'); //配置默认的网站域名
-
-
 // 执行应用并响应
 Container::get('app')->run()->send();

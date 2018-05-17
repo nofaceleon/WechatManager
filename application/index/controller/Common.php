@@ -24,8 +24,8 @@ class Common extends Controller
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
         $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
-        //api身份验证
-        $this->authApi();
+
+        
 
         //接口权限认证 (common里面不验证)
         //$this->userAuth(); //默认是对控制器进行验证
@@ -38,7 +38,7 @@ class Common extends Controller
     protected function userAuth($type = 'controller')
     {
 
-        return; //临时关闭权限认证
+        //return; //临时关闭权限认证
         //在Common中加上权限认证
         $UserAuth = new Auth();
         //默认是对控制器进行验证
@@ -47,8 +47,12 @@ class Common extends Controller
         } else {
             $authname = Request::module() . '/' . Request::controller() . '/' . Request::action();
         }
+
+        filedebug('验证的规则 = '.$authname);
+
         //验证当前访问的用户是否有访问的某控制器的权限
         if (!$UserAuth->check($authname, $this->userid)) {
+            filedebug('没有权限');
             //如果是ajax请求就返回json格式的数据
             $response = [
                 'status' => 0,

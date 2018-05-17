@@ -21,21 +21,7 @@ class Login extends Controller
     public function __construct()
     {
         parent::__construct();
-        //验证API信息
-        //$timestamp = input('post.time', '');
-        //$apitoken = input('post.apitoken', '');
-        //在通用方法中对API安全进行验证
-        //$authres = authApiToken($timestamp,$apitoken);
 
-        //$authres = 1;测试的时候不验证api
-
-//        if(!$authres){
-//            $response = [
-//                'status' => 0,
-//                'msg' => 'api auth failed'
-//            ];
-//            exit(json_encode($response));
-//        }
 
     }
 
@@ -47,32 +33,6 @@ class Login extends Controller
     {
         $username = input('post.username', '');
         $pwd = input('post.pwd', '');
-//        $timestamp = input('post.time', '');
-//        $apitoken = input('post.apitoken', '');
-//
-//        $authres = authApiToken($timestamp,$apitoken);
-//        if(!$authres){
-//            $response = [
-//                'status' => 0,
-//                'msg' => 'api auth failed'
-//            ];
-//            return json($response);
-//        }
-
-        if (CAPTCHA) {
-            //验证验证码是否正确
-            $result = VerifyLoginServlet($_POST['geetest_challenge'], $_POST['geetest_validate'], $_POST['geetest_seccode']);
-            if (!$result) {
-                //验证码验证不通过
-                $response = [
-                    'status' => 0,
-                    'msg' => '请先点按钮验证再获取验证码!'
-                ];
-                return json($response);
-
-            }
-        }
-
         if (empty($username) || empty($pwd)) {
             $response = [
                 'status' => 2,
@@ -92,6 +52,9 @@ class Login extends Controller
                     'status' => 1,
                     'msg' => '登录成功!'
                 ];
+
+                doLog('用户登录','登录成功',$username.'登录','Login/userLogin');
+
                 //将登录的用户名存入session中
 
                 $alluserinfo = [
@@ -133,25 +96,5 @@ class Login extends Controller
     }
 
 
-    /**
-     * 极验验证码
-     */
-    public function GeetTest()
-    {
-        //获取极验验证码的配置文件
-        $GtSdk = new GeetestLib(config('myconfig.CAPTCHA_ID'), config('myconfig.PRIVATE_KEY'));
-        $data = array(
-            "user_id" => session_id(), # 网站用户id
-            "client_type" => "web", #web:电脑上的浏览器；h5:手机上的浏览器，包括移动应用内完全内置的web_view；native：通过原生SDK植入APP应用的方式
-            "ip_address" => Request::ip() # 请在此处传输用户请求验证时所携带的IP
-        );
-        $status = $GtSdk->pre_process($data, 1);
-
-        Session::set('gtserver', $status);
-        Session::set('user_id', $data['user_id']);
-
-        echo $GtSdk->get_response_str();
-        exit();
-    }
 
 }

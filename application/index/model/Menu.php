@@ -32,7 +32,7 @@ class Menu extends Model
         //查询出所有的菜单选项
         $map['appid'] = $appid;
         $map['parentid'] = 0;
-        $menuinfo = $this->where($map)->select()->toArray();
+        $menuinfo = $this->where($map)->order('sort desc')->select()->toArray();
         if(empty($menuinfo)){
             return [];
         }

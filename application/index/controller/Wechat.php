@@ -27,18 +27,21 @@ class Wechat extends Common
      */
     public function createMenu()
     {
+
+        $this->userAuth('action');
+
         //先查出顶级菜单
         $MenuModel = model('Menu');
         $map['parentid'] = 0;
         $map['status'] = 1;
         $map['appid'] = $this->wechatconfig['appid'];
-        $mainbutton = $MenuModel->where($map)->select()->toArray(); //根据为微信公众号的appid查询出对应的菜单(顶级菜单)
+        $mainbutton = $MenuModel->where($map)->order('sort desc')->select()->toArray(); //根据为微信公众号的appid查询出对应的菜单(顶级菜单)
 
         $finall = [];
         foreach ($mainbutton as $k => $v) {
             //查询出所有的子按钮
             $main[$k]['name'] = $v['buttonname'];
-            $childbutton = $MenuModel->where(['parentid' => $v['id'], 'status' => 1])->select()->toArray(); //转换成数组格式的数据,tp5使用模型进行select查询的时候返回的是对象格式的数据
+            $childbutton = $MenuModel->where(['parentid' => $v['id'], 'status' => 1])->order('sort desc')->select()->toArray(); //转换成数组格式的数据,tp5使用模型进行select查询的时候返回的是对象格式的数据
 
             if (empty($childbutton)) {
                 //说明没有子按钮
@@ -95,6 +98,8 @@ class Wechat extends Common
                 'msg' => '推送成功!',
             ];
 
+            doLog('推送菜单','推送成功','','Wechat/createMenu',$this->wechatconfig['appid'],$this->userid);
+
 
             //推送成功后把当前是哪个用户推送的操作记录写入数据库日志中
 
@@ -104,6 +109,10 @@ class Wechat extends Common
                 'status' => 0,
                 'msg' => '推送失败:' . $this->weixin->errMsg,
             ];
+
+            doLog('推送菜单','推送失败',$this->weixin->errMsg,'Wechat/createMenu/error',$this->wechatconfig['appid'],$this->userid);
+
+
         }
 
         return json($response);
@@ -117,6 +126,8 @@ class Wechat extends Common
      */
     public function getMenu()
     {
+
+        $this->userAuth('action');
 
         $menuinfo = $this->weixin->getMenu();
 
@@ -211,6 +222,8 @@ class Wechat extends Common
             'status' => 1,
             'msg' => '成功添加' . $successnum . '条数据,失败' . $errornum . '条',
         ];
+
+
         return json($response);
     }
 
@@ -220,8 +233,7 @@ class Wechat extends Common
      */
     public function getTempListInfo()
     {
-
-        if (!Request::isAjax()) return;
+        
         $this->userAuth('action');//这个方法中加入权限控制
         //从微信服务器中获取模板列表
         $templist = $this->weixin->getTempList();
@@ -286,8 +298,6 @@ class Wechat extends Common
      */
     public function pushTemMsg()
     {
-
-
         $this->userAuth('action');
         $alldata = $_POST; //使用原生的获取提交的信息,防止一些数据被过滤掉
         if (empty($alldata)) {
@@ -394,13 +404,14 @@ class Wechat extends Common
         //创建数据成功
         $res = $temppushlogmodel->insert($info);
 
-        if (!empty($errorarr)) {
-            //循环记录错误日志信息
-            foreach ($errorarr as $k => $v) {
-                doLog($this->wechatconfig['appid'], $res, '推送模板消息失败', "$v", 'pushTemMsg', __CLASS__);
-            }
-
-        }
+//        if (!empty($errorarr)) {
+//            //循环记录错误日志信息
+//
+//            foreach ($errorarr as $k => $v) {
+//                //
+//            }
+//
+//        }
 
         if ($res) {
             //添加数据成功
@@ -475,6 +486,9 @@ class Wechat extends Common
                 'status' => 0,
                 'msg' => $this->weixin->errMsg
             ];
+
+            doLog('生成二维码','生成失败',$this->weixin->errMsg,'Wechat/createQRcode/error',$this->wechatconfig['appid'],$this->userid);
+
         }
         return json($response);
 
@@ -587,7 +601,10 @@ class Wechat extends Common
     public function getNews()
     {
 
-        $res = Cache::get('newslist');
+
+        $cache_name = 'newslist_'.$this->wechatconfig['appid'];
+
+        $res = Cache::get($cache_name);//先看看缓存中是否有数据
         if(!empty($res)){
             $data = json_decode($res,true);
         }else{
@@ -602,11 +619,14 @@ class Wechat extends Common
 
             if(empty($newscount)){
                 $response = [
-                    'status' => 0,
-                    'msg' => '没有数据'
+                    'status' => 1,
+                    'list' => [], //没有数据给个空数组
                 ];
+                //Cache::set('newslist',json_encode([]),30*60); //使用文件缓存30分钟
                 return json($response);
             }
+
+            if($newscount > 50) $newscount = 50; //限制只取50条,时间太久远的图文消息就不去查询了
 
             $material = $this->weixin->getForeverList($type,$offset,$newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
 
@@ -618,7 +638,7 @@ class Wechat extends Common
             }
 
             //这边对数据进行缓存
-            Cache::set('newslist',json_encode($data),30*60); //使用文件缓存30分钟
+            Cache::set($cache_name,json_encode($data),30*60); //使用文件缓存30分钟
         }
 
         $response = [
