@@ -180,8 +180,6 @@ class Menu extends Common
         $data['createtime'] = date('Y-m-d H:i:s');
         $data['updatetime'] = date('Y-m-d H:i:s');
         $data['appid'] = $this->wechatconfig['appid'];
-        $data['cid'] = $this->wechatconfig['id'];
-
         if (isset($data['miniprogramurl']) && !empty($data['miniprogramurl'])) {
             $data['url'] = $data['url'] . ';' . $data['miniprogramurl']; //使用 //TODO 这边之后应该改成存储json格式的数据
             unset($data['miniprogramurl']);

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50714
 File Encoding         : 65001
 
-Date: 2018-05-17 17:28:31
+Date: 2018-05-18 18:25:50
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,14 +25,17 @@ CREATE TABLE `we_auth_group` (
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `rules` char(80) NOT NULL DEFAULT '0' COMMENT '用户拥有的权限',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户组的权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='用户组的权限表';
 
 -- ----------------------------
 -- Records of we_auth_group
 -- ----------------------------
 INSERT INTO `we_auth_group` VALUES ('1', '超级管理员', '1', '1,2,3,4,5,6,7,8,9,10,11,12');
-INSERT INTO `we_auth_group` VALUES ('2', '普通管理员', '1', '1,2,4,5');
+INSERT INTO `we_auth_group` VALUES ('2', '普通管理员', '1', '1,2');
 INSERT INTO `we_auth_group` VALUES ('3', '普通用户', '1', '0');
+INSERT INTO `we_auth_group` VALUES ('5', '12', '1', '1,2,3,4,5,6,7,8,9,10,11,12');
+INSERT INTO `we_auth_group` VALUES ('6', '123555', '1', '2,3');
+INSERT INTO `we_auth_group` VALUES ('10', 'werere', '1', '0');
 
 -- ----------------------------
 -- Table structure for we_auth_group_access
@@ -46,7 +49,7 @@ CREATE TABLE `we_auth_group_access` (
   UNIQUE KEY `uid_group_id` (`uid`,`group_id`),
   KEY `uid` (`uid`),
   KEY `group_id` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='每个用户所属的权限组的表';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='每个用户所属的权限组的表';
 
 -- ----------------------------
 -- Records of we_auth_group_access
@@ -54,6 +57,24 @@ CREATE TABLE `we_auth_group_access` (
 INSERT INTO `we_auth_group_access` VALUES ('1', '1', '1');
 INSERT INTO `we_auth_group_access` VALUES ('2', '2', '2');
 INSERT INTO `we_auth_group_access` VALUES ('3', '3', '3');
+INSERT INTO `we_auth_group_access` VALUES ('4', '4', '1');
+INSERT INTO `we_auth_group_access` VALUES ('5', '5', '3');
+INSERT INTO `we_auth_group_access` VALUES ('6', '6', '3');
+INSERT INTO `we_auth_group_access` VALUES ('7', '7', '1');
+INSERT INTO `we_auth_group_access` VALUES ('8', '8', '1');
+INSERT INTO `we_auth_group_access` VALUES ('9', '9', '1');
+INSERT INTO `we_auth_group_access` VALUES ('10', '10', '1');
+INSERT INTO `we_auth_group_access` VALUES ('11', '11', '1');
+INSERT INTO `we_auth_group_access` VALUES ('20', '12', '1');
+INSERT INTO `we_auth_group_access` VALUES ('12', '13', '1');
+INSERT INTO `we_auth_group_access` VALUES ('13', '14', '1');
+INSERT INTO `we_auth_group_access` VALUES ('14', '15', '1');
+INSERT INTO `we_auth_group_access` VALUES ('15', '16', '1');
+INSERT INTO `we_auth_group_access` VALUES ('16', '17', '3');
+INSERT INTO `we_auth_group_access` VALUES ('17', '18', '1');
+INSERT INTO `we_auth_group_access` VALUES ('18', '19', '1');
+INSERT INTO `we_auth_group_access` VALUES ('19', '20', '1');
+INSERT INTO `we_auth_group_access` VALUES ('21', '21', '3');
 
 -- ----------------------------
 -- Table structure for we_auth_rule
@@ -76,7 +97,7 @@ CREATE TABLE `we_auth_rule` (
 INSERT INTO `we_auth_rule` VALUES ('1', 'index/Config/updateConfig', '修改公众号配置', '1', '1', '');
 INSERT INTO `we_auth_rule` VALUES ('2', 'index/Config/addConfig', '添加公众号配置', '1', '1', '');
 INSERT INTO `we_auth_rule` VALUES ('3', 'index/Config/delConfig', '删除公众号配置', '1', '1', '');
-INSERT INTO `we_auth_rule` VALUES ('4', 'inde/Menu/addMenu', '添加自定义菜单', '1', '1', '');
+INSERT INTO `we_auth_rule` VALUES ('4', 'index/Menu/addMenu', '添加自定义菜单', '1', '1', '');
 INSERT INTO `we_auth_rule` VALUES ('5', 'index/Menu/editMenu', '编辑自定义菜单', '1', '1', '');
 INSERT INTO `we_auth_rule` VALUES ('6', 'index/Menu/delMenu', '删除自定义菜单', '1', '1', '');
 INSERT INTO `we_auth_rule` VALUES ('7', 'index/Wechat/createMenu', '推送自定义菜单', '1', '1', '');
@@ -103,7 +124,7 @@ CREATE TABLE `we_auto_reply` (
   `updatetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_key_appid` (`keyword`,`appid`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COMMENT='自动回复配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COMMENT='自动回复配置表';
 
 -- ----------------------------
 -- Records of we_auto_reply
@@ -119,7 +140,6 @@ INSERT INTO `we_auto_reply` VALUES ('30', '后台管理4f', 'fdsfsdfdsfsdwwwww',
 INSERT INTO `we_auto_reply` VALUES ('32', 'test', '回复test222999999', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQGp8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyQ2UzNHc5c2JmLTExVms4V05xY1UAAgQYiPpaAwQ8AAAA\",\"qrtype\":1,\"expire\":5}', '2018-05-15 15:11:20', '2018-05-15 16:59:25');
 INSERT INTO `we_auto_reply` VALUES ('34', '1234', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEX8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAySjFWaHdNc2JmLTExMDAwMHcwN18AAgR1hfpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 15:12:26', '2018-05-15 16:41:35');
 INSERT INTO `we_auto_reply` VALUES ('36', '123', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEX8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAySjFWaHdNc2JmLTExMDAwMHcwN18AAgR1hfpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 15:35:03', '2018-05-15 15:35:03');
-INSERT INTO `we_auto_reply` VALUES ('38', '1', '1', 'text', '13', 'wxf42302be9b7152f8', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFb8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyX3hBdUlKczliRmUxMDAwMGcwNzkAAgQNnPpaAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-15 16:36:29', '2018-05-15 16:36:29');
 INSERT INTO `we_auto_reply` VALUES ('41', 'lyn', 'lyn', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEG8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyYTMyOHdac2JmLTExVnp2WGhxY1kAAgQnn-taAwQ8AAAA\",\"qrtype\":1,\"expire\":30}', '2018-05-16 11:01:59', '2018-05-16 11:01:59');
 INSERT INTO `we_auto_reply` VALUES ('42', 'nihao', '123', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQFP8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyTXFwZXdnc2JmLTExWTIzWDFxY2sAAgTGwvtaAwQ8AAAA\",\"qrtype\":1,\"expire\":30}', '2018-05-16 13:33:58', '2018-05-16 13:33:58');
 INSERT INTO `we_auto_reply` VALUES ('44', 'test10', 'fdsfdsaf', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQEk8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyWkxYOXd6c2JmLTExZDhPOE5yYzEAAgRIw-taAwQALw0A\",\"qrtype\":1,\"expire\":\"10\"}', '2018-05-16 13:36:08', '2018-05-16 13:36:08');
@@ -131,6 +151,7 @@ INSERT INTO `we_auto_reply` VALUES ('50', '258', '147', 'text', '13', 'wx7ad4ce9
 INSERT INTO `we_auto_reply` VALUES ('51', '232323232', '23213213', 'text', '13', 'wx7ad4ce9789a311ea', '1', '{\"imgurl\":\"https:\\/\\/mp.weixin.qq.com\\/cgi-bin\\/showqrcode?ticket=gQER8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyYVdnbHdmc2JmLTExMDAwMGcwN1cAAgTN3-taAwQAAAAA\",\"qrtype\":2,\"expire\":0}', '2018-05-16 15:37:49', '2018-05-16 15:40:04');
 INSERT INTO `we_auto_reply` VALUES ('52', 'testst', 'fsfdsfs', 'text', '1', 'wxf42302be9b7152f8', '1', '', '2018-05-17 16:40:59', '2018-05-17 16:40:59');
 INSERT INTO `we_auto_reply` VALUES ('53', 'fsfsdfsfds', 'fdsfdsfsdf', 'text', '1', 'wxf42302be9b7152f8', '1', '', '2018-05-17 16:46:37', '2018-05-17 16:46:37');
+INSERT INTO `we_auto_reply` VALUES ('54', '12', '12', 'text', '1', '1', '1', '', '2018-05-18 16:07:39', '2018-05-18 16:07:39');
 
 -- ----------------------------
 -- Table structure for we_event
@@ -194,7 +215,7 @@ CREATE TABLE `we_log` (
   `detail` text,
   `createtime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COMMENT='平台日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8 COMMENT='平台日志表';
 
 -- ----------------------------
 -- Records of we_log
@@ -234,6 +255,66 @@ INSERT INTO `we_log` VALUES ('32', '', '', '用户登录', 'Login/userLogin', '�
 INSERT INTO `we_log` VALUES ('33', 'wxf42302be9b7152f8', '1', '添加自动回复', 'Autoreply/addReply', '添加成功', '', '2018-05-17 16:46:37');
 INSERT INTO `we_log` VALUES ('34', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 17:05:07');
 INSERT INTO `we_log` VALUES ('35', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-17 17:05:24');
+INSERT INTO `we_log` VALUES ('36', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-17 17:35:34');
+INSERT INTO `we_log` VALUES ('37', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 17:55:41');
+INSERT INTO `we_log` VALUES ('38', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"KyLKdTqiKZqw5kq6Vz487Lz6QwXz5FhNbKS6AAzP8WU\",\"key\":\"\\u4f60\\u79bb\\u4eba\\u751f\\u5dc5\\u5cf0\\uff0c\\u53ea\\u5dee\\u4e00\\u4e2a\\u597d\\u57fa\\u53cb\\u7684\\u8ddd\\u79bb\\uff01\",\"updatetime\":\"2018-05-17 18:02:02\"}', '2018-05-17 18:02:02');
+INSERT INTO `we_log` VALUES ('39', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"FfaXbaQsGS70LzSCGHZDMWCRZXm_1T0nPTc6hLzIXgU\",\"key\":\"H5\\u7b56\\u5212\\uff0c\\u4f60\\u77e5\\u9053\\u4f60\\u7684\\u7528\\u6237\\u6b63\\u5728\\u60f3\\u4ec0\\u4e48\\u5417\\uff1f\",\"updatetime\":\"2018-05-17 18:02:30\"}', '2018-05-17 18:02:30');
+INSERT INTO `we_log` VALUES ('40', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 18:02:39');
+INSERT INTO `we_log` VALUES ('41', 'wxf42302be9b7152f8', '1', '编辑菜单', 'Menu/editMenu', '修改成功', '{\"buttonname\":\"123\",\"sort\":0,\"status\":1,\"id\":234,\"parentid\":0,\"type\":\"media_id\",\"url\":\"fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg\",\"key\":\"\\u65b0\\u5a92\\u4f53\\u8425\\u9500\\uff0c\\u8fd9\\u4e9b\\u6e20\\u9053\\u73a9\\u6cd5\\u4f60\\u90fd\\u505a\\u4e86\\u5417\\uff1f\",\"updatetime\":\"2018-05-17 18:02:58\"}', '2018-05-17 18:02:58');
+INSERT INTO `we_log` VALUES ('42', 'wxf42302be9b7152f8', '1', '修改自动回复', 'Autoreply/editReply', '修改成功', '', '2018-05-17 18:08:35');
+INSERT INTO `we_log` VALUES ('43', 'wxf42302be9b7152f8', '1', '修改自动回复', 'Autoreply/editReply', '修改成功', '', '2018-05-17 18:09:20');
+INSERT INTO `we_log` VALUES ('44', 'wxf42302be9b7152f8', '1', '修改自动回复', 'Autoreply/editReply', '修改成功', '', '2018-05-17 18:09:42');
+INSERT INTO `we_log` VALUES ('45', 'wxf42302be9b7152f8', '1', '删除自动回复', 'Autoreply/delReply', '删除成功', '', '2018-05-17 18:09:49');
+INSERT INTO `we_log` VALUES ('46', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-17 18:18:40');
+INSERT INTO `we_log` VALUES ('47', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-17 18:44:19');
+INSERT INTO `we_log` VALUES ('48', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 09:48:04');
+INSERT INTO `we_log` VALUES ('49', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 10:05:49');
+INSERT INTO `we_log` VALUES ('50', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 10:22:54');
+INSERT INTO `we_log` VALUES ('51', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-18 10:27:55');
+INSERT INTO `we_log` VALUES ('52', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 10:52:24');
+INSERT INTO `we_log` VALUES ('53', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-18 10:58:29');
+INSERT INTO `we_log` VALUES ('54', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsongnew登录', '2018-05-18 11:30:41');
+INSERT INTO `we_log` VALUES ('55', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 11:30:47');
+INSERT INTO `we_log` VALUES ('56', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 12:13:12');
+INSERT INTO `we_log` VALUES ('57', '', '', '用户登录', 'Login/userLogin', '登录成功', 'test登录', '2018-05-18 12:20:01');
+INSERT INTO `we_log` VALUES ('58', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 12:21:19');
+INSERT INTO `we_log` VALUES ('59', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 13:31:05');
+INSERT INTO `we_log` VALUES ('60', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 13:39:33');
+INSERT INTO `we_log` VALUES ('61', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 13:43:52');
+INSERT INTO `we_log` VALUES ('62', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 14:26:16');
+INSERT INTO `we_log` VALUES ('63', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 14:34:26');
+INSERT INTO `we_log` VALUES ('64', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 14:34:50');
+INSERT INTO `we_log` VALUES ('65', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 14:51:36');
+INSERT INTO `we_log` VALUES ('66', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:04:29');
+INSERT INTO `we_log` VALUES ('67', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:08:06');
+INSERT INTO `we_log` VALUES ('68', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:10:26');
+INSERT INTO `we_log` VALUES ('69', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:20:43');
+INSERT INTO `we_log` VALUES ('70', '', '', '用户登录', 'Login/userLogin', '登录成功', 'lyn登录', '2018-05-18 15:31:26');
+INSERT INTO `we_log` VALUES ('71', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:38:35');
+INSERT INTO `we_log` VALUES ('72', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:50:48');
+INSERT INTO `we_log` VALUES ('73', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 15:52:29');
+INSERT INTO `we_log` VALUES ('74', '', '', '用户登录', 'Login/userLogin', '登录成功', 'lyn登录', '2018-05-18 15:59:43');
+INSERT INTO `we_log` VALUES ('75', '', '', '用户登录', 'Login/userLogin', '登录成功', 'lyn登录', '2018-05-18 16:03:50');
+INSERT INTO `we_log` VALUES ('76', '1', '19', '添加菜单', 'Menu/addMenu/error', '添加菜单成功', '{\"buttonname\":\"1\",\"sort\":\"\",\"status\":1,\"parentid\":0,\"type\":\"show\",\"createtime\":\"2018-05-18 16:07:11\",\"updatetime\":\"2018-05-18 16:07:11\",\"appid\":\"1\"}', '2018-05-18 16:07:11');
+INSERT INTO `we_log` VALUES ('77', '1', '19', '添加菜单', 'Menu/addMenu/error', '添加菜单成功', '{\"buttonname\":\"12\",\"sort\":\"\",\"status\":1,\"parentid\":235,\"type\":\"view\",\"url\":\"12\",\"createtime\":\"2018-05-18 16:07:27\",\"updatetime\":\"2018-05-18 16:07:27\",\"appid\":\"1\"}', '2018-05-18 16:07:27');
+INSERT INTO `we_log` VALUES ('78', '1', '19', '添加自动回复', 'Autoreply/addReply', '添加成功', '', '2018-05-18 16:07:39');
+INSERT INTO `we_log` VALUES ('79', '1', '19', '公众号配置修改', 'Config/updateConfig', '修改成功', '{\"name\":\"1\",\"id\":\"37\",\"wechatid\":\"2eee222\",\"appid\":\"1\",\"appsecret\":\"1\",\"token\":\"1\",\"encodingaeskey\":\"1\",\"uid\":19,\"updatetime\":\"2018-05-18 16:07:45\"}', '2018-05-18 16:07:45');
+INSERT INTO `we_log` VALUES ('80', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 16:18:30');
+INSERT INTO `we_log` VALUES ('81', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 16:23:24');
+INSERT INTO `we_log` VALUES ('82', 'wxf42302be9b7152f8', '1', '公众号配置修改', 'Config/updateConfig', '修改成功', '{\"name\":\"\\u638c\\u63e1\\u4f20\\u5a92\",\"id\":\"12\",\"wechatid\":\"12345\",\"appid\":\"wxf42302be9b7152f8\",\"appsecret\":\"fae546a19b3112151ed598ba1c293bfd\",\"token\":\"zwmediatoken\",\"encodingaeskey\":\"12422255\",\"uid\":1,\"updatetime\":\"2018-05-18 16:24:11\"}', '2018-05-18 16:24:11');
+INSERT INTO `we_log` VALUES ('83', 'wxf42302be9b7152f8', '1', '公众号配置修改', 'Config/updateConfig', '修改成功', '{\"name\":\"\\u638c\\u63e1\\u4f20\\u5a92\",\"id\":\"12\",\"wechatid\":\"12345\",\"appid\":\"wxf42302be9b7152f8\",\"appsecret\":\"fae546a19b3112151ed598ba1c293bfd\",\"token\":\"zwmediatoken\",\"encodingaeskey\":\"565656\",\"uid\":1,\"updatetime\":\"2018-05-18 16:24:22\"}', '2018-05-18 16:24:22');
+INSERT INTO `we_log` VALUES ('84', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 16:30:02');
+INSERT INTO `we_log` VALUES ('85', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 16:30:14');
+INSERT INTO `we_log` VALUES ('86', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 16:30:29');
+INSERT INTO `we_log` VALUES ('87', 'wxf42302be9b7152f8', '1', '删除公众号配置', 'Config/delConfig', '删除成功', '', '2018-05-18 16:30:41');
+INSERT INTO `we_log` VALUES ('88', '', '', '用户登录', 'Login/userLogin', '登录成功', 'qyh登录', '2018-05-18 16:56:17');
+INSERT INTO `we_log` VALUES ('89', '1', '19', '添加公众号', 'Config/addConfig', '添加成功', '{\"name\":\"2\",\"wechatid\":\"2\",\"appid\":\"2\",\"appsecret\":\"2\",\"token\":\"2\",\"encodingaeskey\":\"2\",\"status\":0,\"uid\":19,\"createtime\":\"2018-05-18 17:51:06\",\"updatetime\":\"2018-05-18 17:51:06\",\"url\":\"http:\\/\\/uat.zwmedia.com.cn\\/jiansheng\\/WechatDevApi\\/public\\/index.php\\/2\"}', '2018-05-18 17:51:06');
+INSERT INTO `we_log` VALUES ('90', '1', '19', '删除公众号配置', 'Config/delConfig', '删除成功', '', '2018-05-18 17:58:26');
+INSERT INTO `we_log` VALUES ('91', '1', '19', '删除公众号配置', 'Config/delConfig', '删除成功', '', '2018-05-18 17:58:28');
+INSERT INTO `we_log` VALUES ('92', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 18:07:41');
+INSERT INTO `we_log` VALUES ('93', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 18:13:36');
+INSERT INTO `we_log` VALUES ('94', '', '', '用户登录', 'Login/userLogin', '登录成功', 'mrsong登录', '2018-05-18 18:14:52');
+INSERT INTO `we_log` VALUES ('95', '', '', '用户登录', 'Login/userLogin', '登录成功', 'lyn登录', '2018-05-18 18:18:24');
 
 -- ----------------------------
 -- Table structure for we_material
@@ -387,7 +468,7 @@ CREATE TABLE `we_menu` (
   `updatetime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `index_appid` (`appid`)
-) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8 COMMENT='自定义菜单表';
+) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=utf8 COMMENT='自定义菜单表';
 
 -- ----------------------------
 -- Records of we_menu
@@ -422,7 +503,9 @@ INSERT INTO `we_menu` VALUES ('230', '0', 'wxf42302be9b7152f8', '123', 'show', '
 INSERT INTO `we_menu` VALUES ('231', '0', 'wxf42302be9b7152f8', '跳转小程序', 'miniprogram', '', 'http://www.baidu.com', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
 INSERT INTO `we_menu` VALUES ('232', '0', 'wxf42302be9b7152f8', '社群商业', 'media_id', '', 'THQtp_Cmk9MLUuNsNe0R3_el62o_UGFfhaqJyrN88us', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
 INSERT INTO `we_menu` VALUES ('233', '0', 'wxf42302be9b7152f8', 'wechat', 'media_id', '', 'zoz1HFDY1FCTuQ_5uE5Q227K-DqmGxfMZS-jYUW2I5o', '230', '0', '1', '2018-05-17 16:23:23', '2018-05-17 16:23:23');
-INSERT INTO `we_menu` VALUES ('234', '12', 'wxf42302be9b7152f8', '123', 'media_id', '新媒体营销，这些渠道玩法你都做了吗？', 'fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg', '0', '0', '1', '2018-05-17 16:25:57', '2018-05-17 16:36:41');
+INSERT INTO `we_menu` VALUES ('234', '12', 'wxf42302be9b7152f8', '123', 'media_id', '新媒体营销，这些渠道玩法你都做了吗？', 'fjXYanzKvnxn-F-BJ_OBsxaGD4TR19ZWC3hRGXeWaBg', '0', '0', '1', '2018-05-17 16:25:57', '2018-05-17 18:02:58');
+INSERT INTO `we_menu` VALUES ('235', '0', '1', '1', 'show', '', '', '0', '0', '1', '2018-05-18 16:07:11', '2018-05-18 16:07:11');
+INSERT INTO `we_menu` VALUES ('236', '0', '1', '12', 'view', '', '12', '235', '0', '1', '2018-05-18 16:07:27', '2018-05-18 16:07:27');
 
 -- ----------------------------
 -- Table structure for we_server_log
@@ -512,18 +595,20 @@ CREATE TABLE `we_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(64) CHARACTER SET latin1 NOT NULL DEFAULT '' COMMENT '用户名',
   `password` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '' COMMENT '密码',
-  `group` int(11) NOT NULL DEFAULT '1' COMMENT '所属用户组',
+  `wechatconfiglist` varchar(255) DEFAULT '' COMMENT '管理的微信账号ID',
   `createtime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '创建时间',
   `updatetime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='微信管理后台用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='微信管理后台用户表';
 
 -- ----------------------------
 -- Records of we_user
 -- ----------------------------
-INSERT INTO `we_user` VALUES ('1', 'mrsong', 'ccf747447e4a6a98f07d211abd414c2892af5d76', '1', '1900-01-01 00:00:00', '1900-01-01 00:00:00');
-INSERT INTO `we_user` VALUES ('2', 'mrsong2', 'ccf747447e4a6a98f07d211abd414c2892af5d76', '1', '1900-01-01 00:00:00', '1900-01-01 00:00:00');
-INSERT INTO `we_user` VALUES ('3', 'mrsongnew', 'ccf747447e4a6a98f07d211abd414c2892af5d76', '1', '1900-01-01 00:00:00', '1900-01-01 00:00:00');
+INSERT INTO `we_user` VALUES ('1', 'mrsong', 'ccf747447e4a6a98f07d211abd414c2892af5d76', '12,31', '1900-01-01 00:00:00', '2018-05-18 16:30:36');
+INSERT INTO `we_user` VALUES ('14', 'test1232', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3', '', '2018-05-18 14:12:09', '2018-05-18 16:33:25');
+INSERT INTO `we_user` VALUES ('19', 'lyn', '7c4a8d09ca3762af61e59520943dc26494f8941b', '', '2018-05-18 15:26:01', '2018-05-18 16:30:36');
+INSERT INTO `we_user` VALUES ('20', 'qyh', '7c4a8d09ca3762af61e59520943dc26494f8941b', '', '2018-05-18 15:42:40', '2018-05-18 15:42:40');
+INSERT INTO `we_user` VALUES ('21', '111', '356a192b7913b04c54574d18c28d46e6395428ab', '', '2018-05-18 16:32:14', '2018-05-18 16:33:33');
 
 -- ----------------------------
 -- Table structure for we_wechat_config
@@ -545,12 +630,12 @@ CREATE TABLE `we_wechat_config` (
   PRIMARY KEY (`id`),
   KEY `index_appid` (`appid`),
   KEY `index_uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COMMENT='公众号配置信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COMMENT='公众号配置信息表';
 
 -- ----------------------------
 -- Records of we_wechat_config
 -- ----------------------------
-INSERT INTO `we_wechat_config` VALUES ('12', '1,2', '掌握传媒', '12345', 'wxf42302be9b7152f8', 'fae546a19b3112151ed598ba1c293bfd', 'zwmediatoken', '124222', '1', '', '2018-05-02 10:33:34', '2018-05-17 15:11:47');
-INSERT INTO `we_wechat_config` VALUES ('31', '3', 'new测试的公众号', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '1', '', '2018-05-10 16:19:43', '2018-05-11 10:12:31');
-INSERT INTO `we_wechat_config` VALUES ('33', '1', '无脸测试', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/WLCS', '2018-05-14 16:17:54', '2018-05-17 15:11:47');
-INSERT INTO `we_wechat_config` VALUES ('35', '1', '上头DOTA欢乐送', 'gh_73f3f4ffb18c', ' wxfede681f96a1c9a6', '8d7dbf7d2c37d91b047dce7b0f80c968', 'qwert', 'h3ulY8VjLY7Rt52oIARdncto8owsx77RoEIW3oY7Bw9', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/STDOTAHLS', '2018-05-16 10:43:03', '2018-05-17 15:11:47');
+INSERT INTO `we_wechat_config` VALUES ('12', '1', '掌握传媒', '12345', 'wxf42302be9b7152f8', 'fae546a19b3112151ed598ba1c293bfd', 'zwmediatoken', '565656', '1', '', '2018-05-02 10:33:34', '2018-05-18 18:09:42');
+INSERT INTO `we_wechat_config` VALUES ('31', '3', 'new测试的公众号', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '0', '', '2018-05-10 16:19:43', '2018-05-18 18:09:42');
+INSERT INTO `we_wechat_config` VALUES ('33', '1', '无脸测试', 'gh_7557b6fe18eb', 'wx7ad4ce9789a311ea', '67083c9d2d66055bdea6a20b63edcb3c', 'songphper', '', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/WLCS', '2018-05-14 16:17:54', '2018-05-18 16:23:50');
+INSERT INTO `we_wechat_config` VALUES ('35', '1', '上头DOTA欢乐送', 'gh_73f3f4ffb18c', ' wxfede681f96a1c9a6', '8d7dbf7d2c37d91b047dce7b0f80c968', 'qwert', 'h3ulY8VjLY7Rt52oIARdncto8owsx77RoEIW3oY7Bw9', '0', 'http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/STDOTAHLS', '2018-05-16 10:43:03', '2018-05-18 16:23:50');

@@ -18,3 +18,4 @@ Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
 Route::any('1', 'index/WechatServer/index?appid=1');
 Route::any('STDOTAHLS', 'index/WechatServer/index?appid= wxfede681f96a1c9a6');
 Route::any('WLCS', 'index/WechatServer/index?appid=123');
+Route::any('2', 'index/WechatServer/index?appid=2');

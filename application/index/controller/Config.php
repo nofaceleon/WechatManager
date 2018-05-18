@@ -22,16 +22,23 @@ class Config extends Common
      */
     public function index()
     {
-        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+
+        //获取该公众号的时候
+        //$configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+        if(empty($this->wechatconfiglist)){
+            $configList = [];
+        }else{
+            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
+        }
+
+        //$configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
 
         $configList = empty($configList) ? [] : $configList;
-
         $response = [
             'status' => 1,
             'msg' => '获取数据成功',
             'configlist' => $configList,
         ];
-        
         return json($response);
 
 //        if (empty($configList)) {
@@ -275,10 +282,20 @@ class Config extends Common
     public function changeAccount($id = 0)
     {
 
-        $this->userAuth('action'); //权限验证
+        //$this->userAuth('action'); //权限验证
+
         //根据ID将此ID的状态改为1,其他的状态改为0
         //先查询出所有的公众号列表
-        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+        //$configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+
+        if(empty($this->wechatconfiglist)){
+            $configList = [];
+        }else{
+            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
+        }
+
+
+
         $errornum = 0;
         $this->configModel->startTrans();//开启数据库事务
         foreach ($configList as $k => $v) {

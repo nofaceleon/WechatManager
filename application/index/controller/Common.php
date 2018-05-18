@@ -23,6 +23,7 @@ class Common extends Controller
         //$alluserinfo = Session::get('alluserinfo');
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
+        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
         $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
 
         

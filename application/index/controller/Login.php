@@ -60,7 +60,8 @@ class Login extends Controller
                 $alluserinfo = [
                     'username' => $username,
                     'userid' => $res['id'],
-                    'logintime' => time()
+                    'logintime' => time(),
+                    'wechatconfiglist' =>$res['wechatconfiglist']
                 ];
 
 //                    Session::set('wechatuser',$username);
