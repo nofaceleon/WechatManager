@@ -25,9 +25,8 @@ class Index extends Common
      */
     public function getBaseInfo()
     {
-        $data = [
-            'username' => $this->wechatuser,
-        ];
+
+        $data = $this->group_id;
         return json($data);
 
     }

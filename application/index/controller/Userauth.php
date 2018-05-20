@@ -4,8 +4,6 @@ namespace app\index\controller;
 
 use app\index\validate\UserVlidate;
 use think\Db;
-use think\facade\Request;
-use think\Validate;
 
 class Userauth extends Common
 {

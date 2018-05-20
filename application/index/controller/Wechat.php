@@ -197,7 +197,15 @@ class Wechat extends Common
                             $ch_data['appid'] = $this->wechatconfig['appid'];
                             $ch_data['buttonname'] = $v3['name'];
                             $ch_data['type'] = $type;
-                            $ch_data['url'] = $v3['url'] ?? $v3[$type];
+
+                            if(strcasecmp($type,'miniprogram') == 0){
+                                //当按钮类型是小程序的时候
+                                $ch_data['key'] = $v3['appid']; //小程序的appid
+                                $ch_data['url'] = $v3['url'].';'.$v3['pagepath'];
+                            }else{
+                                $ch_data['url'] = $v3['url'] ?? $v3[$type];
+                            }
+
                             // $ch_data['media_id'] = $v3['media_id'] ?? '';
                             $ch_data['parentid'] = $pkid; //子菜单的父级ID
                             $ch_data['sort'] = 0;
@@ -210,6 +218,8 @@ class Wechat extends Common
                             } else {
                                 $successnum++;
                             }
+
+                            unset($ch_data); //清空临时数组
 
                         }
                     }
@@ -598,12 +608,14 @@ class Wechat extends Common
     }
 
 
+    /**
+     * 获取图文消息列表
+     */
     public function getNews()
     {
 
 
         $cache_name = 'newslist_'.$this->wechatconfig['appid'];
-
         $res = Cache::get($cache_name);//先看看缓存中是否有数据
         if(!empty($res)){
             $data = json_decode($res,true);

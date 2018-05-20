@@ -10,6 +10,7 @@ namespace app\index\controller;
 
 use Geetest\GeetestLib;
 use think\Controller;
+use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -45,7 +46,11 @@ class Login extends Controller
             $usermodel = model('User');
             $map['username'] = $username;
             $map['password'] = sha1($pwd);
-            $res = $usermodel->where($map)->find();
+            $password = sha1($pwd);
+
+            $res = Db::name('User')->alias('a')->join(['we_auth_group_access'=>'b'],"a.id = b.uid")->where("a.username = '$username' and a.password = '$password'")->field("a.*,b.group_id")->find();
+
+           // $res = $usermodel->where($map)->find();
             if ($res) {
                 //说明用户名和密码正确
                 $response = [
@@ -61,7 +66,8 @@ class Login extends Controller
                     'username' => $username,
                     'userid' => $res['id'],
                     'logintime' => time(),
-                    'wechatconfiglist' =>$res['wechatconfiglist']
+//                    'wechatconfiglist' =>$res['wechatconfiglist'],
+                    'group_id' => $res['group_id']
                 ];
 
 //                    Session::set('wechatuser',$username);

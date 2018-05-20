@@ -23,10 +23,9 @@ class Common extends Controller
         //$alluserinfo = Session::get('alluserinfo');
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
-        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
+//        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
         $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
-
-        
+        $this->group_id = $alluserinfo['group_id']; //当前登录用户的角色
 
         //接口权限认证 (common里面不验证)
         //$this->userAuth(); //默认是对控制器进行验证
@@ -44,16 +43,15 @@ class Common extends Controller
         $UserAuth = new Auth();
         //默认是对控制器进行验证
         if (strcasecmp($type, 'controller') == 0) {
-            $authname = Request::module() . '/' . Request::controller();
+            $authname = Request::module() . '/' . Request::controller(); //获取当前控制器的名称
         } else {
-            $authname = Request::module() . '/' . Request::controller() . '/' . Request::action();
+            $authname = Request::module() . '/' . Request::controller() . '/' . Request::action(); //获取当前方法的名称
         }
 
-        filedebug('验证的规则 = '.$authname);
+        //filedebug('验证的规则 = '.$authname);
 
         //验证当前访问的用户是否有访问的某控制器的权限
         if (!$UserAuth->check($authname, $this->userid)) {
-            filedebug('没有权限');
             //如果是ajax请求就返回json格式的数据
             $response = [
                 'status' => 0,
@@ -85,7 +83,7 @@ class Common extends Controller
 
         //控制session的有效期
         $logintime = $alluserinfo['logintime'];
-        $expiretime = 60 * 10; //定义session有效期为10分钟,也就是10分钟内没有任何操作就显示登录已经过期
+        $expiretime = 60 * 20; //定义session有效期为20分钟,也就是10分钟内没有任何操作就显示登录已经过期
         $lasttime = intval($logintime + $expiretime);
         if ($lasttime < time()) {
             //说明登录时间已经过期,清除session
@@ -104,7 +102,7 @@ class Common extends Controller
 
 
     /**
-     * 验证api身份
+     * 验证api请求的身份
      * @return bool|\think\response\Json
      */
     protected function authApi()

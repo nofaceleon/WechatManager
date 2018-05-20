@@ -2,10 +2,8 @@
 
 namespace app\index\controller;
 
-use app\index\model\WechatConfig;
 use app\index\validate\ConfigValidate;
 use think\Db;
-use think\facade\Request;
 
 class Config extends Common
 {
@@ -23,15 +21,14 @@ class Config extends Common
     public function index()
     {
 
-        //获取该公众号的时候
-        //$configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
-        if(empty($this->wechatconfiglist)){
-            $configList = [];
-        }else{
-            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
-        }
-
-        //$configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
+        //获取该账号对应的公众号配置
+        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+//
+//        if(empty($this->wechatconfiglist)){
+//            $configList = [];
+//        }else{
+//            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
+//        }
 
         $configList = empty($configList) ? [] : $configList;
         $response = [
@@ -286,15 +283,13 @@ class Config extends Common
 
         //根据ID将此ID的状态改为1,其他的状态改为0
         //先查询出所有的公众号列表
-        //$configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
 
-        if(empty($this->wechatconfiglist)){
-            $configList = [];
-        }else{
-            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
-        }
-
-
+//        if(empty($this->wechatconfiglist)){
+//            $configList = [];
+//        }else{
+//            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
+//        }
 
         $errornum = 0;
         $this->configModel->startTrans();//开启数据库事务

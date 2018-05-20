@@ -10,12 +10,4 @@
 // +----------------------------------------------------------------------
 
 //需要添加新的公众号的时候就需要在这里面新添加一条配置,当删除或者停用某个公众号,记得在这边删除指定路由
-Route::any('mrsong', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
-Route::any('wang', 'index/WechatServer/index?appid=wxfaa90d8812d78147');
-Route::any('TLBCSGZH', 'index/WechatServer/index?appid=fdsfdsfsdfs');
-Route::any('ZWCM', 'index/WechatServer/index?appid=wxf42302be9b7152f8');
-Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
-Route::any('1', 'index/WechatServer/index?appid=1');
-Route::any('STDOTAHLS', 'index/WechatServer/index?appid= wxfede681f96a1c9a6');
-Route::any('WLCS', 'index/WechatServer/index?appid=123');
-Route::any('2', 'index/WechatServer/index?appid=2');
+
