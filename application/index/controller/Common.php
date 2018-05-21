@@ -102,13 +102,12 @@ class Common extends Controller
 
 
     /**
-     * 验证api请求的身份
+     * 验证api请求的身份(暂未使用)
      * @return bool|\think\response\Json
      */
-    protected function authApi()
+    protected function authApi_del()
     {
 
-        return true; //临时关闭api验证
         //验证API信息
         $timestamp = input('post.time', '');
         $apitoken = input('post.apitoken', '');

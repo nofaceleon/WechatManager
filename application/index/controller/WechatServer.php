@@ -33,8 +33,6 @@ class WechatServer extends Controller
      */
     public function index()
     {
-//        dump($this->config);
-//        die;
         //filedebug('获取到微信服务器发送的消息');
         //这边验证过了之后就不需要接着认证了,微信会将用户发送的消息,或者事件推送到这个地址上面
         //自动回复消息
@@ -63,7 +61,7 @@ class WechatServer extends Controller
                 $allinfo = $this->weixin->getRevData();
                 //filedebug('事件详细的返回信息 = ' . print_r($allinfo, true));
                 //对数据进行处理,并存入数据库中
-//                filedebug('获取到的事件信息是 = '.print_r($allinfo,true));
+               // filedebug('获取到的事件信息是 = '.print_r($allinfo,true));
                 $this->handleSeverInfo($allinfo); //保存事件信息
 
                 $this->handleUserReply($allinfo['EventKey'], $this->config['appid'],$detailtype); //定义事件回复内容
@@ -124,7 +122,7 @@ class WechatServer extends Controller
             //查询是否有自定义的默认回复内容
             $res = Db::name('AutoReply')->where("keyword = 'DEFAULT_REPLY' and appid = '$appid' and status = 1")->find();
             if(empty($res)){
-                $reply = '没有自定义回复内容';
+                $reply = '没有找到回复内容';
                 $msgtype = 'text';
             }else{
                 $reply = $res['reply'];

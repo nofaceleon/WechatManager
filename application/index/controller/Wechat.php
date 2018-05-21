@@ -63,7 +63,7 @@ class Wechat extends Common
                 //说明有子按钮
 //                $arr['name']= $v['buttonname'];
                 foreach ($childbutton as $ckey => $cvalue) {
-                    filedebug('cvalue = ' . print_r($cvalue, true));
+                    //filedebug('cvalue = ' . print_r($cvalue, true));
                     $temp[$ckey]['name'] = $cvalue['buttonname'];
                     $temp[$ckey]['type'] = $cvalue['type'];
 //                    $temp[$ckey]['key']= 'rselfmenu_'.$v['id'].'_'.$ckey;
@@ -140,7 +140,7 @@ class Wechat extends Common
             return json($response);
         }
 
-        filedebug('获取到的菜单信息是 = ' . print_r($menuinfo, true));
+        //filedebug('获取到的菜单信息是 = ' . print_r($menuinfo, true));
         $menu = $menuinfo['menu'];
         $data['appid'] = $this->wechatconfig['appid'];
         $errornum = 0; //添加失败的数量
@@ -165,7 +165,18 @@ class Wechat extends Common
                     //说明没有子菜单了
                     $data['buttonname'] = $v2['name'];
                     $data['type'] = $v2['type'];
-                    $data['url'] = $v2['url'];
+
+                    $type = $v2['type'];
+
+                    if(strcasecmp($type,'miniprogram') == 0){
+                        $data['key'] = $v2['appid']; //小程序的appid
+                        $data['url'] = $v2['pagepath'].';'.$v2['url'];
+                    }else{
+                        $data['url'] = $v2['url'] ?? $v2[$type];
+                    }
+                    
+                   // $data['url'] = $v2['url'];
+
                     $data['parentid'] = 0; //没有子菜单,该菜单就是顶级菜单
                     $data['sort'] = 0;
                     $data['status'] = 1;
@@ -201,6 +212,7 @@ class Wechat extends Common
                             if(strcasecmp($type,'miniprogram') == 0){
                                 //当按钮类型是小程序的时候
                                 $ch_data['key'] = $v3['appid']; //小程序的appid
+//                                $ch_data['url'] = $v3['pagepath'].';'.$v3['url'];
                                 $ch_data['url'] = $v3['url'].';'.$v3['pagepath'];
                             }else{
                                 $ch_data['url'] = $v3['url'] ?? $v3[$type];

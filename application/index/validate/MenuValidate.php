@@ -22,7 +22,6 @@ class MenuValidate extends Validate
 //        'url' => 'url', //验证URL
         'sort' => 'integer',
         'parentid' => 'require|integer',
-        'appid' => 'require'
     ];
 
     /**
