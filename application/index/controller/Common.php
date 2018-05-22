@@ -3,6 +3,7 @@
 namespace app\index\controller;
 
 use think\Controller;
+use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 use UserAuth\Auth;
@@ -24,7 +25,11 @@ class Common extends Controller
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
 //        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
-        $this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
+        //$this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
+
+        $this->wechatconfig = Db::name('WechatConfig')->where(['status'=>1])->find(); //找出当前平台正在使用的配置信息
+
+        
         $this->group_id = $alluserinfo['group_id']; //当前登录用户的角色
 
         //接口权限认证 (common里面不验证)
