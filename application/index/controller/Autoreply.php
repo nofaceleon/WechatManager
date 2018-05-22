@@ -174,9 +174,22 @@ class Autoreply extends Common
             
         }
 
+        //验证关键字是否重复
+        $ishavekeyword = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid'],'keyword'=>$data['keyword']])->find();
+
+        if(!empty($ishavekeyword)){
+            //说明关键字已经重复了
+            $response = [
+                'status' => 0,
+                'msg' => '该关键字已经存在'
+            ];
+            return json($response);
+            
+        }
+
         //对数据进行验证
         $validate = new AutoreplyValidate();
-        if(!$validate->check($data)){
+        if(!$validate->scene('add')->check($data)){
             //验证不通过
             $response = [
                 'status' => 0,

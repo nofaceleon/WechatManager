@@ -33,7 +33,7 @@ class ConfigValidate extends Validate
      */
     protected $message  =   [
         'name.require' => '公众号名称不能为空',
-        'name.unique' => '改公众号名称已经存在',
+        'name.unique' => '该公众号名称已经存在',
         'wechatid.require' => '微信号不能为空',
         'wechatid.unique' => '该微信号已经存在',
     ];

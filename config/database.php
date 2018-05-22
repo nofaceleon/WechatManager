@@ -18,10 +18,13 @@ if(DEBUG_MODEL){
         // 服务器地址
         'hostname'        => '127.0.0.1',
         // 数据库名
+//        'database'        => 'uatzsmp',
         'database'        => 'wechatconfig',
         // 用户名
+//        'username'        => 'zwcm',
         'username'        => 'root',
         // 密码
+//        'password'        => 'zwcm2016',
         'password'        => 'root',
         // 端口
         'hostport'        => '3306',
@@ -73,7 +76,7 @@ if(DEBUG_MODEL){
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-        'hostname'        => '127.0.0.1',
+        'hostname'        => 'rm-uf685d499m5uvq1o6.mysql.rds.aliyuncs.com',
         // 数据库名
         'database'        => 'wechatconfig',
         // 用户名

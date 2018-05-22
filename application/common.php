@@ -52,7 +52,6 @@ function tree($arr, $pid = 0, $level = 0, $flagstr = '└―')
 
 function doLog($user_action = '',$content = '',$detail = '',$api_name = '',$appid = '',$uid = '')
 {
-    return;
     $data['appid'] = $appid;
     $data['uid'] = $uid;
     $data['user_action'] = $user_action;
