@@ -12,6 +12,7 @@ class Userauth extends Common
     {
         parent::__construct();
 
+        $this->userAuth();
 
     }
 
@@ -21,6 +22,10 @@ class Userauth extends Common
      */
     public function index()
     {
+
+
+        //$this->userAuth('action');
+
         // $sql  = 'SELECT a.username,c.* from we_user as a INNER JOIN we_auth_group_access as b on a.id = b.uid INNER JOIN we_auth_group as c on c.id = b.group_id';
         $userlist = Db::name('User')
             ->alias('a')
@@ -143,6 +148,8 @@ class Userauth extends Common
     public function addUser()
     {
 
+        //$this->userAuth('action');
+
         $username = input('param.username', ''); //获取用户名
         $password = input('param.password', ''); //获取用户密码
         $role = input('param.role', 0); //获取用户角色
@@ -218,6 +225,10 @@ class Userauth extends Common
      */
     public function delUser($id = 0)
     {
+
+        //$this->userAuth('action');
+
+
         if ($id == 0) {
             $response = [
                 'status' => 0,
@@ -253,8 +264,9 @@ class Userauth extends Common
     {
 
 
-        $data = input('param.'); //这个里面包含了主键ID
+        //$this->userAuth('action');
 
+        $data = input('param.'); //这个里面包含了主键ID
 
         $userinfo = [
             'id' => $data['id'],
@@ -354,6 +366,8 @@ class Userauth extends Common
     public function addRole()
     {
 
+        //$this->userAuth('action');
+
         $data = input('param.');
 
         if(empty($data['rules'])){
@@ -397,6 +411,8 @@ class Userauth extends Common
     public function editRole()
     {
 
+        //$this->userAuth('action');
+
         $data = input('param.');
         
         if(empty($data['rules'])){
@@ -433,6 +449,8 @@ class Userauth extends Common
      */
     public function delRole($id = 0)
     {
+
+        //$this->userAuth('action');
 
         if($id == 0){
             $response = [

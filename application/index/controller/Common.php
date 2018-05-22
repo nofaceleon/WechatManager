@@ -48,7 +48,7 @@ class Common extends Controller
             $authname = Request::module() . '/' . Request::controller() . '/' . Request::action(); //获取当前方法的名称
         }
 
-        //filedebug('验证的规则 = '.$authname);
+//        filedebug('验证的规则 = '.$authname);
 
         //验证当前访问的用户是否有访问的某控制器的权限
         if (!$UserAuth->check($authname, $this->userid)) {

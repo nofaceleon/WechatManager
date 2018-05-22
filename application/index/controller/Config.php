@@ -22,7 +22,9 @@ class Config extends Common
     {
 
         //获取该账号对应的公众号配置
-        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+//        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+
+        $configList = Db::name('WechatConfig')->select();
 //
 //        if(empty($this->wechatconfiglist)){
 //            $configList = [];
@@ -283,7 +285,9 @@ class Config extends Common
 
         //根据ID将此ID的状态改为1,其他的状态改为0
         //先查询出所有的公众号列表
-        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+//        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
+        
+        $configList = Db::name('WechatConfig')->select();
 
 //        if(empty($this->wechatconfiglist)){
 //            $configList = [];
