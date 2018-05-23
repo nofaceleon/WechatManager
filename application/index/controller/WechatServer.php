@@ -119,6 +119,16 @@ class WechatServer extends Controller
             $reply = $res['reply'];
             //$this->weixin->$msgtype($reply)->reply();
         }else{
+
+            //获取当前时间
+            $hour = date('H');
+            if($hour < 8 || $hour > 18){
+                //如果不在工作时间,返回的
+                $reply = '当前不在工作时间';
+                $this->weixin->text($reply)->reply();
+                exit;
+            }
+
             //查询是否有自定义的默认回复内容
             $res = Db::name('AutoReply')->where("keyword = 'DEFAULT_REPLY' and appid = '$appid' and status = 1")->find();
             if(empty($res)){
