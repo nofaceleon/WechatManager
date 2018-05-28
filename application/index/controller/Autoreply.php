@@ -85,7 +85,7 @@ class Autoreply extends Common
                 'msg' => '更新失败!'
             ];
 
-            doLog('修改自动回复','修改失败','','Autoreply/editReply/error',$this->wechatconfig['appid'],$this->userid);
+            doLog('Autoreply/editReply/error','修改自动回复失败','',$this->wechatconfig['appid']);
 
         } else {
             $response = [
@@ -93,7 +93,7 @@ class Autoreply extends Common
                 'msg' => '更新成功!'
             ];
 
-            doLog('修改自动回复','修改成功','','Autoreply/editReply',$this->wechatconfig['appid'],$this->userid);
+            doLog('Autoreply/editReply','修改自动回复成功','',$this->wechatconfig['appid']);
 
         }
         return json($response);
@@ -205,7 +205,9 @@ class Autoreply extends Common
                 'msg' => '添加失败!'
             ];
 
-            doLog('添加自动回复','添加失败','','Autoreply/addReply/error',$this->wechatconfig['appid'],$this->userid);
+//            doLog('','添加失败','','Autoreply/addReply/error',$this->wechatconfig['appid'],$this->userid);
+
+            doLog('Autoreply/addReply/error','添加自动回复失败','',$this->wechatconfig['appid']);
 
         } else {
             $response = [
@@ -214,7 +216,7 @@ class Autoreply extends Common
                 'info' => $info ?? [],
             ];
 
-            doLog('添加自动回复','添加成功','','Autoreply/addReply',$this->wechatconfig['appid'],$this->userid);
+            doLog('Autoreply/addReply','添加自动回复成功','',$this->wechatconfig['appid']);
 
         }
         return json($response);
@@ -245,7 +247,10 @@ class Autoreply extends Common
                 'msg' => '删除成功!'
             ];
 
-            doLog('删除自动回复','删除成功','','Autoreply/delReply',$this->wechatconfig['appid'],$this->userid);
+
+            doLog('Autoreply/delReply','删除自动回复成功','',$this->wechatconfig['appid']);
+
+            
 
         } else {
             $response = [
@@ -253,7 +258,7 @@ class Autoreply extends Common
                 'msg' => '删除失败!'
             ];
 
-            doLog('删除自动回复','删除失败','','Autoreply/delReply/error',$this->wechatconfig['appid'],$this->userid);
+            doLog('Autoreply/delReply/error','删除自动回复失败','',$this->wechatconfig['appid']);
 
         }
         return json($response);

@@ -98,7 +98,7 @@ class Wechat extends Common
                 'msg' => '推送成功!',
             ];
 
-            doLog('推送菜单','推送成功','','Wechat/createMenu',$this->wechatconfig['appid'],$this->userid);
+            doLog('Wechat/createMenu','推送菜单成功','',$this->wechatconfig['appid']);
 
 
             //推送成功后把当前是哪个用户推送的操作记录写入数据库日志中
@@ -110,7 +110,7 @@ class Wechat extends Common
                 'msg' => '推送失败:' . $this->weixin->errMsg,
             ];
 
-            doLog('推送菜单','推送失败',$this->weixin->errMsg,'Wechat/createMenu/error',$this->wechatconfig['appid'],$this->userid);
+            doLog('Wechat/createMenu/error','推送菜单失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
 
 
         }
@@ -245,6 +245,8 @@ class Wechat extends Common
             'msg' => '成功添加' . $successnum . '条数据,失败' . $errornum . '条',
         ];
 
+        doLog('Wechat/getMenu','从微信端获取菜单',$response['msg'],$this->wechatconfig['appid']);
+
 
         return json($response);
     }
@@ -264,6 +266,9 @@ class Wechat extends Common
                 'status' => 0,
                 'msg' => '获取模板列表失败!' . $this->weixin->errMsg,
             ];
+
+            doLog('Wechat/getTempListInfo/error','从微信端获取模板列表失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
+
             return json($response);
         }
 
@@ -308,6 +313,9 @@ class Wechat extends Common
                 'msg' => '结果 = 添加:' . $successnum . '条,未更新:' . $errornum . '条',
             ];
         }
+
+
+        doLog('Wechat/getTempListInfo','从微信端获取模板列表成功',$response['msg'],$this->wechatconfig['appid']);
 
         return json($response);
 
@@ -509,7 +517,7 @@ class Wechat extends Common
                 'msg' => $this->weixin->errMsg
             ];
 
-            doLog('生成二维码','生成失败',$this->weixin->errMsg,'Wechat/createQRcode/error',$this->wechatconfig['appid'],$this->userid);
+            doLog('Wechat/createQRcode/error','生成二维码失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
 
         }
         return json($response);
@@ -519,7 +527,7 @@ class Wechat extends Common
 
 
     /**
-     * 从微信服务器端获取素材列表,并写入数据库中
+     * 从微信服务器端获取素材列表,并写入数据库中(暂未使用)
      */
     public function getMaterial()
     {
@@ -603,7 +611,7 @@ class Wechat extends Common
 
 
     /**
-     * 获取图文消息的选项
+     * 获取图文消息的选项(从数据库中获取,暂未使用)
      */
     public function getNews_old()
     {

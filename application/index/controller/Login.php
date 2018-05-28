@@ -58,7 +58,7 @@ class Login extends Controller
                     'msg' => '登录成功!'
                 ];
 
-                doLog('用户登录','登录成功',$username.'登录','Login/userLogin');
+
 
                 //将登录的用户名存入session中
 
@@ -70,9 +70,14 @@ class Login extends Controller
                     'group_id' => $res['group_id']
                 ];
 
+                Session::set('alluserinfo', $alluserinfo);
+                
+                doLog('Login/userLogin','登录成功',$username.'登录','');
+
+
 //                    Session::set('wechatuser',$username);
 //                    Session::set('userid',$res['id']);
-                Session::set('alluserinfo', $alluserinfo);
+
 //                    mglog('登录后台系统');
             } else {
                 //验证失败

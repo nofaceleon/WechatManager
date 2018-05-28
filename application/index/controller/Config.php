@@ -111,7 +111,7 @@ class Config extends Common
             ];
 
 
-            doLog('公众号配置修改','修改失败','','Config/updateConfig/error',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/updateConfig/error','公众号配置修改失败','',$this->wechatconfig['appid']);
 
         } else {
             $response = [
@@ -119,7 +119,9 @@ class Config extends Common
                 'msg' => '更新成功!'
             ];
 
-            doLog('公众号配置修改','修改成功',json_encode($data),'Config/updateConfig',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/updateConfig','公众号配置修改成功','',$this->wechatconfig['appid']);
+
+
 
         }
         return json($response);
@@ -216,7 +218,7 @@ class Config extends Common
                 'msg' => '添加成功!'
             ];
 
-            doLog('添加公众号','添加成功',json_encode($data),'Config/addConfig',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/addConfig','添加公众号成功','',$this->wechatconfig['appid']);
 
             //将新公众号的路由注册到文件中/route/route.php文件
            // $name = pinyin1($data['name']); //获取中文名称的第一个大写字母
@@ -227,7 +229,7 @@ class Config extends Common
                 'msg' => '添加失败!'
             ];
 
-            doLog('添加公众号','添加失败','','Config/addConfig',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/updateConfig/error','添加公众号失败','',$this->wechatconfig['appid']);
         }
         return json($response);
 
@@ -257,7 +259,7 @@ class Config extends Common
                 'msg' => '删除成功!',
             ];
 
-            doLog('删除公众号配置','删除成功','','Config/delConfig',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/delConfig','删除公众号配置成功','',$this->wechatconfig['appid']);
 
         } else {
             //删除失败
@@ -266,7 +268,7 @@ class Config extends Common
                 'msg' => '删除失败!',
             ];
 
-            doLog('删除公众号配置','删除失败','','Config/delConfig',$this->wechatconfig['appid'],$this->userid);
+            doLog('Config/delConfig/error','删除公众号配置失败','',$this->wechatconfig['appid']);
 
         }
 

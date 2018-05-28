@@ -203,6 +203,8 @@ class Userauth extends Common
                 'msg' => '添加用户成功'
             ];
 
+            doLog('Userauth/addUser','添加用户成功','',$this->wechatconfig['appid']);
+
             return json($response);
         } else {
             //添加用户失败
@@ -212,6 +214,7 @@ class Userauth extends Common
                 'msg' => '添加用户失败'
             ];
 
+            doLog('Userauth/addUser/error','添加用户失败','',$this->wechatconfig['appid']);
         }
 
         return json($response);
@@ -225,10 +228,7 @@ class Userauth extends Common
      */
     public function delUser($id = 0)
     {
-
         //$this->userAuth('action');
-
-
         if ($id == 0) {
             $response = [
                 'status' => 0,
@@ -245,11 +245,14 @@ class Userauth extends Common
                 'msg' => '删除成功',
             ];
 
+            doLog('Userauth/delUser/error','删除用户成功','',$this->wechatconfig['appid']);
+
         } else {
             $response = [
                 'status' => 0,
                 'msg' => '删除失败',
             ];
+            doLog('Userauth/delUser/error','删除用户失败','',$this->wechatconfig['appid']);
         }
 
         return json($response);
@@ -309,6 +312,8 @@ class Userauth extends Common
                 'msg' => '更新失败'
             ];
 
+            doLog('Userauth/editUser/error','编辑用失败','',$this->wechatconfig['appid']);
+
         } else {
             Db::commit();
             //更新成功
@@ -317,8 +322,9 @@ class Userauth extends Common
                 'msg' => '更新成功'
             ];
 
-        }
+            doLog('Userauth/editUser','编辑用户成功','',$this->wechatconfig['appid']);
 
+        }
 
         return json($response);
 
@@ -391,12 +397,16 @@ class Userauth extends Common
                 'msg' => '添加成功',
             ];
 
+            doLog('Userauth/addRole','添加用户角色成功','',$this->wechatconfig['appid']);
+
         }else{
 
             $response = [
                 'status' => 0,
                 'msg' => '添加失败',
             ];
+
+            doLog('Userauth/addUser/error','添加用户角色失败','',$this->wechatconfig['appid']);
 
         }
 
@@ -430,12 +440,17 @@ class Userauth extends Common
                 'status' => 0,
                 'msg' => '更新失败',
             ];
+
+            doLog('Userauth/editRole/error','编辑用户角色失败','',$this->wechatconfig['appid']);
+
         }else{
             //更新失败
             $response = [
                 'status' => 1,
                 'msg' => '更新成功',
             ];
+
+            doLog('Userauth/editRole','编辑用户角色成功','',$this->wechatconfig['appid']);
 
         }
         return json($response);
@@ -470,12 +485,17 @@ class Userauth extends Common
                 'status' => 0,
                 'msg' => '删除失败',
             ];
+
+            doLog('Userauth/delRole/error','删除角色失败','',$this->wechatconfig['appid']);
+
         }else{
             //更新失败
             $response = [
                 'status' => 1,
                 'msg' => '删除成功',
             ];
+
+            doLog('Userauth/delRole','删除角色成功','',$this->wechatconfig['appid']);
 
         }
 

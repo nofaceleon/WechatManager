@@ -123,7 +123,7 @@ class WechatServer extends Controller
             //获取当前时间
             $hour = date('H');
             if($hour < 8 || $hour > 18){
-                //如果不在工作时间,返回的
+                //如果不在工作时间,并且没有规定自动回复的内容的时候,返回的提示信息
                 $reply = '当前不在工作时间';
                 $this->weixin->text($reply)->reply();
                 exit;

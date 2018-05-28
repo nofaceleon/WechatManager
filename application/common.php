@@ -46,19 +46,32 @@ function tree($arr, $pid = 0, $level = 0, $flagstr = '└―')
 }
 
 /**
- * 记录系统日志
+ * 记录系统日志,跟天乐邦平台的日志格式统一起来
  */
 
-
-function doLog($user_action = '',$content = '',$detail = '',$api_name = '',$appid = '',$uid = '')
+function doLog($action = '', $content = '', $details = '',$appid = '')
 {
-    $data['appid'] = $appid;
-    $data['uid'] = $uid;
-    $data['user_action'] = $user_action;
-    $data['api_name'] = $api_name;
+    $userinfo = \think\facade\Session::get('alluserinfo'); //从session中获取用户登录的信息
+    $data['uid'] = $userinfo['userid'] ?? 0; //用户的id
+    $data['username'] = $userinfo['username'] ?? ''; //用户名
+    $data['ptid'] = 0; //平台ID
+    $data['zwcmopenid'] = $appid;
+    $data['openid'] = $appid;
+    $data['ptname'] = \think\facade\Request::controller(); //当前控制器的名称
+    $data['productid'] = 0; //当前模块的名称
+    $data['action'] = $action;
     $data['content'] = $content;
-    $data['detail'] = $detail;
+
+    $data['ip'] = \think\facade\Request::ip(); //获取当前请求的IP地址
+
+    $data['details'] = $details;
+    $data['longitude'] = 0;
+    $data['latitude'] = 0;
     $data['createtime'] = date('Y-m-d H:i:s');
+    $data['useragent'] = $_SERVER['HTTP_USER_AGENT'];
+
+    //filedebug('保存的数据是 = '.print_r($data,true));
+
     $res = \think\Db::name('Log')->insert($data);
 }
 
@@ -70,13 +83,18 @@ function doLog($user_action = '',$content = '',$detail = '',$api_name = '',$appi
  */
 function validateURL($URL)
 {
-    $pattern_1 = "/^(http|https|ftp):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se|top)$)(:(\d+))?\/?/i";
-    // $pattern_2 = "/^(www)((\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se)$)(:(\d+))?\/?/i";
-    if (preg_match($pattern_1, $URL)) {
-        return true;
-    } else {
-        return false;
-    }
+//    $pattern_1 = "/^(http|https|ftp):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se|top)$)(:(\d+))?\/?/i";
+//    // $pattern_2 = "/^(www)((\.[A-Z0-9][A-Z0-9_-]*)+.(com|org|net|dk|at|us|tv|info|uk|co.uk|biz|se)$)(:(\d+))?\/?/i";
+//    if (preg_match($pattern_1, $URL)) {
+//        return true;
+//    } else {
+//        return false;
+//    }
+
+    return filter_var(trim($URL), FILTER_VALIDATE_URL); //使用PHP内置的方法验证URL是否合法
+
+
+
 }
 
 
