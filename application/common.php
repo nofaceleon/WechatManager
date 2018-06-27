@@ -55,8 +55,8 @@ function doLog($action = '', $content = '', $details = '',$appid = '')
     $data['uid'] = $userinfo['userid'] ?? 0; //用户的id
     $data['username'] = $userinfo['username'] ?? ''; //用户名
     $data['ptid'] = 0; //平台ID
-    $data['zwcmopenid'] = $appid;
-    $data['openid'] = $appid;
+    $data['zwcmopenid'] = $appid ?? '';
+    $data['openid'] = $appid ?? '';
     $data['ptname'] = \think\facade\Request::controller(); //当前控制器的名称
     $data['productid'] = 0; //当前模块的名称
     $data['action'] = $action;

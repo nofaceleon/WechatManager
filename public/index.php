@@ -16,7 +16,7 @@ namespace think;
 require __DIR__ . '/../thinkphp/base.php';
 
 
-//define('DEBUG_MODEL',true); //是否是测试环境
+define('DEBUG_MODEL',true); //是否是测试环境
 define('CONFIG_URL','http://uat.zwmedia.com.cn/WechatDevApi/public/index.php/'); //配置默认的网站域名
 // 执行应用并响应
 Container::get('app')->run()->send();

@@ -19,6 +19,7 @@ class WechatServer extends Controller
         parent::__construct();
 //        //这边目前只能使用一个账号的配置信息
         $appid = input('param.appid','');//获取路由中的appid参数
+//        filedebug('获取到的公众号配置信息是='.$appid);
         //根据appid参数获取公众号的配置信息
         $this->config = model('WechatConfig')->getWechatConfigByAppid($appid);
         if(empty($this->config)){
@@ -33,7 +34,7 @@ class WechatServer extends Controller
      */
     public function index()
     {
-        //filedebug('获取到微信服务器发送的消息');
+//        filedebug('获取到微信服务器发送的消息');
         //这边验证过了之后就不需要接着认证了,微信会将用户发送的消息,或者事件推送到这个地址上面
         //自动回复消息
         $this->weixin->valid(); //这边是需要验证的时候使用
@@ -42,7 +43,7 @@ class WechatServer extends Controller
         switch ($type) {
             case WechatApi::MSGTYPE_TEXT: //文本
                 $content = $this->weixin->getRevContent();
-                //filedebug('获取到了用户发送的消息' . print_r($content, true));
+                filedebug('获取到了用户发送的消息' . print_r($content, true));
                 //根据获取到的内容,去数据库中查询与之对应的回复方式并推送
                 //filedebug('直行道 = '.$type);
 
@@ -98,6 +99,9 @@ class WechatServer extends Controller
                 $content = str_replace('qrscene_','',$content); //去除参数中的qrscene_
             }
         }
+//        elseif(strcasecmp($event,'subscribe') == 0){
+//            //当是订阅事件,并且没有携带任何参数的时候,先根据用户的OPENID去查询该用户是否下过单,如果有订单信息就去查询该用户的订单信息,并推送相关信息
+//        }
 
         //先根据关键词去数据库中查询该关键字所对应的自动回复内容
 
@@ -119,21 +123,22 @@ class WechatServer extends Controller
             $reply = $res['reply'];
             //$this->weixin->$msgtype($reply)->reply();
         }else{
-
             //获取当前时间
-            $hour = date('H');
-            if($hour < 8 || $hour > 18){
-                //如果不在工作时间,并且没有规定自动回复的内容的时候,返回的提示信息
-                $reply = '当前不在工作时间';
-                $this->weixin->text($reply)->reply();
-                exit;
-            }
-
+//            $hour = date('H');
+//            if($hour < 15 || $hour > 18){
+//                //如果不在工作时间,并且没有规定自动回复的内容的时候,返回的提示信息
+////                $reply = '当前不在工作时间';
+////                $this->weixin->text($reply)->reply();
+//                exit;
+//            }
             //查询是否有自定义的默认回复内容
             $res = Db::name('AutoReply')->where("keyword = 'DEFAULT_REPLY' and appid = '$appid' and status = 1")->find();
             if(empty($res)){
-                $reply = '没有找到回复内容';
-                $msgtype = 'text';
+
+                //$reply = '没有找到回复内容';
+                //$msgtype = 'text';
+                exit; //不做任何回复,直接退出
+
             }else{
                 $reply = $res['reply'];
                 $msgtype = $res['msgtype'];
@@ -185,5 +190,7 @@ class WechatServer extends Controller
 
     }
 
+
+    
 
 }

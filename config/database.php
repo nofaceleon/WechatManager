@@ -9,7 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-define('DEBUG_MODEL',true);
+//define('DEBUG_MODEL',true);
 
 if(DEBUG_MODEL){
 
