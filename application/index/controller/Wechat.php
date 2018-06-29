@@ -1,4 +1,5 @@
 <?php
+
 namespace app\index\controller;
 
 use think\Db;
@@ -22,6 +23,7 @@ class Wechat extends Common
         $this->weixin = new WechatApi($config);
 
     }
+
     /**
      * 创建自定义菜单
      */
@@ -98,7 +100,7 @@ class Wechat extends Common
                 'msg' => '推送成功!',
             ];
 
-            doLog('Wechat/createMenu','推送菜单成功','',$this->wechatconfig['appid']);
+            doLog('Wechat/createMenu', '推送菜单成功', '', $this->wechatconfig['appid']);
 
 
             //推送成功后把当前是哪个用户推送的操作记录写入数据库日志中
@@ -110,7 +112,7 @@ class Wechat extends Common
                 'msg' => '推送失败:' . $this->weixin->errMsg,
             ];
 
-            doLog('Wechat/createMenu/error','推送菜单失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
+            doLog('Wechat/createMenu/error', '推送菜单失败', $this->weixin->errMsg, $this->wechatconfig['appid']);
 
 
         }
@@ -168,14 +170,14 @@ class Wechat extends Common
 
                     $type = $v2['type'];
 
-                    if(strcasecmp($type,'miniprogram') == 0){
+                    if (strcasecmp($type, 'miniprogram') == 0) {
                         $data['key'] = $v2['appid']; //小程序的appid
-                        $data['url'] = $v2['pagepath'].';'.$v2['url'];
-                    }else{
+                        $data['url'] = $v2['pagepath'] . ';' . $v2['url'];
+                    } else {
                         $data['url'] = $v2['url'] ?? $v2[$type];
                     }
-                    
-                   // $data['url'] = $v2['url'];
+
+                    // $data['url'] = $v2['url'];
 
                     $data['parentid'] = 0; //没有子菜单,该菜单就是顶级菜单
                     $data['sort'] = 0;
@@ -209,12 +211,12 @@ class Wechat extends Common
                             $ch_data['buttonname'] = $v3['name'];
                             $ch_data['type'] = $type;
 
-                            if(strcasecmp($type,'miniprogram') == 0){
+                            if (strcasecmp($type, 'miniprogram') == 0) {
                                 //当按钮类型是小程序的时候
                                 $ch_data['key'] = $v3['appid']; //小程序的appid
 //                                $ch_data['url'] = $v3['pagepath'].';'.$v3['url'];
-                                $ch_data['url'] = $v3['url'].';'.$v3['pagepath'];
-                            }else{
+                                $ch_data['url'] = $v3['url'] . ';' . $v3['pagepath'];
+                            } else {
                                 $ch_data['url'] = $v3['url'] ?? $v3[$type];
                             }
 
@@ -245,7 +247,7 @@ class Wechat extends Common
             'msg' => '成功添加' . $successnum . '条数据,失败' . $errornum . '条',
         ];
 
-        doLog('Wechat/getMenu','从微信端获取菜单',$response['msg'],$this->wechatconfig['appid']);
+        doLog('Wechat/getMenu', '从微信端获取菜单', $response['msg'], $this->wechatconfig['appid']);
 
 
         return json($response);
@@ -257,7 +259,7 @@ class Wechat extends Common
      */
     public function getTempListInfo()
     {
-        
+
         $this->userAuth('action');//这个方法中加入权限控制
         //从微信服务器中获取模板列表
         $templist = $this->weixin->getTempList();
@@ -267,7 +269,7 @@ class Wechat extends Common
                 'msg' => '获取模板列表失败!' . $this->weixin->errMsg,
             ];
 
-            doLog('Wechat/getTempListInfo/error','从微信端获取模板列表失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
+            doLog('Wechat/getTempListInfo/error', '从微信端获取模板列表失败', $this->weixin->errMsg, $this->wechatconfig['appid']);
 
             return json($response);
         }
@@ -315,7 +317,7 @@ class Wechat extends Common
         }
 
 
-        doLog('Wechat/getTempListInfo','从微信端获取模板列表成功',$response['msg'],$this->wechatconfig['appid']);
+        doLog('Wechat/getTempListInfo', '从微信端获取模板列表成功', $response['msg'], $this->wechatconfig['appid']);
 
         return json($response);
 
@@ -466,9 +468,9 @@ class Wechat extends Common
      */
     public function createQRcode()
     {
-        $scene_id = input('param.keyword',''); //自定义的场景ID
-        $type = input('param.qrtype',1); //默认是临时二维码
-        if(empty($scene_id)){
+        $scene_id = input('param.keyword', ''); //自定义的场景ID
+        $type = input('param.qrtype', 1); //默认是临时二维码
+        if (empty($scene_id)) {
             $response = [
                 'status' => 0,
                 'msg' => '关键字不能为空'
@@ -487,20 +489,20 @@ class Wechat extends Common
 //            dump($validate->getError());
 //        }
         //将有效期转天数转换成秒
-        $expire = input('param.expire',7); //获取定义的有效时间
+        $expire = input('param.expire', 7); //获取定义的有效时间
 
         //判断有效期天数是否超过30
-        if($type == 1 && $expire > 30){
+        if ($type == 1 && $expire > 30) {
             $response = [
                 'status' => 0,
                 'msg' => '临时二维码的有效期不能超过30天'
             ];
             return json($response);
         }
-        
-        $expire = $expire*3600*24; //将天数参数转换成秒
+
+        $expire = $expire * 3600 * 24; //将天数参数转换成秒
         //filedebug('生成二维码的有效期为 = '.$expire);
-        $ticketinfo = $this->weixin->getQRCode($scene_id, $type,$expire); //获取二维码ticket
+        $ticketinfo = $this->weixin->getQRCode($scene_id, $type, $expire); //获取二维码ticket
         if ($ticketinfo) {
             //成功获取到了ticket信息
             $ticket = $ticketinfo['ticket'];
@@ -517,7 +519,7 @@ class Wechat extends Common
                 'msg' => $this->weixin->errMsg
             ];
 
-            doLog('Wechat/createQRcode/error','生成二维码失败',$this->weixin->errMsg,$this->wechatconfig['appid']);
+            doLog('Wechat/createQRcode/error', '生成二维码失败', $this->weixin->errMsg, $this->wechatconfig['appid']);
 
         }
         return json($response);
@@ -542,7 +544,7 @@ class Wechat extends Common
         //先获取总数
         $countarr = $this->weixin->getForeverCount();
 
-        if($countarr === false){
+        if ($countarr === false) {
             $response = [
                 'status' => 0,
                 'msg' => $this->weixin->errMsg
@@ -551,10 +553,10 @@ class Wechat extends Common
 
         }
 
-        $count_str = $type.'_count';
+        $count_str = $type . '_count';
         $newscount = $countarr[$count_str];
 
-        if(empty($newscount)){
+        if (empty($newscount)) {
             $response = [
                 'status' => 0,
                 'msg' => '没有数据'
@@ -562,15 +564,15 @@ class Wechat extends Common
             return json($response);
         }
 
-        $material = $this->weixin->getForeverList($type,$offset,$newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
-        if(empty($material)){
+        $material = $this->weixin->getForeverList($type, $offset, $newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
+        if (empty($material)) {
             $response = [
                 'status' => 0,
                 'msg' => '获取数据为空'
             ];
             return json($response);
 
-        }elseif($material === false){
+        } elseif ($material === false) {
 
             $response = [
                 'status' => 0,
@@ -581,33 +583,31 @@ class Wechat extends Common
         }
         $successnum = 0;
         $failednum = 0;
-        foreach ($material['item'] as $k=>$v){
+        foreach ($material['item'] as $k => $v) {
             //循环插入数据库中,只保留关键的部分,方便识别
             $data['media_id'] = $v['media_id'];
             $data['title'] = $v['content']['news_item'][0]['title'];
             $data['author'] = $v['content']['news_item'][0]['author'];
 //            $data['digest'] = $v['content']['news_item'][0]['digest'];
-            $data['createtime'] = date('Y-m-d H:i:s',$v['content']['create_time']);
-            $data['updatetime'] = date('Y-m-d H:i:s',$v['content']['update_time']);
+            $data['createtime'] = date('Y-m-d H:i:s', $v['content']['create_time']);
+            $data['updatetime'] = date('Y-m-d H:i:s', $v['content']['update_time']);
             $data['appid'] = $this->wechatconfig['appid']; //
             $res = Db::name('Material')->insert($data);
-            if($res){
+            if ($res) {
                 //插入成功
                 $successnum++;
 
-            } else{
+            } else {
                 //插入失败
                 $failednum++;
             }
         }
         $response = [
             'status' => 1,
-            'msg' =>'插入成功'.$successnum.'条,失败'.$failednum.'条'
+            'msg' => '插入成功' . $successnum . '条,失败' . $failednum . '条'
         ];
         return json($response);
     }
-
-
 
 
     /**
@@ -615,7 +615,7 @@ class Wechat extends Common
      */
     public function getNews_old()
     {
-        $list = Db::name('Material')->where(['appid'=>$this->wechatconfig['appid']])->field('id,media_id,title,createtime')->order('createtime desc')->select();
+        $list = Db::name('Material')->where(['appid' => $this->wechatconfig['appid']])->field('id,media_id,title,createtime')->order('createtime desc')->select();
         $list = empty($list) ? [] : $list;
 
         $response = [
@@ -633,23 +633,21 @@ class Wechat extends Common
      */
     public function getNews()
     {
-
-
-        $cache_name = 'newslist_'.$this->wechatconfig['appid'];
+        $cache_name = 'newslist_' . $this->wechatconfig['appid'];
         $res = Cache::get($cache_name);//先看看缓存中是否有数据
-        if(!empty($res)){
-            $data = json_decode($res,true);
-        }else{
+        if (!empty($res)) {
+            $data = json_decode($res, true);
+        } else {
             $offset = 0; //从0开始获取
             $type = 'news'; //获取的素材类型,目前默认为图文消息
             //先获取总数
             $countarr = $this->weixin->getForeverCount();
 
 
-            $count_str = $type.'_count';
+            $count_str = $type . '_count';
             $newscount = $countarr[$count_str];
 
-            if(empty($newscount)){
+            if (empty($newscount)) {
                 $response = [
                     'status' => 1,
                     'list' => [], //没有数据给个空数组
@@ -658,19 +656,19 @@ class Wechat extends Common
                 return json($response);
             }
 
-            if($newscount > 50) $newscount = 50; //限制只取50条,时间太久远的图文消息就不去查询了
+            if ($newscount > 50) $newscount = 50; //限制只取50条,时间太久远的图文消息就不去查询了
 
-            $material = $this->weixin->getForeverList($type,$offset,$newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
+            $material = $this->weixin->getForeverList($type, $offset, $newscount); //获取永久素材列表,认证后的公众号或者服务号才能使用
 
-            foreach ($material['item'] as $k=>$v){
+            foreach ($material['item'] as $k => $v) {
                 $data[$k]['media_id'] = $v['media_id'];
                 $data[$k]['title'] = $v['content']['news_item'][0]['title'];
-                $data[$k]['createtime'] = date('Y-m-d H:i:s',$v['content']['create_time']);
-                $data[$k]['updatetime'] = date('Y-m-d H:i:s',$v['content']['update_time']);
+                $data[$k]['createtime'] = date('Y-m-d H:i:s', $v['content']['create_time']);
+                $data[$k]['updatetime'] = date('Y-m-d H:i:s', $v['content']['update_time']);
             }
 
             //这边对数据进行缓存
-            Cache::set($cache_name,json_encode($data),30*60); //使用文件缓存30分钟
+            Cache::set($cache_name, json_encode($data), 5 * 60); //使用文件缓存30分钟, 30分钟太长改成5分钟吧
         }
 
         $response = [
@@ -681,6 +679,170 @@ class Wechat extends Common
         return json($response);
 
     }
+
+
+    /**
+     * 从微信的素材库中获取图片信息 (获取素材的接口每天是有限制的 一天 1000次,所以查询出来的数据需要将数据存入缓存中)
+     */
+    public function getForeverForLibrary()
+    {
+
+        $type = input('param.type', 'image'); //默认获取图片素材
+        $page = input('param.page', 1); //分页的页码
+        $limit = input('param.limit', 10); //每页显示的数量,默认是10
+        $offset = ($page - 1) * $limit; //分页的offset
+        $cache_name = $type . '_list_'. $page .'_'. $this->wechatconfig['appid']; //定义缓存的key
+        $res = Cache::get($cache_name);//先看看缓存中是否有数据
+
+        if (!empty($res)) {
+            $data = json_decode($res, true);
+        } else {
+            //先获取总数
+            $countarr = $this->weixin->getForeverCount();
+            if(!$countarr){
+                $response = [
+                    'status' => 0,
+                    'msg' => $this->weixin->errMsg,
+                ];
+                return json($response);
+            }
+            $count_str = $type . '_count';
+            $typecount = $countarr[$count_str];
+            if (empty($typecount)) {
+                $response = [
+                    'status' => 1,
+                    'list' => [], //没有数据给个空数组
+                ];
+                //Cache::set('newslist',json_encode([]),30*60); //使用文件缓存30分钟
+                return json($response);
+            }
+
+            $material = $this->weixin->getForeverList($type, $offset, $limit); //获取永久素材列表,认证后的公众号或者服务号才能使用
+            //获取到了指定的信息之后,进行处理
+            switch ($type) {
+                case 'image':
+                    $data = $this->handelImages($material); //处理图片素材
+                    break;
+                case 'news':
+                    $data = $this->handelNews($material); //处理图文消息素材
+                    break;
+                default:
+                    break;
+            }
+            //这边对数据进行缓存
+            Cache::set($cache_name, json_encode($data), 5 * 60); //使用文件缓存5分钟
+        }
+
+        $response = [
+            'status' => 1,
+            'msg' => '获取成功',
+            'list' => $data
+        ];
+        return json($response);
+
+
+    }
+
+
+    /**
+     * 对图文素材进行处理
+     */
+    private function handelNews($material)
+    {
+//        * 数组结构:
+//        *  array(
+//	 *  	"0"=>array(
+//	 *  		'Title'=>'msg title',
+//	 *  		'Description'=>'summary text',
+//	 *  		'PicUrl'=>'http://www.domain.com/1.jpg',
+//	 *  		'Url'=>'http://www.domain.com/1.html'
+//    *  	),
+//	 *  	"1"=>....
+        $data = [];
+        foreach ($material['item'] as $k => $v) {
+            $data[$k]['media_id'] = $v['media_id'];
+            $newsdata = [];
+            foreach ($v['content']['news_item'] as $k1=>$v1){
+                $newsdata[$k1]['Title']= $v1['title'];
+                $newsdata[$k1]['Description']= $v1['digest'];
+                $newsdata[$k1]['PicUrl']= $v1['thumb_url'];
+                $newsdata[$k1]['Url']= $v1['url'];
+            }
+            $data[$k]['newsdata'] = $newsdata;
+            $data[$k]['title'] = $v['content']['news_item'][0]['title'];//标题
+            $data[$k]['createtime'] = date('Y-m-d H:i:s', $v['content']['create_time']);
+            $data[$k]['updatetime'] = date('Y-m-d H:i:s', $v['content']['update_time']);
+            //还得需要一些数据
+        }
+
+        //filedebug('处理过后的数据='.print_r($data,true));
+
+        return $data;
+
+    }
+
+    /**
+     * 对图片素材进行处理
+     */
+    private function handelImages($material)
+    {
+        return $material['item'];
+        
+    }
+
+
+    /**
+     * 上传永久素材
+     */
+    public function uploadMatrial()
+    {
+
+        //获取文件的类型,目前显示只能上传图片
+        //上传图片,获取图片路径,调用接口,返回图片media_id,将数据存入数据库中,
+
+        $file = $this->request->file('file');
+        $type = 'image'; //上传的图片类型
+        // 移动到框架应用根目录/uploads/ 目录下
+        $info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,gif,bmp,jpeg'])->move('../uploads'); //上传验证,文件大小为2M,图片格式为 bmp/png/jpeg/jpg/gif
+        if ($info) {
+            // 成功上传后 获取上传信息
+            $filePath = $info->getSaveName();
+            $data = [
+                'media' => '@' . dirname(__DIR__, 3) . '/uploads/' . $filePath, //这个图片路径是绝对路径
+//               'media' => $path, //这个图片路径是绝对路径
+            ];
+
+            //filedebug('上传的图片路径是='.print_r($data,true));
+            $res = $this->weixin->uploadForeverMedia($data, $type); //调用接口,获取图片信息
+            //filedebug('微信服务器返回的数据是='.print_r($res,true));
+            if (!$res) {
+                $response = [
+                    'status' => 0,
+                    'msg' => $this->weixin->errMsg, //返回微信的错误信息
+                ];
+            } else {
+                $response = [
+                    'status' => 1,
+                    'msg' => '上传成功',
+                    'info' => $res
+                ];
+            }
+        } else {
+            // 上传失败获取错误信息.异常返回
+            $errormsg = $file->getError();
+            $response = [
+                'status' => 0,
+                'msg' => $errormsg,
+            ];
+        }
+        return json($response);
+
+    }
+
+
+
+
+
 
 
 }

@@ -141,6 +141,9 @@ class WechatServer extends Controller
 
             }else{
                 $reply = $res['reply'];
+                //判断$reply的数据是否是json,如果是就转换成数组格式
+                $json2arr = json_decode($reply, true);
+                if($json2arr) $reply = $json2arr;
                 $msgtype = $res['msgtype'];
             }
         }

@@ -33,7 +33,7 @@ class Autoreply extends Common
 
         if(!empty($replylist)){
             foreach ($replylist as $k => $v){
-                if(isset($v['qrinfo']) && !empty($v['qrinfo'])){
+                if(isset($v['qrinfo']) && !empty($v['qrinfo']) && $v['eventtype'] == 13){
                     $qrinfoarr = json_decode($v['qrinfo'],true);
                     $expire = $qrinfoarr['expire']; //定义的过期时间
                     $createtime = $v['createtime'];
