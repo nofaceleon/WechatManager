@@ -45,7 +45,8 @@ class Common extends Controller
 
         //return; //临时关闭权限认证
         //在Common中加上权限认证
-        $UserAuth = new Auth();
+//        $UserAuth = new Auth();
+        $UserAuth = Auth::getInstance(); //使用单例模式实例化对象
         //默认是对控制器进行验证
         if (strcasecmp($type, 'controller') == 0) {
             $authname = Request::module() . '/' . Request::controller(); //获取当前控制器的名称

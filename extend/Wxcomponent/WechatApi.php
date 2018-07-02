@@ -1,5 +1,7 @@
 <?php
 namespace Wxcomponent;
+use think\facade\Cache;
+
 /**
  *	微信公众平台PHP-SDK, 官方API部分
  *  @author  dodge <dodgepudding@gmail.com>
@@ -1215,6 +1217,7 @@ class WechatApi
 	 */
 	protected function setCache($cachename,$value,$expired){
 		//TODO: set cache implementation
+        Cache::set($cachename, $value, 3600);
 		return false;
 	}
 
@@ -1225,7 +1228,9 @@ class WechatApi
 	 */
 	protected function getCache($cachename){
 		//TODO: get cache implementation
-		return false;
+        $res = Cache::get($cachename);
+        return $res;
+//		return false;
 	}
 
 	/**
@@ -1235,6 +1240,7 @@ class WechatApi
 	 */
 	protected function removeCache($cachename){
 		//TODO: remove cache implementation
+        Cache::rm($cachename);
 		return false;
 	}
 

@@ -22,7 +22,7 @@ class Autoreply extends Common
     public function index()
     {
 
-        //根据当前使用的公众号的appid去查询对应的数据
+        //根据当前使用的公众号的appid去查询对应的数据,是否需要分页显示
         //$replylist = $this->AutoReplyModel->getAllReplyInfo($this->wechatconfig['appid']);
        // $page = input('param.page',1); //
         //$limit = 5;
@@ -338,6 +338,11 @@ class Autoreply extends Common
         }
         return json($response);
     }
+
+
+
+
+
 
 
 

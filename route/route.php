@@ -12,3 +12,4 @@
 //需要添加新的公众号的时候就需要在这里面新添加一条配置,当删除或者停用某个公众号,记得在这边删除指定路由
 
 Route::any('CSGZH', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
+Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');

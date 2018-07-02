@@ -290,7 +290,6 @@ class Config extends Common
 //        $configList = $this->configModel->getAllWechatConfig($this->userid); //获取所有配置信息
         
         $configList = Db::name('WechatConfig')->select();
-
 //        if(empty($this->wechatconfiglist)){
 //            $configList = [];
 //        }else{

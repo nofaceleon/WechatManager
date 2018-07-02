@@ -695,7 +695,7 @@ class Wechat extends Common
         $res = Cache::get($cache_name);//先看看缓存中是否有数据
 
         if (!empty($res)) {
-            $data = json_decode($res, true);
+            $alldata = json_decode($res, true);
         } else {
             //先获取总数
             $countarr = $this->weixin->getForeverCount();
@@ -729,14 +729,24 @@ class Wechat extends Common
                 default:
                     break;
             }
-            //这边对数据进行缓存
-            Cache::set($cache_name, json_encode($data), 5 * 60); //使用文件缓存5分钟
+
+            $alldata = [
+                'data'=>$data,
+                'typecount' => $typecount
+            ];
+
+            if(!empty($data)){
+                //当数据存在的时候,这边对数据进行缓存,防止存入空数据
+                Cache::set($cache_name, json_encode($alldata), 5 * 60); //使用文件缓存5分钟
+            }
+
         }
 
         $response = [
             'status' => 1,
             'msg' => '获取成功',
-            'list' => $data
+            'count' => $alldata['typecount'], //素材总数
+            'list' => $alldata['data'] //处理过的素材信息
         ];
         return json($response);
 
@@ -759,6 +769,8 @@ class Wechat extends Common
 //    *  	),
 //	 *  	"1"=>....
         $data = [];
+
+        if(empty($material)) return []; //如果传递的是空的
         foreach ($material['item'] as $k => $v) {
             $data[$k]['media_id'] = $v['media_id'];
             $newsdata = [];
@@ -768,7 +780,8 @@ class Wechat extends Common
                 $newsdata[$k1]['PicUrl']= $v1['thumb_url'];
                 $newsdata[$k1]['Url']= $v1['url'];
             }
-            $data[$k]['newsdata'] = $newsdata;
+//            $data[$k]['newsdata'] = $newsdata;
+            $data[$k]['newsdata'] = json_encode($newsdata);
             $data[$k]['title'] = $v['content']['news_item'][0]['title'];//标题
             $data[$k]['createtime'] = date('Y-m-d H:i:s', $v['content']['create_time']);
             $data[$k]['updatetime'] = date('Y-m-d H:i:s', $v['content']['update_time']);
@@ -786,7 +799,11 @@ class Wechat extends Common
      */
     private function handelImages($material)
     {
-        return $material['item'];
+        $res = $material['item'];
+//        foreach ($res as $k=>$v){
+//            $res[$k]['url'] = str_replace('http','https',$v['url']);
+//        }
+        return $res;
         
     }
 
@@ -811,8 +828,8 @@ class Wechat extends Common
                 'media' => '@' . dirname(__DIR__, 3) . '/uploads/' . $filePath, //这个图片路径是绝对路径
 //               'media' => $path, //这个图片路径是绝对路径
             ];
-
-            //filedebug('上传的图片路径是='.print_r($data,true));
+            
+            $local_img_url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$filePath; //本地的路径,是否要将这个本地路径存入数据库中呢
             $res = $this->weixin->uploadForeverMedia($data, $type); //调用接口,获取图片信息
             //filedebug('微信服务器返回的数据是='.print_r($res,true));
             if (!$res) {
@@ -821,10 +838,23 @@ class Wechat extends Common
                     'msg' => $this->weixin->errMsg, //返回微信的错误信息
                 ];
             } else {
+
+                //这边将数据存入本地素材库中
+                $adddata = [
+                    'appid' => $this->wechatconfig['appid'],
+                    'media_id' => $res['media_id'],
+                    'local_imgurl' => $local_img_url,
+                    'weixin_imgurl' => $res['url'],
+                ];
+                $addres = Db::name('ImgMaterial')->insert($adddata);
+
+//                $res['url'] = $local_img_url;
+
                 $response = [
                     'status' => 1,
                     'msg' => '上传成功',
-                    'info' => $res
+                    'info' => $res,
+//                    'local_imgurl' => $local_img_url  //上传成功后返回图片路径
                 ];
             }
         } else {
@@ -840,8 +870,34 @@ class Wechat extends Common
     }
 
 
+    /**
+     * 删除永久素材
+     */
+    public function deleteMatrial()
+    {
+        $mediaId = input('param.media_id','');
+        $res = $this->weixin->delForeverMedia($mediaId); //根据mediaID删除永久素材
+        if($res){
+            //删除成功
+            $response = [
+                'status' => 1,
+                'msg' => '删除素材成功'
+            ];
+        }else{
+            //删除失败
+            $response = [
+                'status' => 0,
+                'msg' => $this->weixin->errMsg
+            ];
+        }
+        return json($response);
+
+    }
 
 
+    /**
+     * 删除缓存
+     */
 
 
 

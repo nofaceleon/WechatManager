@@ -84,11 +84,31 @@ class Auth{
         'auth_user'         => 'member'             // 用户信息表
     );
 
-    public function __construct() {
+    private static $instance;
+
+    private function __construct() {
         if (config('auth_config')) {
             //可设置配置项 auth_config, 此配置项为数组。
             $this->_config = array_merge($this->_config, config('auth_config'));
         }
+    }
+    
+    /**
+     * 单例模式
+     */
+    public static function getInstance()
+    {
+        if(!self::$instance instanceof self){
+            self::$instance = new self();
+        }
+        return self::$instance;
+
+    }
+
+    //防止被克隆
+    private function __clone()
+    {
+
     }
 
     /**

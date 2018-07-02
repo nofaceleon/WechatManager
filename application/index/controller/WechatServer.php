@@ -119,8 +119,14 @@ class WechatServer extends Controller
 
         if(!empty($res)){
             //有定义过自动回复
+
+            filedebug('查询到的自动回复消息是 = '.print_r($res,true));
             $msgtype = $res['msgtype'];
             $reply = $res['reply'];
+            $json2arr = json_decode($reply, true);
+            if($json2arr) $reply = $json2arr;
+            filedebug('最终的数据是 = '.print_r($reply,true));
+
             //$this->weixin->$msgtype($reply)->reply();
         }else{
             //获取当前时间
@@ -142,8 +148,6 @@ class WechatServer extends Controller
             }else{
                 $reply = $res['reply'];
                 //判断$reply的数据是否是json,如果是就转换成数组格式
-                $json2arr = json_decode($reply, true);
-                if($json2arr) $reply = $json2arr;
                 $msgtype = $res['msgtype'];
             }
         }
