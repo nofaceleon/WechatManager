@@ -4,7 +4,7 @@ namespace app\index\controller;
 
 use think\Db;
 
-class Imgmaterial extends Common
+class ImgMaterial extends Common
 {
 
     /**
@@ -22,20 +22,21 @@ class Imgmaterial extends Common
             ];
             return json($response);
         }
-        $res = Db::name('ImgMaterial')->where("media_id = '$media_id'")->cache(300)->find();
-        if(empty($res)){
 
+        $res = Db::name('ImgMaterial')->where("media_id = '$media_id'")->cache(300)->find();
+
+        if(empty($res)){
             $response = [
                 'status' => 0,
                 'msg' => '没有数据'
             ];
-
         }else{
-
+//            $url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$res['local_imgurl']; //拼接成需要的URL链接
+            $url = IMG_URL.$res['local_imgurl']; //拼接成需要的URL链接
             $response = [
                 'status' => 1,
                 'msg' => '获取成功',
-                'url' => $res['local_imgurl']
+                'url' => $url
             ];
 
         }
@@ -53,7 +54,7 @@ class Imgmaterial extends Common
         $page = input('param.page',1);
         $limit = input('param.limit',20);
         $appid = $this->wechatconfig['appid'];
-        $count = Db::name('ImgMaterial')->where("appid = '$appid'")->cache(300)->count();
+        $count = Db::name('ImgMaterial')->where("appid = '$appid'")->count();
         $res = Db::name('ImgMaterial')->where("appid = '$appid'")->page($page,$limit)->select();
         if(empty($res)){
             $response = [
@@ -61,6 +62,10 @@ class Imgmaterial extends Common
                 'msg' => '没有数据',
             ];
         }else{
+            foreach ($res as $k=>$v){
+                $res[$k]['local_imgurl'] = IMG_URL.$v['local_imgurl'];
+
+            }
             $response = [
                 'status' => 1,
                 'msg' => '获取成功',

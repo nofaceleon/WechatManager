@@ -828,8 +828,9 @@ class Wechat extends Common
                 'media' => '@' . dirname(__DIR__, 3) . '/uploads/' . $filePath, //这个图片路径是绝对路径
 //               'media' => $path, //这个图片路径是绝对路径
             ];
-            
-            $local_img_url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$filePath; //本地的路径,是否要将这个本地路径存入数据库中呢
+
+//            $local_img_url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$filePath; //本地的路径,也要存入数据库中,返回的图片应该是后台拼接的
+            $local_img_url = $filePath; //本地的路径,也要存入数据库中,返回的图片应该是后台拼接的
             $res = $this->weixin->uploadForeverMedia($data, $type); //调用接口,获取图片信息
             //filedebug('微信服务器返回的数据是='.print_r($res,true));
             if (!$res) {
@@ -847,8 +848,6 @@ class Wechat extends Common
                     'weixin_imgurl' => $res['url'],
                 ];
                 $addres = Db::name('ImgMaterial')->insert($adddata);
-
-//                $res['url'] = $local_img_url;
 
                 $response = [
                     'status' => 1,

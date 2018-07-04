@@ -24,13 +24,13 @@ class Autoreply extends Common
 
         //根据当前使用的公众号的appid去查询对应的数据,是否需要分页显示
         //$replylist = $this->AutoReplyModel->getAllReplyInfo($this->wechatconfig['appid']);
-       // $page = input('param.page',1); //
-        //$limit = 5;
-        //$replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->page($page,$limit)->select();
-        $replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->select(); //返回的是二维数组
 
+        $page = input('param.page',1); //
+        $limit = input('param.limit',10);
+        $count = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->count();
+        $replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->page($page,$limit)->order('createtime desc')->select();
+//        $replylist = Db::name('AutoReply')->where(['appid'=>$this->wechatconfig['appid']])->select(); //返回的是二维数组
         $replylist = empty($replylist) ? [] : $replylist;
-
         if(!empty($replylist)){
             foreach ($replylist as $k => $v){
                 if(isset($v['qrinfo']) && !empty($v['qrinfo']) && $v['eventtype'] == 13){
@@ -47,8 +47,8 @@ class Autoreply extends Common
         }
         $response = [
             'status' => 1,
-            'replylist' => $replylist
-
+            'replylist' => $replylist,
+            'count' => $count,
         ];
         return json($response);
 
@@ -114,8 +114,6 @@ class Autoreply extends Common
                 'msg' => '没有相关信息!'
             ];
         } else {
-
-
             if(isset($replyinfo['qrinfo']) && !empty($replyinfo['qrinfo'])){
                 $qrinfoarr = json_decode($replyinfo['qrinfo'],true);
                 $replyinfo['qrtype'] = $qrinfoarr['qrtype'];
@@ -123,7 +121,14 @@ class Autoreply extends Common
                 $replyinfo['expire'] = $qrinfoarr['expire'];
             }
 
-            
+            if(strcasecmp($replyinfo['msgtype'],'image') == 0){
+                //当是图片格式的时候,根据media_id感觉
+                $media_id = $replyinfo['reply'];
+                $imginfo = Db::name('ImgMaterial')->where("media_id = '$media_id'")->cache(300)->find();
+                if(!empty($imginfo)) $replyinfo['local_imgurl'] = IMG_URL.$imginfo['local_imgurl'];
+
+            }
+
             $response = [
                 'status' => 1,
                 'msg' => '获取成功!',

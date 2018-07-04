@@ -18,5 +18,12 @@ require __DIR__ . '/../thinkphp/base.php';
 
 define('DEBUG_MODEL',true); //是否是测试环境
 define('CONFIG_URL','http://uat.zwmedia.com.cn/WechatDevApi/public/index.php/'); //配置默认的网站域名
+
+if(DEBUG_MODEL){
+    define('IMG_URL',$_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'); //定义图片路径(测试环境)
+}else{
+    define('IMG_URL',$_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/Wechatadmin/WechatDevApi/uploads/'); //定义图片路径(正式环境)
+}
+
 // 执行应用并响应
 Container::get('app')->run()->send();

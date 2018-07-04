@@ -29,7 +29,7 @@ class AutoreplyValidate extends Validate
 
     protected $scene = [
         'edit'  =>  ['reply','msgtype','eventtype','status','keyword'], //编辑场景验证的字段
-        'add'  =>  ['reply','msgtype','eventtype','status','appid'], //编辑场景验证的字段
+        'add'  =>  ['reply','msgtype','eventtype','status','appid'], //添加场景验证的字段
     ];
 
 
