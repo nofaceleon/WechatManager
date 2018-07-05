@@ -1,5 +1,13 @@
 # 微信开发者后台VUE版本
 
+
+Tp5.1使用composer进行包管理
+
+注意:如果使用Git进行版本控制,从git上拉取代码后,要在项目目录下面执行
+composer install 命令来安装框架
+
+
+
 #### 项目介绍
 适用于vue的后台接口
 
@@ -10,7 +18,8 @@
 3.正常情况下 route/route.php 和 config/database.php 这两个文件是不需要修改的(因为正式环境的配置跟测试环境的配置是不一样的)
 
 ####数据库修改日志:
- 
+
+##### 2018-7-5 日上线版本 
 1.(2018-7-2 11:41:10)we_auto_reply表中的 reply 字段类型改为text,并增加remark字段
 ```sql
 ALTER TABLE `we_auto_reply`
@@ -32,6 +41,10 @@ CREATE TABLE `we_img_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ```
+
+##### 下个版本...
+
+
 
 
 

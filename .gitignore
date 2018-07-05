@@ -6,3 +6,4 @@ thinkphp
 .env
 /route
 /uploads
+/config
