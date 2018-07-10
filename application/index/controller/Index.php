@@ -26,7 +26,7 @@ class Index extends Common
     public function getBaseInfo()
     {
 
-        //测试提交,测试推送
+        //测试提交,测试推送 2
         $data = $this->group_id;
         return json($data);
 
