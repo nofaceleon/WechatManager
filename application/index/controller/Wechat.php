@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use app\service\helper\Format;
 use think\Db;
 use think\facade\Cache;
 use think\facade\Request;
@@ -892,6 +893,54 @@ class Wechat extends Common
         return json($response);
 
     }
+
+
+    /**
+     * 主动回复消息也分为2种,回复图片和回复文本信息
+     */
+    public function initreply()
+    {
+
+        //TODO 这个接口从数据库中读取信息,然后拼接数据并回复
+
+        $content = input('param.content','');
+        if(empty($content)) return Format::error('回复内容不能为空');
+
+        $openid = input('param.openid','');
+
+        //$openid = 'oHIv-wagNwj9P18vT51lhYc-y0zE';
+
+        $data = [
+            'touser'=> $openid,
+            'msgtype'=>'text',
+            'text'=>[
+                'content'=>$content
+            ]
+        ];
+
+
+        $data = [
+            'touser'=> $openid,
+            'msgtype'=>'image',
+            'image'=>[
+                'media_id'=>'3G_uOH7iV2EuZD7NSo-twnSjdizL5ZgGp9PF_HdByV37bAM2kd5RqO9HUaZIRaNk' //图片对应的media_id
+            ]
+        ];
+
+        //发送客服消息
+        $res = $this->weixin->sendCustomMessage($data);
+        if($res){
+            return Format::success('回复成功');
+        }else{
+            //回复失败怎么处理,回复模板消息?
+
+            return Format::error($this->weixin->errMsg);
+        }
+
+    }
+
+    
+
 
 
     /**

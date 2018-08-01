@@ -6,6 +6,8 @@
  */
 namespace app\index\controller;
 
+use app\service\replyhandle\ImgReply;
+use app\service\replyhandle\TextReply;
 use think\Controller;
 use think\Db;
 use think\facade\Request;
@@ -38,15 +40,23 @@ class WechatServer extends Controller
         //这边验证过了之后就不需要接着认证了,微信会将用户发送的消息,或者事件推送到这个地址上面
         //自动回复消息
         $this->weixin->valid(); //这边是需要验证的时候使用
+
         $type = $this->weixin->getRev()->getRevType(); //获取微信推送过来的消息类型
-//        filedebug('获取类型' . print_r($type, true));
+
+        filedebug('获取类型' . print_r($type, true));
+
+        if($type == WechatApi::MSGTYPE_VOICE){
+            filedebug('接收到的是语音');
+        }
+
         switch ($type) {
             case WechatApi::MSGTYPE_TEXT: //文本
                 $content = $this->weixin->getRevContent();
-                filedebug('获取到了用户发送的消息' . print_r($content, true));
+
+                (TextReply::getInstance())->saveData($this->weixin->getRevData()); //保存数据信息
+
                 //根据获取到的内容,去数据库中查询与之对应的回复方式并推送
                 //filedebug('直行道 = '.$type);
-
                 $this->handleUserReply($content, $this->config['appid'],$type);
                 exit;
                 break;
@@ -72,8 +82,19 @@ class WechatServer extends Controller
                 //filedebug('接收到了事件推送' . print_r($detailtype, true));
                 break;
             case WechatApi::MSGTYPE_IMAGE: //图片
+                
+
+                (ImgReply::getInstance())->saveData($this->weixin->getRevData());
+                exit;
+//                $picurl = $this->weixin->getRevPic(); //获取图片路径
+                break;
+
+            case WechatApi::MSGTYPE_VOICE: //语音
+                filedebug('获取到了语音数据='.print_r($this->weixin->getRevData(),true));
+                $this->weixin->text("接收到了语音")->reply();
 
                 break;
+
             default:
                 $this->weixin->text("help info")->reply();
         }
