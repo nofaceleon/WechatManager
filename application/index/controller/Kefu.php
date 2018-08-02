@@ -34,20 +34,29 @@ class Kefu extends Common
 
         //先查出所有用户列表
 
+        $userList = Db::name('Kefu')->alias('a')->leftJoin('ClientUser b','a.openid = b.openid')->where(['a.wechatid'=>$wechatid])->field('a.openid,b.nickname,b.headimgurl')->group('a.openid')->select();
+
+        foreach ($userList as $k=>&$v){
+            $detail = Db::name('Kefu')->where(['openid'=>$v['openid']])->order('createtime desc')->field("content,DATE_FORMAT(createtime,'%H:%i') as time")->find();
+            $v = array_merge($v,$detail);
+        }
 
 
-        //查出改用户有多少条未读消息(过滤掉自动回复的文案)
 
+        //SELECT a.openid,b.nickname,b.headimgurl FROM we_kefu as a LEFT JOIN we_client_user as b on a.openid = b.openid  where a.wechatid = 'gh_7557b6fe18eb' GROUP BY a.openid
+
+	   // SELECT * FROM we_kefu where openid = 'oHIv-wagNwj9P18vT51lhYc-y0zE' ORDER BY createtime desc LIMIT 1
+
+        //查出改用户有多少条未读消息和最后一条数据(过滤掉自动回复的文案)
 
 
         //
 
 
-
 //        $list = Db::name('kefu')->where($where)->field('openid,content,count(*)')->group('openid')->select();
-        $list = Db::name('kefu')->query($sql);
-        if ($list) {
-            return Format::success('获取数据成功', $list);
+        //$list = Db::name('kefu')->query($sql);
+        if ($userList) {
+            return Format::success('获取数据成功', $userList);
         } else {
             return Format::error('获取数据失败');
         }
