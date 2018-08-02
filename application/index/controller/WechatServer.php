@@ -8,6 +8,7 @@ namespace app\index\controller;
 
 use app\service\replyhandle\ImgReply;
 use app\service\replyhandle\TextReply;
+use app\service\user\Adduser;
 use think\Controller;
 use think\Db;
 use think\facade\Request;
@@ -45,9 +46,8 @@ class WechatServer extends Controller
 
         filedebug('获取类型' . print_r($type, true));
 
-        if($type == WechatApi::MSGTYPE_VOICE){
-            filedebug('接收到的是语音');
-        }
+        //存储用户信息
+        Adduser::getInstance($this->weixin)->addUser();
 
         switch ($type) {
             case WechatApi::MSGTYPE_TEXT: //文本

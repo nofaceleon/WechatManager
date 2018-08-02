@@ -28,7 +28,7 @@ class Format
         ];
 
         if ($meta !== null) {
-            $result['meta'] = $meta;
+            $result['data'] = $meta;
         }
 
 
@@ -44,7 +44,7 @@ class Format
      * @param int $status
      * @return \think\response\Json
      */
-    public static function error($msg, $meta = null, $status = 0)
+    public static function error($msg, $action = '',$appid = '', $meta = '', $status = 0)
     {
 
         $result = [
@@ -53,8 +53,10 @@ class Format
         ];
 
         if ($meta !== null) {
-            $result['meta'] = $meta;
+           $meta = is_array($meta) ? json_encode($meta) : $meta;
         }
+
+        doLog($action, $msg, $meta, $appid);
 
         return json($result);
 

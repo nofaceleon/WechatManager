@@ -44,7 +44,7 @@ class ImgReply
 //        filedebug('获取到的图片数据是=' . print_r($data, true));
 
         $questionInfo = [
-            'to_user_name' => $data['ToUserName'],
+            'wechatid' => $data['ToUserName'],
             'openid' => $data['FromUserName'],
             'content' => '[图片]',
             'msgtype' => $data['MsgType'],

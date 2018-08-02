@@ -38,7 +38,7 @@ class TextReply
     {
 
         $questionInfo = [
-            'to_user_name' => $data['ToUserName'],
+            'wechatid' => $data['ToUserName'],
             'openid' => $data['FromUserName'],
             'content' => $data['Content'],
             'msgtype' => $data['MsgType'],
