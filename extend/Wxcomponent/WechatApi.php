@@ -2633,6 +2633,9 @@ class WechatApi
 	 */
 	public function sendCustomMessage($data){
 		if (!$this->access_token && !$this->checkAuth()) return false;
+
+		filedebug('accesstoken='.$this->access_token);
+
 		$result = $this->http_post(self::API_URL_PREFIX.self::CUSTOM_SEND_URL.'access_token='.$this->access_token,self::json_encode($data));
 		if ($result)
 		{

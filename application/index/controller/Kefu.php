@@ -29,7 +29,7 @@ class Kefu extends Common
         //TODO 这边还要过滤掉有自动回复的文案
 //        $sql = "SELECT a.openid,a.content,count(*) as num,DATE_FORMAT(a.createtime,'%H:%i'),b.nickname,b.headimgurl FROM we_kefu as a LEFT JOIN we_client_user as b ON a.openid = b.openid WHERE a.`status` = 0 AND a.wechatid = '$wechatid' AND a.content not in (SELECT keyword from we_auto_reply where appid = '$appid' and `status` = 1 ) GROUP BY a.openid ORDER BY a.createtime desc";
 
-        $sql = "SELECT a.openid,a.content,a.status,DATE_FORMAT(a.createtime,'%H:%i') as time,b.nickname,b.headimgurl FROM we_kefu as a LEFT JOIN we_client_user as b ON a.openid = b.openid WHERE a.wechatid = '$wechatid' AND a.content not in (SELECT keyword from we_auto_reply where appid = '$appid' and `status` = 1 ) GROUP BY a.openid ORDER BY a.createtime desc";
+        //$sql = "SELECT a.openid,a.content,a.status,DATE_FORMAT(a.createtime,'%H:%i') as time,b.nickname,b.headimgurl FROM we_kefu as a LEFT JOIN we_client_user as b ON a.openid = b.openid WHERE a.wechatid = '$wechatid' AND a.content not in (SELECT keyword from we_auto_reply where appid = '$appid' and `status` = 1 ) GROUP BY a.openid ORDER BY a.createtime desc";
 
 
         //先查出所有用户列表
@@ -37,8 +37,13 @@ class Kefu extends Common
         $userList = Db::name('Kefu')->alias('a')->leftJoin('ClientUser b','a.openid = b.openid')->where(['a.wechatid'=>$wechatid])->field('a.openid,b.nickname,b.headimgurl')->group('a.openid')->select();
 
         foreach ($userList as $k=>&$v){
-            $detail = Db::name('Kefu')->where(['openid'=>$v['openid']])->order('createtime desc')->field("content,DATE_FORMAT(createtime,'%H:%i') as time")->find();
-            $v = array_merge($v,$detail);
+
+            //$detail = Db::name('Kefu')->where(['openid'=>$v['openid']])->order('createtime desc')->field("status,content,DATE_FORMAT(createtime,'%H:%i') as time")->find();
+            $openid = $v['openid'];
+            $sql = "select status,content,DATE_FORMAT(createtime,'%H:%i') as time from we_kefu where openid='$openid' and content not in (SELECT keyword from we_auto_reply where appid = '$appid' and status = 1) order by createtime desc limit 1";
+
+            $detail = Db::name('Kefu')->query($sql);
+            $v = array_merge($v,$detail[0]);
         }
 
 
@@ -58,7 +63,7 @@ class Kefu extends Common
         if ($userList) {
             return Format::success('获取数据成功', $userList);
         } else {
-            return Format::error('获取数据失败');
+            return Format::error('没有数据','Kefu/getgetUserChatInfo/error', $this->wechatconfig['appid']);
         }
 
 
@@ -77,7 +82,6 @@ class Kefu extends Common
         if (empty($openid)) return Format::error('OPENID不能为空', 'Kefu/getgetUserChatInfo/error', $this->wechatconfig['appid']);
 
         $this->changeStatus($openid);
-
 
         $appid = $this->wechatconfig['appid'];
         $sql = "SELECT * FROM we_kefu where openid = '$openid' and content not in (SELECT keyword from we_auto_reply where appid = '$appid' and `status` = 1 ) ORDER BY createtime ASC ";
@@ -110,7 +114,6 @@ class Kefu extends Common
         $data = [
             'status' => 1,
         ];
-
 
         try {
             Db::name('Kefu')->where(['openid' => $openid, 'status' => 0])->update($data);

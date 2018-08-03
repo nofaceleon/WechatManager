@@ -3,7 +3,9 @@
 namespace app\index\controller;
 
 use app\service\helper\Format;
+use app\service\kefureply\initreply;
 use think\Db;
+use think\Exception;
 use think\facade\Cache;
 use think\facade\Request;
 use think\Validate;
@@ -692,7 +694,7 @@ class Wechat extends Common
         $page = input('param.page', 1); //分页的页码
         $limit = input('param.limit', 10); //每页显示的数量,默认是10
         $offset = ($page - 1) * $limit; //分页的offset
-        $cache_name = $type . '_list_'. $page .'_'. $this->wechatconfig['appid']; //定义缓存的key
+        $cache_name = $type . '_list_' . $page . '_' . $this->wechatconfig['appid']; //定义缓存的key
         $res = Cache::get($cache_name);//先看看缓存中是否有数据
 
         if (!empty($res)) {
@@ -700,7 +702,7 @@ class Wechat extends Common
         } else {
             //先获取总数
             $countarr = $this->weixin->getForeverCount();
-            if(!$countarr){
+            if (!$countarr) {
                 $response = [
                     'status' => 0,
                     'msg' => $this->weixin->errMsg,
@@ -732,11 +734,11 @@ class Wechat extends Common
             }
 
             $alldata = [
-                'data'=>$data,
+                'data' => $data,
                 'typecount' => $typecount
             ];
 
-            if(!empty($data)){
+            if (!empty($data)) {
                 //当数据存在的时候,这边对数据进行缓存,防止存入空数据
                 Cache::set($cache_name, json_encode($alldata), 5 * 60); //使用文件缓存5分钟
             }
@@ -771,15 +773,15 @@ class Wechat extends Common
 //	 *  	"1"=>....
         $data = [];
 
-        if(empty($material)) return []; //如果传递的是空的
+        if (empty($material)) return []; //如果传递的是空的
         foreach ($material['item'] as $k => $v) {
             $data[$k]['media_id'] = $v['media_id'];
             $newsdata = [];
-            foreach ($v['content']['news_item'] as $k1=>$v1){
-                $newsdata[$k1]['Title']= $v1['title'];
-                $newsdata[$k1]['Description']= $v1['digest'];
-                $newsdata[$k1]['PicUrl']= $v1['thumb_url'];
-                $newsdata[$k1]['Url']= $v1['url'];
+            foreach ($v['content']['news_item'] as $k1 => $v1) {
+                $newsdata[$k1]['Title'] = $v1['title'];
+                $newsdata[$k1]['Description'] = $v1['digest'];
+                $newsdata[$k1]['PicUrl'] = $v1['thumb_url'];
+                $newsdata[$k1]['Url'] = $v1['url'];
             }
 //            $data[$k]['newsdata'] = $newsdata;
             $data[$k]['newsdata'] = json_encode($newsdata);
@@ -805,7 +807,7 @@ class Wechat extends Common
 //            $res[$k]['url'] = str_replace('http','https',$v['url']);
 //        }
         return $res;
-        
+
     }
 
 
@@ -875,15 +877,15 @@ class Wechat extends Common
      */
     public function deleteMatrial()
     {
-        $mediaId = input('param.media_id','');
+        $mediaId = input('param.media_id', '');
         $res = $this->weixin->delForeverMedia($mediaId); //根据mediaID删除永久素材
-        if($res){
+        if ($res) {
             //删除成功
             $response = [
                 'status' => 1,
                 'msg' => '删除素材成功'
             ];
-        }else{
+        } else {
             //删除失败
             $response = [
                 'status' => 0,
@@ -902,51 +904,80 @@ class Wechat extends Common
     {
 
         //TODO 这个接口从数据库中读取信息,然后拼接数据并回复
-
-        $content = input('param.content','');
-        if(empty($content)) return Format::error('回复内容不能为空');
-
-        $openid = input('param.openid','');
-
-        //$openid = 'oHIv-wagNwj9P18vT51lhYc-y0zE';
-
-        $data = [
-            'touser'=> $openid,
-            'msgtype'=>'text',
-            'text'=>[
-                'content'=>$content
-            ]
-        ];
-
-
-        $data = [
-            'touser'=> $openid,
-            'msgtype'=>'image',
-            'image'=>[
-                'media_id'=>'3G_uOH7iV2EuZD7NSo-twnSjdizL5ZgGp9PF_HdByV37bAM2kd5RqO9HUaZIRaNk' //图片对应的media_id
-            ]
-        ];
+        $content = input('param.content', ''); //接收回复内容
+        $openid = input('param.openid', ''); //接收OPENID
+        $msgtype = input('param.msgtype', 'text'); //默认回复文本消息
+        if($msgtype == 'image'){
+            $content = '[图片]';
+        }
+        if (empty($content)) return Format::error('回复内容不能为空','Wechat/initreply/error', $this->wechatconfig['appid']);
+        switch ($msgtype){
+            case 'text':
+                $data = [
+                    'touser' => $openid,
+                    'msgtype' => 'text',
+                    'text' => [
+                        'content' => $content
+                    ]
+                ];
+                break;
+            case 'image':
+                $media_id = input('param.media_id','');
+                $imgurl = input('param.url','');
+                $data = [
+                    'touser' => $openid,
+                    'msgtype' => 'image',
+                    'image' => [
+                        'meida_id' => $media_id
+                    ]
+                ];
+        }
 
         //发送客服消息
         $res = $this->weixin->sendCustomMessage($data);
-        if($res){
-            return Format::success('回复成功');
-        }else{
-            //回复失败怎么处理,回复模板消息?
+        if ($res) {
 
+            //回复成功之后才将数据存入数据库中
+            $rawdata = [
+                'wechatid' => $this->wechatconfig['wechatid'],
+                'openid' => $openid,
+                'content' => $content,
+                'msgtype' => $msgtype,
+                'detail' => json_encode($data),
+                'replytype' => 2,
+                'status' => 1,
+                'kfid' => $this->userid,
+                'createtime' => date('Y-m-d H:i:s'),
+
+            ];
+
+            if($msgtype == 'image'){
+                $imgdata = [
+                    'PicUrl'=>$imgurl,
+                    'media_id'=>$media_id
+                ];
+                $rawdata['detail'] = json_encode($imgdata);
+            }
+
+            try {
+                Db::name('Kefu')->insert($rawdata);
+            } catch (Exception $e) {
+                $errormsg = $e->getMessage();
+                doLog('Wechat/initreply/error', '客服回复入库失败', $errormsg, $this->wechatconfig['appid']);
+            }
+
+            return Format::success('回复成功');
+        } else {
+            //回复失败怎么处理,回复模板消息?
             return Format::error($this->weixin->errMsg);
         }
 
     }
 
-    
-
-
 
     /**
      * 删除缓存
      */
-
 
 
 }
