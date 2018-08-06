@@ -10,7 +10,6 @@ namespace app\service\helper;
 
 use think\Db;
 use think\Exception;
-use traits\controller\Jump;
 
 class Dbcache
 {
@@ -20,41 +19,41 @@ class Dbcache
     private static $instacne;
 
 
+
     private function __construct($dbconfig = [])
     {
 
-        filedebug('执行的到构造函数');
-
-        if (empty($dbconfig)) {
-            self::$dbconfig = [
-                // 数据库类型
-                'type' => 'mysql',
-                // 数据库连接DSN配置
-                'dsn' => '',
-                // 服务器地址
-                'hostname' => '127.0.0.1',
-                // 数据库名
-                'database' => 'wechat_access_token',
-                // 数据库用户名
-                'username' => 'root',
-                // 数据库密码
-                'password' => 'root',
-                // 数据库连接端口
-                'hostport' => '3306',
-                // 数据库连接参数
-                'params' => [],
-                // 数据库编码默认采用utf8
-                'charset' => 'utf8',
-                // 数据库表前缀
-                'prefix' => '',
-            ];
-        } else {
-            self::$dbconfig = $dbconfig;
-        }
-
-
+//        if (empty($dbconfig)) {
+////            self::$dbconfig = [
+////                // 数据库类型
+////                'type' => 'mysql',
+////                // 数据库连接DSN配置
+////                'dsn' => '',
+////                // 服务器地址
+////                'hostname' => '127.0.0.1',
+////                // 数据库名
+////                'database' => 'wechat_access_token',
+////                // 数据库用户名
+////                'username' => 'root',
+////                // 数据库密码
+////                'password' => 'root',
+////                // 数据库连接端口
+////                'hostport' => '3306',
+////                // 数据库连接参数
+////                'params' => [],
+////                // 数据库编码默认采用utf8
+////                'charset' => 'utf8',
+////                // 数据库表前缀
+////                'prefix' => '',
+////            ];
+////
+//            self::$dbconfig = config('zsmp.'); //获取配置文件中的数据库配置
+//
+//        } else {
+//            self::$dbconfig = $dbconfig;
+//        }
+        self::$dbconfig = (empty($dbconfig)) ? config('zsmp.') : $dbconfig;
         self::$timenow = date('Y-m-d H:i:s');
-
     }
 
     public static function getInstance($dbconfig = [])
@@ -81,7 +80,7 @@ class Dbcache
             return false;
         }
 
-        $res = Db::connect(self::$dbconfig)->table('access_token')->where(['cachekey' => $cachename])->find();
+        $res = Db::connect(self::$dbconfig)->table('tb_access_token')->where(['cachekey' => $cachename])->find();
         $data = [
             'cachekey' => $cachename,
             'access_token' => $value,
@@ -94,7 +93,7 @@ class Dbcache
         if (empty($res)) {
             //没有数据,执行插入操作
             try {
-                Db::connect(self::$dbconfig)->table('access_token')->insert($data);
+                Db::connect(self::$dbconfig)->table('tb_access_token')->insert($data);
                 return true;
             } catch (Exception $e) {
                 $errormsg = $e->getMessage();
@@ -104,7 +103,8 @@ class Dbcache
         } else {
             //执行更新操作
             try {
-                Db::connect(self::$dbconfig)->table('access_token')->where(['cachekey' => $cachename])->update($data);
+                unset($data['createtime']); //更新操作不需要更新创建时间
+                Db::connect(self::$dbconfig)->table('tb_access_token')->where(['cachekey' => $cachename])->update($data);
                 return true;
             } catch (Exception $e) {
                 $errormsg = $e->getMessage();
@@ -123,7 +123,7 @@ class Dbcache
     public static function getCache($cachename = '')
     {
         $timenow = self::$timenow;
-        $res = Db::connect(self::$dbconfig)->table('access_token')->where("cachekey = '$cachename' and expiretime > '$timenow'")->find();
+        $res = Db::connect(self::$dbconfig)->table('tb_access_token')->where("cachekey = '$cachename' and expiretime > '$timenow'")->find();
         if (empty($res)) {
             //没有该缓存数据
             return false;
@@ -143,7 +143,7 @@ class Dbcache
     {
 
         try {
-            Db::connect(self::$dbconfig)->table('access_token')->where("cachekey = '$cachename'")->limit(1)->delete();
+            Db::connect(self::$dbconfig)->table('tb_access_token')->where("cachekey = '$cachename'")->limit(1)->delete();
             return true;
         } catch (Exception $e) {
             $errormsg = $e->getMessage();

@@ -1,5 +1,6 @@
 <?php
 namespace Wxcomponent;
+use app\service\helper\Dbcache;
 use think\facade\Cache;
 
 /**
@@ -1217,7 +1218,9 @@ class WechatApi
 	 */
 	protected function setCache($cachename,$value,$expired){
 		//TODO: set cache implementation
-        Cache::set($cachename, $value, 3600);
+//        Cache::set($cachename, $value, 3600);
+        (Dbcache::getInstance())->setCache($cachename,$value,$expired);
+
 		return false;
 	}
 
@@ -1228,7 +1231,8 @@ class WechatApi
 	 */
 	protected function getCache($cachename){
 		//TODO: get cache implementation
-        $res = Cache::get($cachename);
+//        $res = Cache::get($cachename);
+        $res = (Dbcache::getInstance())->getCache($cachename);
         return $res;
 //		return false;
 	}
@@ -1240,7 +1244,9 @@ class WechatApi
 	 */
 	protected function removeCache($cachename){
 		//TODO: remove cache implementation
-        Cache::rm($cachename);
+//        Cache::rm($cachename);
+        (Dbcache::getInstance())->delCache($cachename);
+
 		return false;
 	}
 
@@ -1260,7 +1266,7 @@ class WechatApi
 		    return $this->access_token;
 		}
 
-		$authname = 'wechat_access_token'.$appid;
+		$authname = 'wechat_access_token_'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->access_token = $rs;
 			return $rs;
@@ -1290,7 +1296,7 @@ class WechatApi
 	public function resetAuth($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->access_token = '';
-		$authname = 'wechat_access_token'.$appid;
+		$authname = 'wechat_access_token_'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}

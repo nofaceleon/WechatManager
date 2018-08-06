@@ -45,6 +45,28 @@ function tree($arr, $pid = 0, $level = 0, $flagstr = '└―')
 
 }
 
+
+/**
+ * 无限极分类函数2
+ */
+function treeTo($arr, $pid = 0, $level = 0, $flagstr = '')
+{
+    static $list = [];
+    foreach ($arr as $v) {
+        if ($v['pid'] == $pid) {
+            $v['level'] = $level;
+            $flg = str_repeat($flagstr, $level);
+//            $flg = str_repeat('├──',$level);
+            $v['tag'] = $flg . $v['tag'];
+            $list[] = $v;
+            treeTo($arr, $v['id'], $level + 1);
+        }
+    }
+    return $list;
+
+}
+
+
 /**
  * 记录系统日志,跟天乐邦平台的日志格式统一起来
  */

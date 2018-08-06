@@ -928,11 +928,11 @@ class Wechat extends Common
                     'touser' => $openid,
                     'msgtype' => 'image',
                     'image' => [
-                        'meida_id' => $media_id
+                        'media_id' => $media_id
                     ]
                 ];
         }
-
+        
         //发送客服消息
         $res = $this->weixin->sendCustomMessage($data);
         if ($res) {
