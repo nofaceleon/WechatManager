@@ -16,7 +16,7 @@ use think\Exception;
 
 class Customerinfo extends Common
 {
-    
+
     /**
      * 获取用户的基本信息
      */
@@ -86,6 +86,22 @@ class Customerinfo extends Common
      */
     public function saveTel()
     {
+        $openid = input('param.openid', '');
+        $telephone = input('param.telephone', '');
+        if (empty($openid) || empty($telephone)) return Format::error('OPENID或电话号码不能为空', 'Customerinfo/saveTel/error', $this->wechatconfig['appid']);
+
+        $ishave = Db::name('ClientUser')->where(['openid'=>$openid])->find();
+        if(empty($ishave)) return Format::error('OPENID不存在', 'Customerinfo/saveTel/error', $this->wechatconfig['appid']);
+
+        try {
+            $data['telephone'] = $telephone;
+            $data['updatetime'] = date('Y-m-d H:i:s');
+            Db::name('ClientUser')->where(['openid' => $openid])->update($data);
+            return Format::success('保存电话号码成功');
+        } catch (Exception $e) {
+            return Format::error($e->getMessage(), 'Customerinfo/saveTel/error', $this->wechatconfig['appid']);
+        }
+
 
     }
 
@@ -100,7 +116,7 @@ class Customerinfo extends Common
         //根据传递的查询类型去实例化对应的
         //这边通过工厂类去查询相应的数据信息
         try {
-            $info = (InfoFactory::Factory($type))->getInfo();
+            $info = (InfoFactory::Factory($type,config('zsmp.')))->getInfo();
             return Format::success('获取数据成功', $info);
         } catch (Exception $e) {
             return Format::error($e->getMessage(), 'Customerinfo/getUserAllInfo/error', $this->wechatconfig['appid']);

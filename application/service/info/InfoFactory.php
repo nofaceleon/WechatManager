@@ -13,11 +13,11 @@ class InfoFactory
 {
 
 
-    //定义验证码类型
+    //定义类型
     const BUY_INFO = 'buy';
     const SIGN_INFO = 'sign';
 
-    //具体的类型对应的类的名称
+    //具体的类型对应的类的名称,添加type和类名的映射关系,这样以后如果修改类名的话,只需要改这边的映射关系
     private static $classList = [
         self::BUY_INFO => 'BuyInfo',
         self::SIGN_INFO => 'SignInfo',
@@ -26,7 +26,7 @@ class InfoFactory
 
 
     //根据名称实例化类
-    public static function Factory($type = '')
+    public static function Factory($type = '',$dbconfig = null)
     {
 
         if(empty($type)){
@@ -37,7 +37,7 @@ class InfoFactory
             throw new Exception('没有找到'.$type.'对应的类');
         } else{
             $fullclassname = 'app\service\info\\'.self::$classList[$type];
-            return new $fullclassname();
+            return new $fullclassname($dbconfig);
         }
 
 

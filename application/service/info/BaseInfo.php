@@ -7,6 +7,8 @@
  */
 namespace app\service\info;
 
+use think\Exception;
+
 trait BaseInfo
 {
 
@@ -14,6 +16,9 @@ trait BaseInfo
 
     public function __construct($dbconfig = null)
     {
+        if(empty($dbconfig)){
+            throw new Exception('数据库配置为空');
+        }
         $this->dbconfig = $dbconfig;
     }
 }
