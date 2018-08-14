@@ -969,7 +969,8 @@ class Wechat extends Common
             return Format::success('回复成功');
         } else {
             //回复失败怎么处理,回复模板消息?
-            return Format::error($this->weixin->errMsg);
+//            return Format::error($this->weixin->errMsg);
+            return Format::error($this->weixin->errMsg, 'Wechat/initreply/error', $this->wechatconfig['appid'],'',0,$this->weixin->errCode);
         }
 
     }

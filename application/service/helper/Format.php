@@ -4,6 +4,7 @@
  * User: 123
  * Date: 2018/8/1
  * Time: 12:31
+ * 统一封装接口返回的数据格式
  */
 
 namespace app\service\helper;
@@ -44,16 +45,20 @@ class Format
      * @param int $status
      * @return \think\response\Json
      */
-    public static function error($msg, $action = '',$appid = '', $meta = '', $status = 0)
+    public static function error($msg, $action = '', $appid = '', $meta = '', $status = 0, $errorcode = 0)
     {
+
+
+        $errorCodeList = config('wxerrorcode.');
+
 
         $result = [
             'status' => $status,
-            'msg' => $msg
+            'msg' => $errorCodeList[$errorcode] ?? $msg
         ];
 
         if ($meta !== null) {
-           $meta = is_array($meta) ? json_encode($meta) : $meta;
+            $meta = is_array($meta) ? json_encode($meta) : $meta;
         }
 
         doLog($action, $msg, $meta, $appid);

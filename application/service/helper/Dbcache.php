@@ -4,6 +4,19 @@
  * User: song
  * Date: 2018/8/5
  * Time: 11:40
+ * 在数据库中缓存access_token,方便不同的项目之间能够共用同一个access_token,而不用各自去刷新
+ *
+    CREATE TABLE `tb_access_token` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `cachekey` varchar(64) NOT NULL DEFAULT '' COMMENT '缓存key',
+    `value` varchar(255) NOT NULL DEFAULT '' COMMENT '缓存的内容',
+    `expire` int(255) NOT NULL DEFAULT '0' COMMENT '有效期',
+    `expiretime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '过期时间',
+    `createtime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '创建时间',
+    `updatetime` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '更新时间',
+    `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
  */
 
 namespace app\service\helper;
@@ -14,11 +27,10 @@ use think\Exception;
 class Dbcache
 {
 
-    private static $dbconfig;
-    private static $timenow;
+    private static $tabelname = 'tb_access_token'; //缓存的表名
+    private static $dbconfig; //数据库连接配置
+    private static $timenow; //当前时间
     private static $instacne;
-
-
 
     private function __construct($dbconfig = [])
     {
@@ -80,20 +92,21 @@ class Dbcache
             return false;
         }
 
-        $res = Db::connect(self::$dbconfig)->table('tb_access_token')->where(['cachekey' => $cachename])->find();
+        $res = Db::connect(self::$dbconfig)->table(self::$tabelname)->where(['cachekey' => $cachename])->find();
         $data = [
             'cachekey' => $cachename,
-            'access_token' => $value,
+            'value' => $value,
             'expiretime' => date('Y-m-d H:i:s', time() + intval($expired)),
             'createtime' => self::$timenow,
             'updatetime' => self::$timenow,
             'expire' => $expired,
+            'remark' => '微信开发者后台access_token',
         ];
 
         if (empty($res)) {
             //没有数据,执行插入操作
             try {
-                Db::connect(self::$dbconfig)->table('tb_access_token')->insert($data);
+                Db::connect(self::$dbconfig)->table(self::$tabelname)->insert($data);
                 return true;
             } catch (Exception $e) {
                 $errormsg = $e->getMessage();
@@ -104,7 +117,7 @@ class Dbcache
             //执行更新操作
             try {
                 unset($data['createtime']); //更新操作不需要更新创建时间
-                Db::connect(self::$dbconfig)->table('tb_access_token')->where(['cachekey' => $cachename])->update($data);
+                Db::connect(self::$dbconfig)->table(self::$tabelname)->where(['cachekey' => $cachename])->update($data);
                 return true;
             } catch (Exception $e) {
                 $errormsg = $e->getMessage();

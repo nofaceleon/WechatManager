@@ -5,63 +5,53 @@
  * Date: 2018/8/9
  * Time: 18:32
  */
+
 namespace app\index\controller;
 
 use app\service\helper\Format;
+use app\service\info\InfoFactory;
+use app\service\observers\BaseObserver;
 use think\Db;
+use think\Exception;
 
 class Customerinfo extends Common
 {
-
-
+    
     /**
      * 获取用户的基本信息
      */
     public function getCustomerUserInfo()
     {
-        $openid = input('param.openid',''); //接收用户的OPENID
-        if(empty($openid)) return Format::error('OPENID不能为空', 'Customerinfo/getCustomerUserInfo/error', $this->wechatconfig['appid']);
-        $baseInfo = Db::name('ClientUser')->where(['openid'=>$openid])->cache(300)->find();
-
-
-//        $user_tag_info = Db::name('UserTag')->where(['openid'=>$openid])->select();
-//        foreach ($user_tag_info as $k=>&$v){
-//            $tagids = $v['tagid'];
-//            $tagarr = Db::name('Tag')->where("id in ($tagids)")->column('tag');
-//            $tagstr = implode('/',$tagarr);
-//            $v['tagidstr'] = $tagstr;
-//        }
-//
-//        $baseInfo['tagInfo'] = $user_tag_info;
-
-        return Format::success('获取数据成功',$baseInfo);
-
-        
-
-
+        $openid = input('param.openid', ''); //接收用户的OPENID
+        if (empty($openid)) return Format::error('OPENID不能为空', 'Customerinfo/getCustomerUserInfo/error', $this->wechatconfig['appid']);
+        $baseInfo = Db::name('ClientUser')->where(['openid' => $openid])->cache(300)->find();
+        return Format::success('获取数据成功', $baseInfo);
 
     }
 
 
-
     public function getUserTagInfo()
     {
-        $openid = input('param.openid','');
-        $page = input('param.page',1);
-        $limit = input('param.limit',3);
-        if(empty($openid)) return Format::error('OPENID不能为空', 'Customerinfo/getUserTagInfo/error', $this->wechatconfig['appid']);
+        $openid = input('param.openid', '');
+        $page = input('param.page', 1);
+        $limit = input('param.limit', 3);
+        if (empty($openid)) return Format::error('OPENID不能为空', 'Customerinfo/getUserTagInfo/error', $this->wechatconfig['appid']);
 
-        $count = Db::name('UserTag')->where(['openid'=>$openid])->count();
+        $count = Db::name('UserTag')->where(['openid' => $openid])->count();
 
-        $user_tag_info = Db::name('UserTag')->where(['openid'=>$openid])->page($page,$limit)->select();
-        foreach ($user_tag_info as $k=>&$v){
+        $user_tag_info = Db::name('UserTag')->where(['openid' => $openid])->page($page, $limit)->order('createtime desc')->select();
+        foreach ($user_tag_info as $k => &$v) {
             $tagids = $v['tagid'];
             $tagarr = Db::name('Tag')->where("id in ($tagids)")->column('tag');
-            $tagstr = implode('/',$tagarr);
+            $tagstr = implode('/', $tagarr);
             $v['tagidstr'] = $tagstr;
         }
-        $user_tag_info['count'] = $count;
-        return Format::success('获取数据成功',$user_tag_info);
+//        $user_tag_info['count'] = $count;
+
+        $totalInfo['user_tag_info'] = $user_tag_info;
+        $totalInfo['count'] = $count;
+
+        return Format::success('获取数据成功', $totalInfo);
 
     }
 
@@ -79,14 +69,14 @@ class Customerinfo extends Common
 //            return implode('/',$resres);
 //        })->select();
 
-        $user_tag_info = Db::name('UserTag')->where(['openid'=>$openid])->select();
-        foreach ($user_tag_info as $k=>&$v){
+        $user_tag_info = Db::name('UserTag')->where(['openid' => $openid])->select();
+        foreach ($user_tag_info as $k => &$v) {
             $tagids = $v['tagid'];
             $tagarr = Db::name('Tag')->where("id in ($tagids)")->column('tag');
-            $tagstr = implode('/',$tagarr);
+            $tagstr = implode('/', $tagarr);
             $v['tagidstr'] = $tagstr;
         }
-//
+
         return json($user_tag_info);
     }
 
@@ -100,6 +90,31 @@ class Customerinfo extends Common
     }
 
 
-    
+    /**
+     * 获取用户在平台的相关的信息
+     */
+    public function getUserAllInfo()
+    {
+        $openid = input('param.openid', '');  //接收OPENID
+        $type = input('param.type', 'buy');
+        //根据传递的查询类型去实例化对应的
+        //这边通过工厂类去查询相应的数据信息
+        try {
+            $info = (InfoFactory::Factory($type))->getInfo();
+            return Format::success('获取数据成功', $info);
+        } catch (Exception $e) {
+            return Format::error($e->getMessage(), 'Customerinfo/getUserAllInfo/error', $this->wechatconfig['appid']);
+        }
+
+
+        //查询该OPENID对应的领取的优惠券信息
+        //查询领取的优惠券信息
+        //查询购买的商品的信息
+        //查询购买的文件
+        //注册观察者,观察者是执行没有返回值的一些操作
+
+
+    }
+
 
 }
