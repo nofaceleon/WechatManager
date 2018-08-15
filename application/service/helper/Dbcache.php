@@ -27,7 +27,7 @@ use think\Exception;
 class Dbcache
 {
 
-    private static $tabelname = 'tb_access_token'; //缓存的表名
+    private static $tabelname = 'tb_wx_cache'; //缓存的表名
     private static $dbconfig; //数据库连接配置
     private static $timenow; //当前时间
     private static $instacne;
@@ -136,13 +136,13 @@ class Dbcache
     public static function getCache($cachename = '')
     {
         $timenow = self::$timenow;
-        $res = Db::connect(self::$dbconfig)->table('tb_access_token')->where("cachekey = '$cachename' and expiretime > '$timenow'")->find();
+        $res = Db::connect(self::$dbconfig)->table(self::$tabelname)->where("cachekey = '$cachename' and expiretime > '$timenow'")->find();
         if (empty($res)) {
             //没有该缓存数据
             return false;
         } else {
             //缓存数据是
-            return $res['access_token'];
+            return $res['value'];
         }
 
     }
@@ -156,7 +156,7 @@ class Dbcache
     {
 
         try {
-            Db::connect(self::$dbconfig)->table('tb_access_token')->where("cachekey = '$cachename'")->limit(1)->delete();
+            Db::connect(self::$dbconfig)->table(self::$tabelname)->where("cachekey = '$cachename'")->limit(1)->delete();
             return true;
         } catch (Exception $e) {
             $errormsg = $e->getMessage();

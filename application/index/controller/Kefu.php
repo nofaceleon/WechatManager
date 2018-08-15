@@ -105,56 +105,36 @@ class Kefu extends Common
     /**
      * 更改消息状态
      */
-    public function changeStatus($openid)
+    private function changeStatus($openid)
     {
-        // $openid = input('param.openid','');
-        $data = [
-            'status' => 1,
-        ];
+        $data['status'] = 1;
         try {
             Db::name('Kefu')->where(['openid' => $openid, 'status' => 0])->update($data);
         } catch (Exception $e) {
             $errormsg = $e->getMessage();
             doLog('Kefu/changeStatus/error', '更改已读未读状态失败', $errormsg, $this->wechatconfig['appid']);
-
         }
-
-
-    }
-
-
-    /**
-     * 获取用户的领取优惠券的详细信息
-     */
-    public function getDetailInfo()
-    {
-
-        $res = input('param.openid', '');
-        if (empty($res)) return Format::error('OPENID不能为空', 'Kefu/getDetailInfo/error', $this->wechatconfig['appid']);
-
-
     }
 
 
     /**
      * 获取用户的基本信息
      */
-    public function getUserBaseInfo()
-    {
-
-        //获取用户的微信基本信息
-        $openid = input('param.openid', '');
-        if (empty($res)) return Format::error('OPENID不能为空', 'Kefu/getUserBaseInfo/error', $this->wechatconfig['appid']);
-        $userInfo = Db::name('ClientUser')->where(['openid' => $openid])->find(); //获取微信相关的具体信息 //TODO 这边要关联表
-
-        //获取这个用户的相关标签的信息
-        $tag = $userInfo['tag'];
-
-        $taglist = Db::name('Tag')->where("id in ($tag)")->column('tag'); //获取标签的内容
-        $tagstr = implode('/',$taglist);
-
-
-    }
+//    public function getUserBaseInfo()
+//    {
+//
+//        //获取用户的微信基本信息
+//        $openid = input('param.openid', '');
+//        if (empty($res)) return Format::error('OPENID不能为空', 'Kefu/getUserBaseInfo/error', $this->wechatconfig['appid']);
+//        $userInfo = Db::name('ClientUser')->where(['openid' => $openid])->find(); //获取微信相关的具体信息 //TODO 这边要关联表
+//
+//        //获取这个用户的相关标签的信息
+//        $tag = $userInfo['tag'];
+//
+//        $taglist = Db::name('Tag')->where("id in ($tag)")->column('tag'); //获取标签的内容
+//        $tagstr = implode('/',$taglist);
+//
+//    }
 
 
 }

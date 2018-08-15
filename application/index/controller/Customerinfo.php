@@ -30,8 +30,12 @@ class Customerinfo extends Common
     }
 
 
+    /**
+     * 获取用户的标签信息
+     */
     public function getUserTagInfo()
     {
+        //TODO 这个接口有点慢,有空优化一下
         $openid = input('param.openid', '');
         $page = input('param.page', 1);
         $limit = input('param.limit', 3);
@@ -107,16 +111,20 @@ class Customerinfo extends Common
 
 
     /**
-     * 获取用户在平台的相关的信息
+     * 获取用户在平台的相关的信息,根据电话号码或者OPENID来查询
      */
     public function getUserAllInfo()
     {
-        $openid = input('param.openid', '');  //接收OPENID
-        $type = input('param.type', 'buy');
+
+        $param = input('param.',''); //接收所有的参数
+        //接收查询条件(电话号码或者OPENID,默认是根据电话号码去查询)
+        $type = $param['type'] ?? '';
+        unset($param['type']);
         //根据传递的查询类型去实例化对应的
         //这边通过工厂类去查询相应的数据信息
         try {
-            $info = (InfoFactory::Factory($type,config('zsmp.')))->getInfo();
+            filedebug('where='.print_r($param,true));
+            $info = (InfoFactory::Factory($type,config('zsmp.')))->getInfo($param);
             return Format::success('获取数据成功', $info);
         } catch (Exception $e) {
             return Format::error($e->getMessage(), 'Customerinfo/getUserAllInfo/error', $this->wechatconfig['appid']);
@@ -131,6 +139,21 @@ class Customerinfo extends Common
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

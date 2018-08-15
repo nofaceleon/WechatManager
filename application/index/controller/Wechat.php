@@ -979,6 +979,7 @@ class Wechat extends Common
     /**
      * 删除缓存
      */
+    
 
 
 }
