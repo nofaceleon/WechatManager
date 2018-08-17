@@ -1266,7 +1266,7 @@ class WechatApi
 		    return $this->access_token;
 		}
 
-		$authname = 'wechat_access_token_'.$appid;
+		$authname = 'wechat_access_token'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->access_token = $rs;
 			return $rs;
@@ -1296,7 +1296,7 @@ class WechatApi
 	public function resetAuth($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->access_token = '';
-		$authname = 'wechat_access_token_'.$appid;
+		$authname = 'wechat_access_token'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}
@@ -1308,7 +1308,7 @@ class WechatApi
 	public function resetJsTicket($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->jsapi_ticket = '';
-		$authname = 'wechat_jsapi_ticket'.$appid;
+		$authname = 'ticket_'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}
@@ -1325,7 +1325,7 @@ class WechatApi
 		    $this->jsapi_ticket = $jsapi_ticket;
 		    return $this->jsapi_ticket;
 		}
-		$authname = 'wechat_jsapi_ticket'.$appid;
+		$authname = 'ticket_'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->jsapi_ticket = $rs;
 			return $rs;

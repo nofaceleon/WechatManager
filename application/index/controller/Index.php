@@ -1,8 +1,7 @@
 <?php
 namespace app\index\controller;
 
-use think\Db;
-use think\Exception;
+use app\service\helper\Dbredis;
 
 class Index extends Common
 {
@@ -23,11 +22,9 @@ class Index extends Common
     /**
      * 返回用户的基本信息
      */
-    public function getBaseInfo()
+    public function index()
     {
-        //测试提交,测试推送 2
-        $data = $this->group_id;
-        return json($data);
+        (Dbredis::getInstance())->set('test132131test','pppppp',3600);
 
     }
 
