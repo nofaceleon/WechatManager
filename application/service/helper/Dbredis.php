@@ -4,6 +4,7 @@
  * User: 123
  * Date: 2018/8/17
  * Time: 15:07
+ * 天乐邦项目中的封装好的redis
  */
 namespace app\service\helper;
 
@@ -15,7 +16,7 @@ class Dbredis
 
     private static $instance;
 
-    private function __construct($config = [])
+    private function __construct($config)
     {
 
         if(empty($config)){
@@ -33,10 +34,10 @@ class Dbredis
         $this->redis->auth($auth);
     }
 
-    public static function getInstance()
+    public static function getInstance($config = [])
     {
         if(!self::$instance instanceof self){
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
         return self::$instance;
 

@@ -43,6 +43,9 @@ class Format
     {
 
         $errorCodeList = config('wxerrorcode.');
+
+        //TODO 是否能够捕捉access_token过期的错误码,然后删除过期的access_token缓存,让后面的代码刷新?
+
         $result = [
             'status' => $status,
             'msg' => $errorCodeList[$errorcode] ?? $msg

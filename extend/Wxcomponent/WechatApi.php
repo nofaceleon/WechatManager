@@ -1,7 +1,7 @@
 <?php
 namespace Wxcomponent;
-use app\service\helper\Dbcache;
-use think\facade\Cache;
+use app\service\common\Register;
+use app\service\dbcache\Dbcache;
 
 /**
  *	微信公众平台PHP-SDK, 官方API部分
@@ -253,6 +253,8 @@ class WechatApi
 		$this->appsecret = isset($options['appsecret'])?$options['appsecret']:'';
 		$this->debug = isset($options['debug'])?$options['debug']:false;
 		$this->logcallback = isset($options['logcallback'])?$options['logcallback']:false;
+		$this->cacheDbname = 'redis';
+		Register::setObj($this->cacheDbname,Dbcache::getInstance());
 	}
 
 
@@ -1219,6 +1221,7 @@ class WechatApi
 	protected function setCache($cachename,$value,$expired){
 		//TODO: set cache implementation
 //        Cache::set($cachename, $value, 3600);
+//        (Dbcache::getInstance())->setCache($cachename,$value,$expired);
         (Dbcache::getInstance())->setCache($cachename,$value,$expired);
 
 		return false;
@@ -1232,6 +1235,7 @@ class WechatApi
 	protected function getCache($cachename){
 		//TODO: get cache implementation
 //        $res = Cache::get($cachename);
+//        $res = (Dbcache::getInstance())->getCache($cachename);
         $res = (Dbcache::getInstance())->getCache($cachename);
         return $res;
 //		return false;
@@ -1245,6 +1249,7 @@ class WechatApi
 	protected function removeCache($cachename){
 		//TODO: remove cache implementation
 //        Cache::rm($cachename);
+//        (Dbcache::getInstance())->delCache($cachename);
         (Dbcache::getInstance())->delCache($cachename);
 
 		return false;
@@ -1266,7 +1271,7 @@ class WechatApi
 		    return $this->access_token;
 		}
 
-		$authname = 'wechat_access_token'.$appid;
+		$authname = 'access_token_'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->access_token = $rs;
 			return $rs;
@@ -1296,7 +1301,7 @@ class WechatApi
 	public function resetAuth($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->access_token = '';
-		$authname = 'wechat_access_token'.$appid;
+		$authname = 'access_token_'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}
