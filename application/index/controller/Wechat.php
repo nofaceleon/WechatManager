@@ -970,7 +970,19 @@ class Wechat extends Common
         } else {
             //回复失败怎么处理,回复模板消息?
 //            return Format::error($this->weixin->errMsg);
-            return Format::error($this->weixin->errMsg, 'Wechat/initreply/error', $this->wechatconfig['appid'],'',0,$this->weixin->errCode);
+
+            if($this->weixin->errCode == ''){
+                //TODO 当错误码是由于过期,则调用模板消息来进行回复,然后需要打上特殊的标识
+
+                //这边调用模板消息发送
+
+
+            }else{
+
+                return Format::error($this->weixin->errMsg, 'Wechat/initreply/error', $this->wechatconfig['appid'],'',0,$this->weixin->errCode);
+            }
+
+
         }
 
     }

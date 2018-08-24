@@ -93,6 +93,7 @@ class Kefu extends Common
                     //说明是图片
                     $v['picurl'] = json_decode($v['detail'], true)['PicUrl']; //获取图片
                 }
+                $v['displaytime'] = get_last_time(strtotime($v['createtime']));
             }
             return Format::success('获取数据成功', $chatInfo);
         } else {
