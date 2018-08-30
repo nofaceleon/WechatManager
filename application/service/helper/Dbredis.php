@@ -6,6 +6,7 @@
  * Time: 15:07
  * 天乐邦项目中的封装好的redis
  */
+
 namespace app\service\helper;
 
 
@@ -19,7 +20,7 @@ class Dbredis
     private function __construct($config)
     {
 
-        if(empty($config)){
+        if (empty($config)) {
             $host = config('redisconfig.REDIS_HOST_DEFAULT');
             $port = config('redisconfig.REDIS_PORT_DEFAULT');
             $auth = config('redisconfig.REDIS_AUTH_DEFAULT');
@@ -29,14 +30,17 @@ class Dbredis
             $auth = $config['auth'];
         }
 
+
         $this->redis = new \Redis();
         $this->redis->pconnect($host, $port);
         $this->redis->auth($auth);
+
+
     }
 
     public static function getInstance($config = [])
     {
-        if(!self::$instance instanceof self){
+        if (!self::$instance instanceof self) {
             self::$instance = new self($config);
         }
         return self::$instance;
@@ -493,9 +497,11 @@ class Dbredis
      * @User:jysdhr
      * @param $list_key
      */
-    public function llen($list_key) {
+    public function llen($list_key)
+    {
         return $this->redis->lLen($list_key);
     }
+
     /**
      * [zCard 获取zset长度]
      * @ckhero
@@ -530,7 +536,7 @@ class Dbredis
      */
     public function expireTime($key, $type = 1)
     {
-        return $type == 1 ? $this->redis->ttl($key) : $this->redis->pttl($key) ;
+        return $type == 1 ? $this->redis->ttl($key) : $this->redis->pttl($key);
     }
 
     /**
@@ -538,7 +544,8 @@ class Dbredis
      * @User:jysdhr
      * @return bool
      */
-    public function flushAll(){
+    public function flushAll()
+    {
         return $this->redis->flushAll();
     }
 
@@ -553,9 +560,8 @@ class Dbredis
     public function __call($functionName, $args)
     {
 
-        return call_user_func_array(array($this->redis,$functionName), $args);
+        return call_user_func_array(array($this->redis, $functionName), $args);
     }
-
 
 
     /**
@@ -565,9 +571,9 @@ class Dbredis
      * @param $member
      * @return float
      */
-    public function zIncrBy($key,$value,$member)
+    public function zIncrBy($key, $value, $member)
     {
-        return $this->redis->zIncrBy($key,$value,$member);
+        return $this->redis->zIncrBy($key, $value, $member);
     }
 
     /**
@@ -579,13 +585,14 @@ class Dbredis
      * @param bool $WITHSCORES
      * @return array
      */
-    public function zRevRange($key,$start = 0,$stop = -1,$WITHSCORES = false)
+    public function zRevRange($key, $start = 0, $stop = -1, $WITHSCORES = false)
     {
-        return $this->redis->zRevRange($key,$start,$stop,$WITHSCORES);
+        return $this->redis->zRevRange($key, $start, $stop, $WITHSCORES);
 
     }
 
     //使用redis管道模式
+
     /**
      * @return \Redis
      */
@@ -602,5 +609,5 @@ class Dbredis
         $this->redis->exec();
     }
 
-    
+
 }

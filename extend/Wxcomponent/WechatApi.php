@@ -253,8 +253,6 @@ class WechatApi
 		$this->appsecret = isset($options['appsecret'])?$options['appsecret']:'';
 		$this->debug = isset($options['debug'])?$options['debug']:false;
 		$this->logcallback = isset($options['logcallback'])?$options['logcallback']:false;
-		$this->cacheDbname = 'redis';
-		Register::setObj($this->cacheDbname,Dbcache::getInstance());
 	}
 
 
@@ -1223,8 +1221,7 @@ class WechatApi
 //        Cache::set($cachename, $value, 3600);
 //        (Dbcache::getInstance())->setCache($cachename,$value,$expired);
         (Dbcache::getInstance())->setCache($cachename,$value,$expired);
-
-		return false;
+		//return false;
 	}
 
 	/**
@@ -1251,8 +1248,7 @@ class WechatApi
 //        Cache::rm($cachename);
 //        (Dbcache::getInstance())->delCache($cachename);
         (Dbcache::getInstance())->delCache($cachename);
-
-		return false;
+		//return false;
 	}
 
 	/**
@@ -1271,7 +1267,7 @@ class WechatApi
 		    return $this->access_token;
 		}
 
-		$authname = 'access_token_'.$appid;
+		$authname = 'wechat_access_token'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->access_token = $rs;
 			return $rs;
@@ -1301,7 +1297,7 @@ class WechatApi
 	public function resetAuth($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->access_token = '';
-		$authname = 'access_token_'.$appid;
+		$authname = 'wechat_access_token'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}
@@ -1313,7 +1309,7 @@ class WechatApi
 	public function resetJsTicket($appid=''){
 		if (!$appid) $appid = $this->appid;
 		$this->jsapi_ticket = '';
-		$authname = 'ticket_'.$appid;
+		$authname = 'wechat_jsapi_ticket'.$appid;
 		$this->removeCache($authname);
 		return true;
 	}
@@ -1330,7 +1326,7 @@ class WechatApi
 		    $this->jsapi_ticket = $jsapi_ticket;
 		    return $this->jsapi_ticket;
 		}
-		$authname = 'ticket_'.$appid;
+		$authname = 'wechat_jsapi_ticket'.$appid;
 		if ($rs = $this->getCache($authname))  {
 			$this->jsapi_ticket = $rs;
 			return $rs;

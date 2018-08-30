@@ -6,6 +6,7 @@
  * Time: 10:38
  * 简单封装一下
  */
+
 namespace app\service\dbcache;
 
 use app\service\helper\Dbredis;
@@ -18,22 +19,17 @@ class Dbcache implements CacheInterface
 
     private function __construct($redis)
     {
-        if($redis !== null){
+        if ($redis !== null) {
             $this->redis = $redis;
-        }else{
-//            $config = [
-//                'host'=>'139.224.0.198',
-//                'port'=>'3198',
-//                'auth'=>'#yr9XjB%b6k',
-//            ];
-            $this->redis = Dbredis::getInstance($config = []);
+        } else {
+            $this->redis = Dbredis::getInstance();
         }
     }
 
 
     public static function getInstance($redis = null)
     {
-        if(!self::$instance instanceof self){
+        if (!self::$instance instanceof self) {
             self::$instance = new self($redis);
         }
         return self::$instance;
@@ -46,10 +42,10 @@ class Dbcache implements CacheInterface
      * @param $value
      * @param int $expire
      */
-    public function setCache($cachename,$value,$expire = 3600)
+    public function setCache($cachename, $value, $expire = 3600)
     {
-        $this->redis->databaseSelect('home');
-        $this->redis->set($cachename,$value,$expire);
+        $this->redis->select(0);
+        $this->redis->set($cachename, $value, $expire);
     }
 
 
@@ -59,7 +55,7 @@ class Dbcache implements CacheInterface
      */
     public function getCache($cachename)
     {
-        $this->redis->databaseSelect('home');
+        $this->redis->select(0);
         $value = $this->redis->get($cachename);
         //file_put_contents('debug.log','从缓存中获取'.$cachename.'='.$value."\r\n",8);
         return $value;
@@ -72,11 +68,10 @@ class Dbcache implements CacheInterface
      */
     public function delCache($cachename)
     {
-        $this->redis->databaseSelect('home');
+        $this->redis->select(0);
         $this->redis->delete($cachename);
 
     }
-
 
 
 }

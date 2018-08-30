@@ -205,7 +205,6 @@ class Menu extends Common
                 'status' => 1,
                 'msg' => '添加成功!'
             ];
-
             doLog('Menu/addMenu','添加菜单成功',json_encode($data),$this->wechatconfig['appid']);
 
         } else {
@@ -268,20 +267,14 @@ class Menu extends Common
                 'status' => 1,
                 'msg' => '删除成功!'
             ];
-
-
             doLog('Menu/delMenu','删除菜单成功','',$this->wechatconfig['appid']);
-
         } else {
             //删除失败
             $response = [
                 'status' => 0,
                 'msg' => '删除失败,请稍后再试!'
             ];
-
             doLog('Menu/delMenu/error','删除菜单失败','',$this->wechatconfig['appid']);
-
-
         }
 
         return json($response);
