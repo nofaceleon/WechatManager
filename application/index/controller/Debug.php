@@ -13,15 +13,56 @@ class Debug
 {
     public function index()
     {
-//        $config = [
-//            'host'=>'r-uf60d46cf5a620b4.redis.rds.aliyuncs.com',
-//            'port'=>'6379',
-//            'auth'=>'yr9XjBb6k',
-//        ];
-//        $redis = new \Redis();
-//        $redis->pconnect($config['host'], $config['port']);
-//        $redis->auth($config['auth']);
-//        echo $redis->ping(); //可以连接
+
+        //http://uat.zwmedia.com.cn/jiansheng/WechatDevApi/public/index.php/index/Debug/index
+
+
+        $token = input('param.key','wechat_access_tokenwx307bfefddcfa71a2');
+
+        //调试正式环境下面的redis
+        $config = [
+            'host'=>'r-uf60d46cf5a620b4.redis.rds.aliyuncs.com',
+            'port'=>'6379',
+            'auth'=>'yr9XjBb6k',
+        ];
+
+        $redis = new \Redis();
+        $redis->pconnect($config['host'], $config['port']);
+        $redis->auth($config['auth']);
+        $redis->select(11);
+//        $res = $redis->get('wechat_access_tokenwx307bfefddcfa71a2');  //
+        $res = $redis->get($token);  //
+        $ttl = $redis->ttl($token);  //
+
+        echo $token."<br/>";
+
+        echo $res."||".$ttl;
+
+
+
+    }
+
+
+    
+    public function delkey()
+    {
+
+
+        //调试正式环境下面的redis
+        $config = [
+            'host'=>'r-uf60d46cf5a620b4.redis.rds.aliyuncs.com',
+            'port'=>'6379',
+            'auth'=>'yr9XjBb6k',
+        ];
+
+        $redis = new \Redis();
+        $redis->pconnect($config['host'], $config['port']);
+        $redis->auth($config['auth']);
+        $redis->select(11);
+//        $res = $redis->get('wechat_access_tokenwx307bfefddcfa71a2');  //
+        //$redis->del('SignGame:luckuserinfo_4');
+        //$redis->del('SignGame:luckuserinfo_27');
+
 
     }
 }

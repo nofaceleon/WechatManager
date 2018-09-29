@@ -21,7 +21,7 @@ class BuyInfo implements InfoInterface
         if(empty($where)){
             throw new Exception('查询条件不能为空');
         }
-        $res = Db::connect($this->dbconfig)->table('tb_order')->where($where)->limit(2)->select();
+        $res = Db::connect($this->dbconfig)->table('tb_order')->where($where)->select();
         return $res;
 
     }

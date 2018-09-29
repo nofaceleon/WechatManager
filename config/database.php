@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 
 //define('DEBUG_MODEL',true);
+//$projectconf = parse_ini_file('/var/www/html/pay_conf/projectconf.ini', true);
 
 if(DEBUG_MODEL){
 
@@ -18,17 +19,13 @@ if(DEBUG_MODEL){
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-//        'hostname'        => '127.0.0.1',
         'hostname'        => '139.224.0.198',
         // 数据库名
         'database'        => 'uatzsmp',
-//        'database'        => 'wechatconfig',
         // 用户名
         'username'        => 'zwcm',
-//        'username'        => 'root',
         // 密码
         'password'        => 'zwcm2016',
-//        'password'        => 'root',
         // 端口
         'hostport'        => '3306',
         // 连接dsn
@@ -75,19 +72,21 @@ if(DEBUG_MODEL){
 
     //正式数据库的配置
 
+    $projectconf = parse_ini_file('/var/www/html/pay_conf/projectconf.ini', true);
+
     return [
         // 数据库类型
-        'type'            => 'mysql',
+        'type'            => $projectconf['WechatDevApi']['TYPE'],
         // 服务器地址
-        'hostname'        => 'rm-uf685d499m5uvq1o6.mysql.rds.aliyuncs.com',
+        'hostname'        => $projectconf['WechatDevApi']['HOSTNAME'],
         // 数据库名
-        'database'        => 'wechatconfig',
+        'database'        => $projectconf['WechatDevApi']['DATABASE'],
         // 用户名
-        'username'        => 'levin',
+        'username'        => $projectconf['WechatDevApi']['USERNAME'],
         // 密码
-        'password'        => 'levin#!@2016*',
+        'password'        => $projectconf['WechatDevApi']['PASSWORD'],
         // 端口
-        'hostport'        => '3306',
+        'hostport'        => $projectconf['WechatDevApi']['HOSTPORT'],
         // 连接dsn
         'dsn'             => '',
         // 数据库连接参数
@@ -95,7 +94,7 @@ if(DEBUG_MODEL){
         // 数据库编码默认采用utf8
         'charset'         => 'utf8',
         // 数据库表前缀
-        'prefix'          => 'we_',
+        'prefix'          => $projectconf['WechatDevApi']['PREFIX'],
         // 数据库调试模式
         'debug'           => true,
         // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)

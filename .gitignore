@@ -6,4 +6,6 @@ thinkphp
 .env
 /route
 /uploads
-/config
+config/databases.php
+application/index/controller/Debug.php
+config/zsmp.php
