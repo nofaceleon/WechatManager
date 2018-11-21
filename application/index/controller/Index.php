@@ -3,7 +3,7 @@ namespace app\index\controller;
 
 use app\service\helper\Dbredis;
 
-class Index extends Common
+class Index
 {
 
 
@@ -24,7 +24,11 @@ class Index extends Common
      */
     public function index()
     {
-        (Dbredis::getInstance())->set('test132131test','pppppp',3600);
+
+        //return 'hello world';
+
+        dump($_SERVER); //默认的时候居然没有 request_scheme 参数
+        //(Dbredis::getInstance())->set('test132131test','pppppp',3600);
 
     }
 

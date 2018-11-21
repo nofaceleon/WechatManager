@@ -43,6 +43,7 @@ class Common extends Controller
     protected function userAuth($type = 'controller')
     {
 
+        //TODO 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由
         //return; //临时关闭权限认证
         //在Common中加上权限认证
 //        $UserAuth = new Auth();
