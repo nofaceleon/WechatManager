@@ -283,6 +283,11 @@ class Config extends Common
     public function changeAccount($id = 0)
     {
 
+        //TODO 切换账号的时候不应该保存状态到数据库中，应该是保存到个人的当前的session中，这样才能保证多个用户同时操作的时候不会串，用户第一次登录的时候也应该默认给个操作的账户
+
+
+
+
         //$this->userAuth('action'); //权限验证
 
         //根据ID将此ID的状态改为1,其他的状态改为0

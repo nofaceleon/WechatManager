@@ -18,18 +18,23 @@ class Index
      * 显示微信后台管理首页
      */
 
-
     /**
      * 返回用户的基本信息
      */
     public function index()
     {
 
-        //return 'hello world';
+        die('hello');
+       // (Dbredis::getInstance())->set('test132131test','pppppp',3600);
+    // header('location: href');
+        //TODO 访问首页的时候如果没有登录，就直接重定向到登录页面
+//      header("Location:" . 'http://wechat.songphper.top/dist/');
+      header("Location:" . 'http://my.song.top/dist/');
+    }
 
-        dump($_SERVER); //默认的时候居然没有 request_scheme 参数
-        //(Dbredis::getInstance())->set('test132131test','pppppp',3600);
-
+    public function test()
+    {
+        echo 'tst';
     }
 
 

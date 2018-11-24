@@ -12,3 +12,9 @@ body {
 	bottom: 0px;
 	width: 100%
 }
+.el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+.label_wrap .el-cascader__label{
+	padding-top:10px
+}

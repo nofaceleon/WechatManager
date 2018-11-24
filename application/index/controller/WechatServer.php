@@ -25,6 +25,8 @@ class WechatServer extends Controller
 //        filedebug('获取到的公众号配置信息是='.$appid);
         //根据appid参数获取公众号的配置信息
         $this->config = model('WechatConfig')->getWechatConfigByAppid($appid);
+
+        //TODO 获取到当前的用户的选择的账户配置信息，应该从session中获取，而不是从数据库中获取
         if(empty($this->config)){
             //没有找到对应的公众号配置
             return;//直接退出
