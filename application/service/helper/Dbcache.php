@@ -27,7 +27,7 @@ use think\Exception;
 class Dbcache
 {
 
-    private static $tabelname = 'tb_wx_cache'; //缓存的表名
+    private static $tabelname = 'we_access_token'; //缓存的表名
     private static $dbconfig; //数据库连接配置
     private static $timenow; //当前时间
     private static $instacne;
@@ -64,7 +64,7 @@ class Dbcache
 //        } else {
 //            self::$dbconfig = $dbconfig;
 //        }
-        self::$dbconfig = (empty($dbconfig)) ? config('zsmp.') : $dbconfig;
+        self::$dbconfig = (empty($dbconfig)) ? config('dbcache.') : $dbconfig;
         self::$timenow = date('Y-m-d H:i:s');
     }
 
