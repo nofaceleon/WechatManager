@@ -47,7 +47,13 @@ class checkAuth
 
 //        filedebug('验证的规则 = '.$authname);
 
-        $userid = Session::get('alluserinfo')['userid'];
+        $alluserifno = Session::get('alluserinfo');
+        $userid = $alluserifno['userid'];
+        $group_id = $alluserifno['group_id'];
+        if($group_id == 1){
+            //临时添加，超级管理员角色默认拥有所有接口权限
+            return true;
+        }
 
         return $UserAuth->check($authname, $userid);
 
