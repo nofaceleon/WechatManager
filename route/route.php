@@ -42,7 +42,7 @@ Route::group('index',function (){
     Route::any('imgmaterial/getImageUrl','index/Imgmaterial/getImageUrl'); //根据media_id获取图片路径
     Route::any('imgmaterial/getAllImg','index/Imgmaterial/getAllImg'); //获取所有素材
 
-    Route::any('kefu/getAllImg','index/Kefu/getChatList'); //获取信息列表数据
+    Route::any('kefu/getChatList','index/Kefu/getChatList'); //获取信息列表数据
     Route::any('kefu/getUserChatInfo','index/Kefu/getUserChatInfo'); //获取具体聊天信息
     Route::any('kefu/changeStatus','index/Kefu/changeStatus'); //更改消息状态
 
