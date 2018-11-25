@@ -100,3 +100,4 @@ Route::group('index',function (){
 //===========================================
 Route::any('CSGZH', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
 Route::any('WLCS', 'index/WechatServer/index?appid=wx7ad4ce9789a311ea');
+

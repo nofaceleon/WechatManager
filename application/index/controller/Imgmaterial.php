@@ -32,7 +32,8 @@ class ImgMaterial extends Common
             ];
         }else{
 //            $url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$res['local_imgurl']; //拼接成需要的URL链接
-            $url = IMG_URL.$res['local_imgurl']; //拼接成需要的URL链接
+//            $url = IMG_URL.$res['local_imgurl']; //拼接成需要的URL链接
+            $url = config('defineurl.imgurl').$res['local_imgurl']; //拼接成需要的URL链接
             $response = [
                 'status' => 1,
                 'msg' => '获取成功',
@@ -63,7 +64,8 @@ class ImgMaterial extends Common
             ];
         }else{
             foreach ($res as $k=>$v){
-                $res[$k]['local_imgurl'] = IMG_URL.$v['local_imgurl'];
+//                $res[$k]['local_imgurl'] = IMG_URL.$v['local_imgurl'];
+                $res[$k]['local_imgurl'] = config('defineurl.imgurl').$v['local_imgurl'];
 
             }
             $response = [

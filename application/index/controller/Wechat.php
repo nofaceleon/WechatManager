@@ -825,19 +825,22 @@ class Wechat extends Common
         $file = $this->request->file('file');
         $type = 'image'; //上传的图片类型
         // 移动到框架应用根目录/uploads/ 目录下
-        $info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,gif,bmp,jpeg'])->move('../uploads'); //上传验证,文件大小为2M,图片格式为 bmp/png/jpeg/jpg/gif
+//        $info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,gif,bmp,jpeg'])->move('../uploads'); //上传验证,文件大小为2M,图片格式为 bmp/png/jpeg/jpg/gif
+        $info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,gif,bmp,jpeg'])->move('../public/static'); //上传验证,文件大小为2M,图片格式为 bmp/png/jpeg/jpg/gif
+//        filedebug('info='.print_r($info,true));
         if ($info) {
             // 成功上传后 获取上传信息
             $filePath = $info->getSaveName();
             $data = [
-                'media' => '@' . dirname(__DIR__, 3) . '/uploads/' . $filePath, //这个图片路径是绝对路径
+//                'media' => '@' . dirname(__DIR__, 3) . '/uploads/' . $filePath, //这个图片路径是绝对路径
+                'media' => '@' . dirname(__DIR__, 3) . '/public/static/' . $filePath, //这个图片路径是绝对路径
 //               'media' => $path, //这个图片路径是绝对路径
             ];
 
 //            $local_img_url = $_SERVER['REQUEST_SCHEME'] . '://'.$_SERVER['HTTP_HOST'].'/WechatDevApi/uploads/'.$filePath; //本地的路径,也要存入数据库中,返回的图片应该是后台拼接的
             $local_img_url = $filePath; //本地的路径,也要存入数据库中,返回的图片应该是后台拼接的
             $res = $this->weixin->uploadForeverMedia($data, $type); //调用接口,获取图片信息
-            //filedebug('微信服务器返回的数据是='.print_r($res,true));
+//            filedebug('微信服务器返回的数据是='.print_r($res,true));
             if (!$res) {
                 $response = [
                     'status' => 0,
@@ -852,14 +855,22 @@ class Wechat extends Common
                     'local_imgurl' => $local_img_url,
                     'weixin_imgurl' => $res['url'],
                 ];
-                $addres = Db::name('ImgMaterial')->insert($adddata);
 
-                $response = [
-                    'status' => 1,
-                    'msg' => '上传成功',
-                    'info' => $res,
+                try{
+                    Db::name('ImgMaterial')->insert($adddata);
+                    $response = [
+                        'status' => 1,
+                        'msg' => '上传成功',
+                        'info' => $res,
 //                    'local_imgurl' => $local_img_url  //上传成功后返回图片路径
-                ];
+                    ];
+                }catch (Exception $e){
+                    //数据存入数据库出现异常
+                    return Format::error('保存数据库失败:'.$e->getMessage());
+                }
+
+
+
             }
         } else {
             // 上传失败获取错误信息.异常返回

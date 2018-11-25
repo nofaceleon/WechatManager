@@ -125,7 +125,8 @@ class Autoreply extends Common
                 //当是图片格式的时候,根据media_id感觉
                 $media_id = $replyinfo['reply'];
                 $imginfo = Db::name('ImgMaterial')->where("media_id = '$media_id'")->cache(300)->find();
-                if(!empty($imginfo)) $replyinfo['local_imgurl'] = IMG_URL.$imginfo['local_imgurl'];
+//                if(!empty($imginfo)) $replyinfo['local_imgurl'] = IMG_URL.$imginfo['local_imgurl'];
+                if(!empty($imginfo)) $replyinfo['local_imgurl'] = config('defineurl.imgurl').$imginfo['local_imgurl'];
 
             }
 
