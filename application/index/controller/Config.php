@@ -34,6 +34,14 @@ class Config extends Common
 //            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
 //        }
 
+        //数据处理一下显示当前session中的数据
+        foreach ($configList as $k => $v){
+            if($v['id'] == $this->wechatconfig['id']){
+                $configList[$k]['status'] = 1;
+            }else{
+                $configList[$k]['status'] = 0;
+            }
+        }
         $configList = empty($configList) ? [] : $configList;
         $response = [
             'status' => 1,

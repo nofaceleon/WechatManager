@@ -5,7 +5,7 @@ use app\service\helper\Dbredis;
 use app\service\helper\Format;
 use think\facade\Session;
 
-class Index extends Common
+class Index
 {
 
 
@@ -26,7 +26,7 @@ class Index extends Common
     public function index()
     {
 
-        return Format::success('yes',Session::get('alluserinfo'));
+//        return Format::success('yes',Session::get('alluserinfo'));
 //        die('hello');
 
         //dump(config('defineurl.weburl'));
@@ -34,14 +34,10 @@ class Index extends Common
        // (Dbredis::getInstance())->set('test132131test','pppppp',3600);
     // header('location: href');
         //TODO 访问首页的时候如果没有登录，就直接重定向到登录页面
-//      header("Location:" . 'http://wechat.songphper.top/dist/');
-      header("Location:" . 'http://my.song.top/dist/');
+      header("Location:" . 'http://wechat.songphper.top/dist/');
+//      header("Location:" . 'http://my.song.top/dist/');
     }
 
-    public function test()
-    {
-        echo 'tst';
-    }
 
 
 

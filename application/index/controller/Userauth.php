@@ -3,6 +3,7 @@
 namespace app\index\controller;
 
 use app\index\validate\UserVlidate;
+use app\service\helper\Format;
 use think\Db;
 
 class Userauth extends Common
@@ -466,16 +467,8 @@ class Userauth extends Common
     {
 
         //$this->userAuth('action');
-
-        if($id == 0){
-            $response = [
-                'status' => 0,
-                'msg' => 'ID不能为空',
-            ];
-
-            return json($response);
-
-        }
+        if($id == 0) return Format::error('id不能为空');
+        if($id == 1) return Format::error('超级管理员角色无法删除');
 
         $res = Db::name('AuthGroup')->delete($id);
 
@@ -489,7 +482,7 @@ class Userauth extends Common
             doLog('Userauth/delRole/error','删除角色失败','',$this->wechatconfig['appid']);
 
         }else{
-            //更新失败
+            //更新成功
             $response = [
                 'status' => 1,
                 'msg' => '删除成功',

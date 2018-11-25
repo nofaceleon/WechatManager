@@ -12,35 +12,35 @@
 //需要添加新的公众号的时候就需要在这里面新添加一条配置,当删除或者停用某个公众号,记得在这边删除指定路由
 
 //登录路由不需要验证登录
-Route::post('index/login/userlogin','index/Login/userlogin'); //用户登录接口
-Route::get('index/login/logout','index/Login/logout'); //退出登录接口
-Route::get('/','index/index/index'); //首页接口
+Route::any('index/login/userlogin','index/Login/userlogin'); //用户登录接口
+Route::any('index/login/logout','index/Login/logout'); //退出登录接口
+Route::any('/','index/index/index'); //首页接口
 
-//所有的方法都生成一个路由
+//所有的方法都生成一个路由 http://wechat.songphper.top/index/Autoreply/index.html
 Route::group('index',function (){
 //    Route::any('login/userlogin','index/Login/userlogin');
-    Route::get('config/index','index/Config/index'); //获取公众号列表
-    Route::get('config/getConfigInfo','index/Config/getConfigInfo'); //获取具体的配置信息
-    Route::get('config/changeAccount','index/Config/changeAccount'); //切换公众号配置
-    Route::post('config/updateConfig','index/Config/updateConfig')->middleware('checkAuth'); //修改公众号配置
-    Route::post('config/addConfig','index/Config/addConfig')->middleware('checkAuth'); //添加公众号配置
-    Route::get('config/delConfig','index/Config/delConfig')->middleware('checkAuth'); //删除公众号配置
+    Route::any('config/index','index/Config/index'); //获取公众号列表
+    Route::any('config/getConfigInfo','index/Config/getConfigInfo'); //获取具体的配置信息
+    Route::any('config/changeAccount','index/Config/changeAccount'); //切换公众号配置
+    Route::any('config/updateConfig','index/Config/updateConfig')->middleware('checkAuth'); //修改公众号配置
+    Route::any('config/addConfig','index/Config/addConfig')->middleware('checkAuth'); //添加公众号配置
+    Route::any('config/delConfig','index/Config/delConfig')->middleware('checkAuth'); //删除公众号配置
 
-    Route::get('autoreply/index','index/Autoreply/index'); //获取自动回复列表
-    Route::post('autoreply/editReply','index/Autoreply/editReply')->middleware('checkAuth'); //修改自动回复
-    Route::post('autoreply/addReply','index/Autoreply/addReply')->middleware('checkAuth'); //添加新的自动回复
-    Route::get('autoreply/delReply','index/Autoreply/delReply')->middleware('checkAuth'); //删除自动回复
-    Route::post('autoreply/exchangeStatus','index/Autoreply/exchangeStatus')->middleware('checkAuth'); //更改启用或者禁用的状态
-    Route::get('autoreply/getQrcode','index/Autoreply/getQrcode')->middleware('checkAuth'); //获取生成的二维码
-    Route::get('autoreply/getReplyInfo','index/Autoreply/getReplyInfo'); //获取自动回复的详细信息
+    Route::any('autoreply/index','index/Autoreply/index'); //获取自动回复列表
+    Route::any('autoreply/editReply','index/Autoreply/editReply')->middleware('checkAuth'); //修改自动回复
+    Route::any('autoreply/addReply','index/Autoreply/addReply')->middleware('checkAuth'); //添加新的自动回复
+    Route::any('autoreply/delReply','index/Autoreply/delReply')->middleware('checkAuth'); //删除自动回复
+    Route::any('autoreply/exchangeStatus','index/Autoreply/exchangeStatus')->middleware('checkAuth'); //更改启用或者禁用的状态
+    Route::any('autoreply/getQrcode','index/Autoreply/getQrcode')->middleware('checkAuth'); //获取生成的二维码
+    Route::any('autoreply/getReplyInfo','index/Autoreply/getReplyInfo'); //获取自动回复的详细信息
 
-    Route::get('customerinfo/getCustomerUserInfo','index/Customerinfo/getCustomerUserInfo'); //获取客户的基本信息
-    Route::get('customerinfo/getUserTagInfo','index/Customerinfo/getUserTagInfo'); //获取客户的标签信息
-    Route::post('customerinfo/saveTel','index/Customerinfo/saveTel'); //修改客户的手机号
-    Route::get('customerinfo/getUserAllInfo','index/Customerinfo/getUserAllInfo'); //获取客户在平台的一些相关信息
+    Route::any('customerinfo/getCustomerUserInfo','index/Customerinfo/getCustomerUserInfo'); //获取客户的基本信息
+    Route::any('customerinfo/getUserTagInfo','index/Customerinfo/getUserTagInfo'); //获取客户的标签信息
+    Route::any('customerinfo/saveTel','index/Customerinfo/saveTel'); //修改客户的手机号
+    Route::any('customerinfo/getUserAllInfo','index/Customerinfo/getUserAllInfo'); //获取客户在平台的一些相关信息
 
-    Route::get('imgmaterial/getImageUrl','index/Imgmaterial/getImageUrl'); //根据media_id获取图片路径
-    Route::get('imgmaterial/getAllImg','index/Imgmaterial/getAllImg'); //获取所有素材
+    Route::any('imgmaterial/getImageUrl','index/Imgmaterial/getImageUrl'); //根据media_id获取图片路径
+    Route::any('imgmaterial/getAllImg','index/Imgmaterial/getAllImg'); //获取所有素材
 
     Route::any('kefu/getAllImg','index/Kefu/getChatList'); //获取信息列表数据
     Route::any('kefu/getUserChatInfo','index/Kefu/getUserChatInfo'); //获取具体聊天信息
