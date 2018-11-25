@@ -13,7 +13,7 @@ class checkAuth
     public function handle($request, \Closure $next, $type = 'action')
     {
 
-        //TODO 将来使用中间件验证用户权限的问题
+        //将来使用中间件验证用户权限的问题（完成）
         if($this->userAuth($type)){
             //验证通过
             return $next($request);
@@ -33,7 +33,7 @@ class checkAuth
     protected function userAuth($type)
     {
 
-        //TODO 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由
+        // 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由（完成）
         //return; //临时关闭权限认证
         //在Common中加上权限认证
 //        $UserAuth = new Auth();

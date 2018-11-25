@@ -11,7 +11,7 @@ class checkLogin
 {
     public function handle($request, \Closure $next)
     {
-        //TODO 将来使用中间件来验证用户是否登录
+        // 将来使用中间件来验证用户是否登录（完成）
         //获取session中的值
         $userinfo = $this->isExpireSession();
         if($userinfo['status'] == 2){

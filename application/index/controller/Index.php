@@ -1,10 +1,6 @@
 <?php
 namespace app\index\controller;
 
-use app\service\helper\Dbredis;
-use app\service\helper\Format;
-use think\facade\Session;
-
 class Index
 {
 

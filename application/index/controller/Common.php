@@ -3,7 +3,6 @@
 namespace app\index\controller;
 
 use think\Controller;
-use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 use UserAuth\Auth;
@@ -39,6 +38,7 @@ class Common extends Controller
     }
 
     /**
+     * 已经废弃，验证方法已经放到中间件中
      * 用户权限认证,只在需要验证的地方加上该方法
      * $type 验证模式:controller表示对控制器进行验证 ,action表示对控制器中的具体方法进行验证
      */
@@ -46,7 +46,7 @@ class Common extends Controller
     {
 
 
-        //TODO 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由
+        // 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由（完成）
         return; //临时关闭权限认证
         //在Common中加上权限认证
 //        $UserAuth = new Auth();
