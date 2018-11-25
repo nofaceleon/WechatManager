@@ -62,12 +62,15 @@ class Login extends Controller
 
                 //将登录的用户名存入session中
 
+                $wechatconfig = Db::name('WechatConfig')->find();//获取一个公众号配置信息
+
                 $alluserinfo = [
                     'username' => $username,
                     'userid' => $res['id'],
                     'logintime' => time(),
 //                    'wechatconfiglist' =>$res['wechatconfiglist'],
-                    'group_id' => $res['group_id']
+                    'group_id' => $res['group_id'],
+                    'wechatconfig' => $wechatconfig,
                 ];
 
                 Session::set('alluserinfo', $alluserinfo);

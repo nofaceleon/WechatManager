@@ -30,9 +30,8 @@ class Common extends Controller
 //        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
         //$this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
 
-        $this->wechatconfig = Db::name('WechatConfig')->where(['status'=>1])->find(); //找出当前平台正在使用的配置信息
-
-        
+//        $this->wechatconfig = Db::name('WechatConfig')->where(['status'=>1])->find(); //找出当前平台正在使用的配置信息
+        $this->wechatconfig = $alluserinfo['wechatconfig']; //找出当前平台正在使用的配置信息
         $this->group_id = $alluserinfo['group_id']; //当前登录用户的角色
 
         //接口权限认证 (common里面不验证)

@@ -2,8 +2,10 @@
 namespace app\index\controller;
 
 use app\service\helper\Dbredis;
+use app\service\helper\Format;
+use think\facade\Session;
 
-class Index
+class Index extends Common
 {
 
 
@@ -24,6 +26,7 @@ class Index
     public function index()
     {
 
+        return Format::success('yes',Session::get('alluserinfo'));
 //        die('hello');
 
         //dump(config('defineurl.weburl'));

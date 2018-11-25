@@ -3,7 +3,9 @@
 namespace app\index\controller;
 
 use app\index\validate\ConfigValidate;
+use app\service\helper\Format;
 use think\Db;
+use think\facade\Session;
 
 class Config extends Common
 {
@@ -281,10 +283,12 @@ class Config extends Common
     /**
      * 切换公众号账户
      */
-    public function changeAccount($id = 0)
+    public function changeAccount_old($id = 0)
     {
 
         //TODO 切换账号的时候不应该保存状态到数据库中，应该是保存到个人的当前的session中，这样才能保证多个用户同时操作的时候不会串，用户第一次登录的时候也应该默认给个操作的账户
+
+        //操作session
 
 
 
@@ -338,6 +342,33 @@ class Config extends Common
 
 
     }
+
+
+    /**
+     * 切换公众号账户
+     */
+    public function changeAccount($id = 0)
+    {
+
+        //TODO 切换账号的时候不应该保存状态到数据库中，应该是保存到个人的当前的session中，这样才能保证多个用户同时操作的时候不会串，用户第一次登录的时候也应该默认给个操作的账户
+
+        //操作session
+
+        $wechatconfig = Db::name('WechatConfig')->where('id',$id)->find();//获取一个公众号配置信息
+        if(empty($wechatconfig)){
+            return Format::error('公众号不存在');
+        }else{
+            //修改seesion中的值
+            $alluserinfo = Session::get('alluserinfo');
+            $alluserinfo['wechatconfig'] = $wechatconfig;
+            Session::set('alluserinfo',$alluserinfo);
+            return Format::success('切换公众号成功');
+        }
+
+    }
+
+
+
 
 
     /**
