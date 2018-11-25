@@ -19,9 +19,12 @@ class Common extends Controller
     {
         parent::__construct();
 
+        //die('to access');
+
         //验证用户是否已经登录,从session中获取用户是否登录的信息
-        $alluserinfo = $this->isExpireSession();
+        //$alluserinfo = $this->isExpireSession();
         //$alluserinfo = Session::get('alluserinfo');
+        $alluserinfo = Session::get('alluserinfo');
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
 //        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
@@ -40,11 +43,12 @@ class Common extends Controller
      * 用户权限认证,只在需要验证的地方加上该方法
      * $type 验证模式:controller表示对控制器进行验证 ,action表示对控制器中的具体方法进行验证
      */
-    protected function userAuth($type = 'controller')
+    private function userAuth($type = 'controller')
     {
 
+
         //TODO 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由
-        //return; //临时关闭权限认证
+        return; //临时关闭权限认证
         //在Common中加上权限认证
 //        $UserAuth = new Auth();
         $UserAuth = Auth::getInstance(); //使用单例模式实例化对象

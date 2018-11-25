@@ -62,7 +62,7 @@ class Config extends Common
      */
     public function updateConfig()
     {
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         $data['name'] = input('post.name','');
         $data['id'] = input('post.id',0); //主键ID
         $data['wechatid'] = input('post.wechatid','');
@@ -169,7 +169,7 @@ class Config extends Common
     public function addConfig()
     {
 
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         //$data = input('param.');
         $data['name'] = input('post.name','');
         $data['wechatid'] = input('post.wechatid','');
@@ -209,7 +209,8 @@ class Config extends Common
 
         $name = trim($name); //去除首尾的空白字符
 
-        $data['url'] = CONFIG_URL.$name; //拼接配置URL
+//        $data['url'] = CONFIG_URL.$name; //拼接配置URL
+        $data['url'] = config('defineurl.weburl').$name; //拼接配置URL，改成从配置文件中获取相关配置
 
         $res = $this->configModel->insert($data);
         if ($res) {
@@ -242,7 +243,7 @@ class Config extends Common
      */
     public function delConfig($id = 0)
     {
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         if (empty($id)) {
             $response = [
                 'status' => 0,

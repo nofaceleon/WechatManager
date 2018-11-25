@@ -61,7 +61,7 @@ class Autoreply extends Common
     public function editReply()
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
 
         $data = Request::param(false); //不对输入的数据进行过滤操作
         $data['updatetime'] = date('Y-m-d H:i:s');
@@ -147,7 +147,7 @@ class Autoreply extends Common
     public function addReply()
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
 
         $data = Request::param(false); //获取原始数据,不对数据进过滤,因为回复的内容中可能包含链接
         //$data['reply'] = $_POST['reply'];
@@ -235,7 +235,7 @@ class Autoreply extends Common
     public function delReply($id = 0)
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
 
         if ($id == 0) {
             $response = [
@@ -315,7 +315,7 @@ class Autoreply extends Common
     public function getQrcode($id = 0)
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
 
         if($id == 0) {
             $response = [

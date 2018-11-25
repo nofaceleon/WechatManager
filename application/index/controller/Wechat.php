@@ -18,6 +18,8 @@ class Wechat extends Common
     {
         parent::__construct();
         //这边目前只能使用一个账号的配置信息
+
+        //TODO 配置信息应该从session中获取
         $config = [
             'appid' => $this->wechatconfig['appid'],
             'appsecret' => $this->wechatconfig['appsecret'],
@@ -33,7 +35,7 @@ class Wechat extends Common
     public function createMenu()
     {
 
-        $this->userAuth('action');
+        //$this->userAuth('action');
 
         //先查出顶级菜单
         $MenuModel = model('Menu');
@@ -132,7 +134,7 @@ class Wechat extends Common
     public function getMenu()
     {
 
-        $this->userAuth('action');
+        //$this->userAuth('action');
 
         $menuinfo = $this->weixin->getMenu();
 
@@ -263,7 +265,7 @@ class Wechat extends Common
     public function getTempListInfo()
     {
 
-        $this->userAuth('action');//这个方法中加入权限控制
+        //$this->userAuth('action');//这个方法中加入权限控制
         //从微信服务器中获取模板列表
         $templist = $this->weixin->getTempList();
         if ($templist === false) {
@@ -333,7 +335,7 @@ class Wechat extends Common
      */
     public function pushTemMsg()
     {
-        $this->userAuth('action');
+        //$this->userAuth('action');
         $alldata = $_POST; //使用原生的获取提交的信息,防止一些数据被过滤掉
         if (empty($alldata)) {
             $response = [

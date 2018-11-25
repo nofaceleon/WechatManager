@@ -12,7 +12,7 @@ class Userauth extends Common
     {
         parent::__construct();
 
-        $this->userAuth();
+        //$this->userAuth();
 
     }
 
@@ -520,6 +520,25 @@ class Userauth extends Common
         return json($response);
 
     }
+
+
+    /**
+     * 添加验证规则
+     */
+    public function addRules()
+    {
+
+    }
+
+
+    /**
+     * 将规则赋予对应的角色
+     */
+    public function addRulesToRole()
+    {
+
+    }
+
 
 
 
