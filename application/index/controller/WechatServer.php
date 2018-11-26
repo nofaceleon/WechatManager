@@ -46,7 +46,7 @@ class WechatServer extends Controller
 
         $type = $this->weixin->getRev()->getRevType(); //获取微信推送过来的消息类型
 
-        filedebug('获取类型' . print_r($type, true));
+        //filedebug('获取类型' . print_r($type, true));
 
         //存储用户信息
         Adduser::getInstance($this->weixin)->addUser();
@@ -92,7 +92,7 @@ class WechatServer extends Controller
                 break;
 
             case WechatApi::MSGTYPE_VOICE: //语音
-                filedebug('获取到了语音数据='.print_r($this->weixin->getRevData(),true));
+                //filedebug('获取到了语音数据='.print_r($this->weixin->getRevData(),true));
                 $this->weixin->text("接收到了语音")->reply();
 
                 break;
@@ -143,12 +143,12 @@ class WechatServer extends Controller
         if(!empty($res)){
             //有定义过自动回复
 
-            filedebug('查询到的自动回复消息是 = '.print_r($res,true));
+            //filedebug('查询到的自动回复消息是 = '.print_r($res,true));
             $msgtype = $res['msgtype'];
             $reply = $res['reply'];
             $json2arr = json_decode($reply, true);
             if($json2arr) $reply = $json2arr;
-            filedebug('最终的数据是 = '.print_r($reply,true));
+           // filedebug('最终的数据是 = '.print_r($reply,true));
 
             //$this->weixin->$msgtype($reply)->reply();
         }else{

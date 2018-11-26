@@ -137,13 +137,15 @@ class Wechat extends Common
         //$this->userAuth('action');
 
         $menuinfo = $this->weixin->getMenu();
+//        filedebug('fanhuizhi='.print_r($this->weixin->errCode,true));
 
         //获取菜单信息出错,返回错误信息
         if ($menuinfo === false) {
-            $response = [
-                'status' => 0,
-                'msg' => $this->weixin->errMsg //返回具体的错误信息
-            ];
+//            $response = [
+//                'status' => 0,
+//                'msg' => $this->weixin->errMsg //返回具体的错误信息
+//            ];
+            return Format::error($this->weixin->errMsg, 'wechat/getMenu/error', $this->wechatconfig['appid'],'',0,$this->weixin->errCode);
             return json($response);
         }
 
