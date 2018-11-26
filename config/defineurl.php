@@ -7,6 +7,7 @@
  */
 
 return [
-    'weburl' => 'http://wechat.songphper.top/', //回调域名地址
-    'imgurl' => 'http://wechat.songphper.top/static/', //静态文件路径地址
+    'weburl' => 'http://www.songphper.top/', //回调域名地址
+    'imgurl' => 'http://www.songphper.top/static/', //静态文件路径地址
+    'indexurl' => 'http://www.songphper.top/dist/', //静态文件路径地址
 ];

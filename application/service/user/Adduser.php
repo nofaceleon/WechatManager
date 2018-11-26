@@ -51,10 +51,17 @@ class Adduser
         //先判断数据库中有没有数据,如果有的话就执行更新操作,没有的话就执行插入操作
 
         $ishave = Db::name('ClientUser')->where(["openid"=>$openid])->find();
+        $expire = 7; //默认设置7天更新一次用户数据
+
         if($ishave){
-            //TODO 多久更新一次用户数据呢?
+            //TODO 多久更新一次用户数据呢? 默认7天更新一次
+            $updatetime = $ishave['updatetime'];
+            $oldtime = strtotime("- $expire day"); //获取指定日期前的时间
+            if($oldtime < strtotime($updatetime)){
+                return;
+            }
             //数据库中有值直接返回
-            return;
+            //return;
         }
         //现在
         $userinfo = $this->weixin->getUserInfo($data['FromUserName']);
@@ -86,7 +93,13 @@ class Adduser
 
 
         try{
-            Db::name('ClientUser')->insert($userinfodata);
+            if($ishave){
+                //filedebug('更新用户数据');
+                Db::name('ClientUser')->where('id',$ishave['id'])->update($userinfodata);
+            }else{
+                Db::name('ClientUser')->insert($userinfodata);
+            }
+
         }catch (Exception $e){
             $errormsg = $e->getMessage(); //获取错误信息
             doLog('user/Adduser/addUser/error', '添加用户信息失败', $errormsg, '');

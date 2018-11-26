@@ -30,7 +30,8 @@ class Index
        // (Dbredis::getInstance())->set('test132131test','pppppp',3600);
     // header('location: href');
         //TODO 访问首页的时候如果没有登录，就直接重定向到登录页面
-      header("Location:" . 'http://wechat.songphper.top/dist/');
+        $index_url = config('defineurl.indexurl');
+      header("Location:" . $index_url);
 //      header("Location:" . 'http://my.song.top/dist/');
     }
 

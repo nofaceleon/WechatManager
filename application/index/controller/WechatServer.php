@@ -204,7 +204,6 @@ class WechatServer extends Controller
      */
     private function handleSeverInfo($content = '')
     {
-
         $ServerLogModel = model('ServerLog');
         $data['openid'] = $content['FromUserName'];
         $data['to_user_name'] = $content['ToUserName'];
