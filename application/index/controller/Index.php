@@ -30,7 +30,11 @@ class Index
        // (Dbredis::getInstance())->set('test132131test','pppppp',3600);
     // header('location: href');
         //TODO 访问首页的时候如果没有登录，就直接重定向到登录页面
-        $index_url = config('defineurl.indexurl');
+//        $index_url = config('defineurl.indexurl');
+//        dump($_SERVER);
+//        die;
+        $index_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/dist';
+
       header("Location:" . $index_url);
 //      header("Location:" . 'http://my.song.top/dist/');
     }
