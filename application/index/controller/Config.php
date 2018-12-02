@@ -5,6 +5,7 @@ namespace app\index\controller;
 use app\index\validate\ConfigValidate;
 use app\service\helper\Format;
 use think\Db;
+use think\facade\Cookie;
 use think\facade\Session;
 
 class Config extends Common
@@ -370,6 +371,8 @@ class Config extends Common
             $alluserinfo = Session::get('alluserinfo');
             $alluserinfo['wechatconfig'] = $wechatconfig;
             Session::set('alluserinfo',$alluserinfo);
+            //顺便将选择的公众号存到cookie中
+            Cookie::set('userselect',$wechatconfig,3600*24*30); //cookie保存30天
             return Format::success('切换公众号成功');
         }
 

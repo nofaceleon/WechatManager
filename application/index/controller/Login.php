@@ -11,12 +11,12 @@ namespace app\index\controller;
 use Geetest\GeetestLib;
 use think\Controller;
 use think\Db;
+use think\facade\Cookie;
 use think\facade\Request;
 use think\facade\Session;
 
 class Login extends Controller
 {
-
 
 
     public function __construct()
@@ -48,9 +48,9 @@ class Login extends Controller
             $map['password'] = sha1($pwd);
             $password = sha1($pwd);
 
-            $res = Db::name('User')->alias('a')->join(['we_auth_group_access'=>'b'],"a.id = b.uid")->where("a.username = '$username' and a.password = '$password'")->field("a.*,b.group_id")->find();
+            $res = Db::name('User')->alias('a')->join(['we_auth_group_access' => 'b'], "a.id = b.uid")->where("a.username = '$username' and a.password = '$password'")->field("a.*,b.group_id")->find();
 
-           // $res = $usermodel->where($map)->find();
+            // $res = $usermodel->where($map)->find();
             if ($res) {
                 //说明用户名和密码正确
                 $response = [
@@ -59,10 +59,15 @@ class Login extends Controller
                 ];
 
 
+                //将登录的用户名存入session中,这边如果使用一个cookie来存储用户上一次的选择是最好的了
+                //先判断cookie中是否有值
+                $wechatconfig_for_cookie = Cookie::get('userselect');
+                if (!empty($wechatconfig_for_cookie)) {
+                    $wechatconfig = $wechatconfig_for_cookie;
+                } else {
+                    $wechatconfig = Db::name('WechatConfig')->find();//获取一个公众号配置信息
+                }
 
-                //将登录的用户名存入session中
-
-                $wechatconfig = Db::name('WechatConfig')->find();//获取一个公众号配置信息
 
                 $alluserinfo = [
                     'username' => $username,
@@ -74,8 +79,8 @@ class Login extends Controller
                 ];
 
                 Session::set('alluserinfo', $alluserinfo);
-                
-                doLog('Login/userLogin','登录成功',$username.'登录','');
+
+                doLog('Login/userLogin', '登录成功', $username . '登录', '');
 
 
 //                    Session::set('wechatuser',$username);
@@ -109,7 +114,6 @@ class Login extends Controller
         ];
         return json($response);
     }
-
 
 
 }
