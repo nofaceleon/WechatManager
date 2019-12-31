@@ -11,19 +11,21 @@
 
 //需要添加新的公众号的时候就需要在这里面新添加一条配置,当删除或者停用某个公众号,记得在这边删除指定路由
 
+//filedebug(print_r($_SERVER,true));
+
 //登录路由不需要验证登录
 Route::any('index/login/userlogin','index/Login/userlogin')
-    ->header('Access-Control-Allow-Origin','http://admin.songphper.top')
+    ->header('Access-Control-Allow-Origin',$_SERVER['HTTP_ORIGIN'])
     ->header('Access-Control-Allow-Credentials', 'true')
     ->allowCrossDomain(); //用户登录接口
 
 Route::any('index/login/logout','index/Login/logout')
-    ->header('Access-Control-Allow-Origin','http://admin.songphper.top')
+    ->header('Access-Control-Allow-Origin',$_SERVER['HTTP_ORIGIN'])
     ->header('Access-Control-Allow-Credentials', 'true')
     ->allowCrossDomain(); //退出登录接口
 
 Route::any('/','index/index/index')
-    ->header('Access-Control-Allow-Origin','http://admin.songphper.top')
+    ->header('Access-Control-Allow-Origin',$_SERVER['HTTP_ORIGIN'])
     ->header('Access-Control-Allow-Credentials', 'true')
     ->allowCrossDomain(); //首页接口
 
@@ -100,7 +102,7 @@ Route::group('index',function (){
 
 
 })->middleware('checkLogin')
-    ->header('Access-Control-Allow-Origin','http://admin.songphper.top')
+    ->header('Access-Control-Allow-Origin',$_SERVER['HTTP_ORIGIN'])
     ->header('Access-Control-Allow-Credentials', 'true')
     ->allowCrossDomain();
 
