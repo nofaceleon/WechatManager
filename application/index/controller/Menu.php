@@ -45,7 +45,7 @@ class Menu extends Common
     public function editMenu()
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
 
         $data = input('param.'); //接收前端传递过来的数据
         $data['updatetime'] = date('Y-m-d H:i:s');
@@ -175,7 +175,7 @@ class Menu extends Common
     public function addMenu()
     {
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
         $data = input('param.'); //获取全部请求数据
         //作为登录才能使用的接口,不需要进行安全认证
         $data['createtime'] = date('Y-m-d H:i:s');
@@ -238,7 +238,7 @@ class Menu extends Common
     {
 
 
-        $this->userAuth('action');
+//        $this->userAuth('action');
         //这边也应该是ajax的请求
         $menuid = input('param.id', '');
         if (empty($menuid)) {
