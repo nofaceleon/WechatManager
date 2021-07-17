@@ -19,13 +19,13 @@ if(DEBUG_MODEL){
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-        'hostname'        => '139.224.0.198',
+        'hostname'        => 'localhost',
         // 数据库名
-        'database'        => 'uatzsmp',
+        'database'        => 'root',
         // 用户名
-        'username'        => 'zwcm',
+        'username'        => 'root',
         // 密码
-        'password'        => 'zwcm2016',
+        'password'        => '123',
         // 端口
         'hostport'        => '3306',
         // 连接dsn
