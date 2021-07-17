@@ -3,7 +3,10 @@
 namespace app\index\controller;
 
 use app\index\validate\ConfigValidate;
+use app\service\helper\Format;
 use think\Db;
+use think\facade\Cookie;
+use think\facade\Session;
 
 class Config extends Common
 {
@@ -32,6 +35,14 @@ class Config extends Common
 //            $configList  = Db::name('WechatConfig')->where("id in ($this->wechatconfiglist)")->select();
 //        }
 
+        //数据处理一下显示当前session中的数据
+        foreach ($configList as $k => $v){
+            if($v['id'] == $this->wechatconfig['id']){
+                $configList[$k]['status'] = 1;
+            }else{
+                $configList[$k]['status'] = 0;
+            }
+        }
         $configList = empty($configList) ? [] : $configList;
         $response = [
             'status' => 1,
@@ -62,7 +73,7 @@ class Config extends Common
      */
     public function updateConfig()
     {
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         $data['name'] = input('post.name','');
         $data['id'] = input('post.id',0); //主键ID
         $data['wechatid'] = input('post.wechatid','');
@@ -169,7 +180,7 @@ class Config extends Common
     public function addConfig()
     {
 
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         //$data = input('param.');
         $data['name'] = input('post.name','');
         $data['wechatid'] = input('post.wechatid','');
@@ -209,7 +220,8 @@ class Config extends Common
 
         $name = trim($name); //去除首尾的空白字符
 
-        $data['url'] = CONFIG_URL.$name; //拼接配置URL
+//        $data['url'] = CONFIG_URL.$name; //拼接配置URL
+        $data['url'] = config('defineurl.weburl').$name; //拼接配置URL，改成从配置文件中获取相关配置
 
         $res = $this->configModel->insert($data);
         if ($res) {
@@ -242,7 +254,7 @@ class Config extends Common
      */
     public function delConfig($id = 0)
     {
-        $this->userAuth('action'); //权限验证
+//        $this->userAuth('action'); //权限验证
         if (empty($id)) {
             $response = [
                 'status' => 0,
@@ -280,8 +292,15 @@ class Config extends Common
     /**
      * 切换公众号账户
      */
-    public function changeAccount($id = 0)
+    public function changeAccount_old($id = 0)
     {
+
+        //TODO 切换账号的时候不应该保存状态到数据库中，应该是保存到个人的当前的session中，这样才能保证多个用户同时操作的时候不会串，用户第一次登录的时候也应该默认给个操作的账户
+
+        //操作session
+
+
+
 
         //$this->userAuth('action'); //权限验证
 
@@ -332,6 +351,35 @@ class Config extends Common
 
 
     }
+
+
+    /**
+     * 切换公众号账户
+     */
+    public function changeAccount($id = 0)
+    {
+
+        //TODO 切换账号的时候不应该保存状态到数据库中，应该是保存到个人的当前的session中，这样才能保证多个用户同时操作的时候不会串，用户第一次登录的时候也应该默认给个操作的账户
+
+        //操作session
+
+        $wechatconfig = Db::name('WechatConfig')->where('id',$id)->find();//获取一个公众号配置信息
+        if(empty($wechatconfig)){
+            return Format::error('公众号不存在');
+        }else{
+            //修改seesion中的值
+            $alluserinfo = Session::get('alluserinfo');
+            $alluserinfo['wechatconfig'] = $wechatconfig;
+            Session::set('alluserinfo',$alluserinfo);
+            //顺便将选择的公众号存到cookie中
+            Cookie::set('userselect',$wechatconfig,3600*24*30); //cookie保存30天
+            return Format::success('切换公众号成功');
+        }
+
+    }
+
+
+
 
 
     /**

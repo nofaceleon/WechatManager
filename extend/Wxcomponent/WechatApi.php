@@ -1,7 +1,7 @@
 <?php
 namespace Wxcomponent;
 use app\service\common\Register;
-use app\service\dbcache\Dbcache;
+use app\service\helper\Dbcache;
 
 /**
  *	微信公众平台PHP-SDK, 官方API部分

@@ -123,6 +123,7 @@ class Auth{
         if (!$this->_config['auth_on'])
             return true;
         $authList = $this->getAuthList($uid,$type); //获取用户需要验证的所有有效规则列表
+        //filedebug('规则列表 = '.print_r($authList,true));
         if (is_string($name)) {
             $name = strtolower($name);
             if (strpos($name, ',') !== false) {
@@ -174,6 +175,7 @@ class Auth{
             ->join($this->_config['auth_group']." g", "g.id=a.group_id")
             ->where("a.uid='$uid' and g.status='1'")
             ->field('uid,group_id,title,rules')->select();
+        //filedebug('groups='.print_r($user_groups,true));
         $groups[$uid] = $user_groups ? $user_groups : array();
         return $groups[$uid];
     }
@@ -211,7 +213,7 @@ class Auth{
         //读取用户组所有权限规则
         $rules = \think\Db::name($this->_config['auth_rule'])->where("type = $type and status = 1 and id in ($idstr)")->field('condition,name')->select();
 
-//        $sql = \think\Db::name($this->_config['auth_rule'])->getLastSql();
+        $sql = \think\Db::name($this->_config['auth_rule'])->getLastSql();
 //        filedebug('读取用户组所有权限规则 = '.json_encode($rules));
 //        filedebug('读取用户组所有权限规则sql = '.$sql);
 //        die;

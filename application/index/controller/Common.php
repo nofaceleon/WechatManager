@@ -3,7 +3,6 @@
 namespace app\index\controller;
 
 use think\Controller;
-use think\Db;
 use think\facade\Request;
 use think\facade\Session;
 use UserAuth\Auth;
@@ -19,17 +18,19 @@ class Common extends Controller
     {
         parent::__construct();
 
+        //die('to access');
+
         //验证用户是否已经登录,从session中获取用户是否登录的信息
-        $alluserinfo = $this->isExpireSession();
+        //$alluserinfo = $this->isExpireSession();
         //$alluserinfo = Session::get('alluserinfo');
+        $alluserinfo = Session::get('alluserinfo');
         $this->wechatuser = $alluserinfo['username']; //当前登录用户的用户名
         $this->userid = $alluserinfo['userid']; //当前登录用户的id
 //        $this->wechatconfiglist = $alluserinfo['wechatconfiglist'] ?? ''; //当前登录用户的id
         //$this->wechatconfig = model('WechatConfig')->getWechatConfig($this->userid); //该用户当前使用的微信公众号配置信息
 
-        $this->wechatconfig = Db::name('WechatConfig')->where(['status'=>1])->find(); //找出当前平台正在使用的配置信息
-
-        
+//        $this->wechatconfig = Db::name('WechatConfig')->where(['status'=>1])->find(); //找出当前平台正在使用的配置信息
+        $this->wechatconfig = $alluserinfo['wechatconfig']; //找出当前平台正在使用的配置信息
         $this->group_id = $alluserinfo['group_id']; //当前登录用户的角色
 
         //接口权限认证 (common里面不验证)
@@ -37,14 +38,16 @@ class Common extends Controller
     }
 
     /**
+     * 已经废弃，验证方法已经放到中间件中
      * 用户权限认证,只在需要验证的地方加上该方法
      * $type 验证模式:controller表示对控制器进行验证 ,action表示对控制器中的具体方法进行验证
      */
-    protected function userAuth($type = 'controller')
+    private function userAuth($type = 'controller')
     {
 
-        //TODO 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由
-        //return; //临时关闭权限认证
+
+        // 关于登陆验证跟权限验证，都应该写到中间件中，所有的接口都应该使用自定义的路由（完成）
+        return; //临时关闭权限认证
         //在Common中加上权限认证
 //        $UserAuth = new Auth();
         $UserAuth = Auth::getInstance(); //使用单例模式实例化对象

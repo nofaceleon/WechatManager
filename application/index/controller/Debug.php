@@ -21,9 +21,9 @@ class Debug
 
         //调试正式环境下面的redis
         $config = [
-            'host'=>'r-uf60d46cf5a620b4.redis.rds.aliyuncs.com',
+            'host'=>'',
             'port'=>'6379',
-            'auth'=>'yr9XjBb6k',
+            'auth'=>'',
         ];
 
         $redis = new \Redis();
@@ -50,9 +50,9 @@ class Debug
 
         //调试正式环境下面的redis
         $config = [
-            'host'=>'r-uf60d46cf5a620b4.redis.rds.aliyuncs.com',
+            'host'=>'',
             'port'=>'6379',
-            'auth'=>'yr9XjBb6k',
+            'auth'=>'',
         ];
 
         $redis = new \Redis();
